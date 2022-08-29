@@ -1,0 +1,206 @@
+package config;
+
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.Locale;
+import java.util.TimerTask;
+
+import org.apache.commons.lang3.time.DateUtils;
+
+import modele.Airtime;
+import modele.Caissier;
+import modele.Partner;
+import superbetDAO.AirtimeDAO;
+import superbetDAO.CaissierDAO;
+import superbetDAO.DAOFactory;
+import superbetDAO.MisekDAO;
+import superbetDAO.PartnerDAO;
+import superbetDAO.VersementDAO;
+
+public class CobWorker {
+	
+//private static Log logger = LogFactory.getLog(CobWorker.class);
+	
+	private static TimerTask task;
+	
+	private static java.util.Timer timer;
+	private static PartnerDAO partnerDao;
+	private static CaissierDAO caissierDao;
+	private static AirtimeDAO airtimeDao;
+	private static MisekDAO misekDao;
+	private static VersementDAO versementDao;
+	private static DAOFactory daof;
+	
+	/**
+	 * 
+	 */
+	public CobWorker() {
+		this.misekDao = daof.getInstance().getMisekDao();
+		this.airtimeDao = daof.getInstance().getAirtimeDao();
+		this.caissierDao = DAOFactory.getInstance().getCaissierDao();
+		partnerDao = DAOFactory.getInstance().getPartnerDao();
+		this.versementDao = DAOFactory.getInstance().getVersementDao();
+	}
+	public static void initChecking(){
+		try{
+			
+			if(task != null) task.cancel();
+			if(timer != null) timer.cancel();
+				
+
+			task = new TimerTask(){
+				@Override
+				public void run(){
+					
+					try {
+						if(Params.mapHeure.containsKey(new SimpleDateFormat("HH").format(new Date()))) {
+							process();
+						}
+							
+					}catch(Exception e){
+						//e.printStackTrace();
+					}
+				}	
+			};
+
+			timer = new java.util.Timer(true);
+			int sec = 60;
+			int min = 15;
+			timer.schedule(task, DateUtils.addMinutes(new Date(), 5) , min*sec*1000);	
+
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+	}
+	
+		
+	/**
+	 * 
+	 */
+	public static void runChecking(){
+		try{
+			
+			if(task != null) task.cancel();
+			if(timer != null) timer.cancel();
+			
+			task = new TimerTask(){
+				@Override
+				public void run(){
+					
+					try {
+						if(Params.mapHeure.containsKey(new SimpleDateFormat("HH").format(new Date()))) {
+							System.out.println("LANCEMENT DU COB 237");
+							process();
+						}
+							
+					}catch(Exception e){
+						e.printStackTrace();
+					}
+				}	
+			};
+
+			timer = new java.util.Timer(true);
+			int sec = 60;
+			int min = 1;
+			timer.schedule(task, DateUtils.addSeconds(new Date(), 5) , min*sec*1000);	
+
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+	}
+	
+	
+	/**
+	 * 
+	 */
+	public static void cancelChecking(){
+		try{
+			
+			if(task != null) task.cancel();
+			if(timer != null) timer.cancel();
+						
+			task = null;
+			timer = null;
+			
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+	}
+	
+	
+	/**
+	 * 
+	 */
+	public static void process(){
+		//recherche de tous les partners
+		System.out.println("recherche de tous les partners");
+		ArrayList<Partner> listPartners = partnerDao.getAllPartners();
+		String txtDate=new SimpleDateFormat("dd/MM/yyyy,H:m:s", Locale.FRANCE).format(new Date());
+		String fecha = txtDate.toString().substring(0,10);
+		long t1;
+		long t2;
+		double balance = 0;
+		System.out.println("Partner COB: "+listPartners.size());
+		try {
+			t1 = Timestamp.givetimestamp(fecha+",00:00:00");
+			t2 = Timestamp.givetimestamp(fecha+",23:59:00");
+			
+			for(Partner partn : listPartners) {
+				if("opened".equalsIgnoreCase(partn.getCob())) {
+				  partnerDao.update_cob("closed",partn.getCoderace());
+				//recherche des caissiers par partenaires
+				ArrayList<Caissier> list_cais = caissierDao.findByPartner(partn.getCoderace());
+				System.out.println("list_cais COB: "+list_cais.size());
+				  for(Caissier cais : list_cais) {
+					  balance = 0;
+					  if(cais.getProfil() != 1) {
+						  Airtime airtime = airtimeDao.find(cais);
+							
+							
+							/** à ajouter balance autres jeux**/
+							
+							if(airtime != null) {
+							//	if(!"VA".equalsIgnoreCase(airtime.getEta())) {
+								System.out.println("\"\"+t1, \"\"+t2: "+t1+"  "+t2);
+									double in = misekDao.getMiseRK(""+cais.getIdCaissier(), ""+t1, ""+t2);
+									double out = versementDao.getVersementD(""+t1, ""+cais.getIdCaissier(), ""+t2);
+									if(in != 0)
+									     misekDao.updateMiseRK(""+cais.getIdCaissier(), ""+t1, ""+t2);
+									if(out != 0)
+									     versementDao.updateVersementD(""+t1, ""+cais.getIdCaissier(), ""+t2);
+									balance = airtime.getBalance() - in + out;
+									balance = (double)((int)(balance*100))/100;
+									System.out.println("new balance "+balance+" in: "+in+" out: "+out);
+									airtimeDao.updateMvt(cais.getIdCaissier(), balance);
+									Airtime airti = new Airtime();
+									airti.setCredit(out);
+									
+									airti.setDate(new Date());
+									airti.setDebit(in);
+									airti.setCaissier(cais.getIdCaissier());
+									airti.setBalance(balance);
+									airti.setLibelle("MAJ CAISSE");
+									airti.setEta("VA");
+									airtimeDao.create(airti);
+							//	}
+							}
+					  }
+						  
+				  }
+				  System.out.println("FIN DU COB");
+			 }
+				  
+			}
+			
+		} catch (ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		
+		
+	}
+	
+}

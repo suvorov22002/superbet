@@ -1,0 +1,235 @@
+package business;
+
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
+
+import javax.servlet.http.HttpServletRequest;
+
+import org.apache.commons.lang3.time.DateFormatUtils;
+
+import config.Params;
+import modele.Caissier;
+import modele.GameCycle;
+import modele.Partner;
+import superbetDAO.CaissierDAO;
+import superbetDAO.GameCycleDAO;
+import superbetDAO.MisekDAO;
+import superbetDAO.PartnerDAO;
+
+public class TurnoverForm {
+	
+	private static final String FIELD_PERCENTAGE = "percentage";
+	private static final String FIELD_CYCLE = "cycle";
+	private static final String FIELD_FREQUENCE = "frequence";
+	private static final String FIELD_JEU = "turn_jeu";
+	private static final String FIELD_CODERACE = "turncoderace";
+	private static final String FIELD_ICODERACE = "icoderace";
+	private static final String FIELD_CHOICE = "turnchoice";
+	private Long idPartner;
+	private String IN = "('";
+	
+	
+	private  String resultat = null;
+	private  Map<String, String> erreurs = new HashMap<String, String>();
+	private PartnerDAO partnerDao;
+	private GameCycleDAO gmcDao;
+	private MisekDAO misekDao;
+	private CaissierDAO caissierDao;
+	private ArrayList<GameCycle> gmc;
+	private int taille = 0;
+	private String partneraire;
+	private double current_percent;
+	double summise;
+	double sumWin;
+	double curr_percent;
+	
+	
+	public TurnoverForm(GameCycleDAO gmcDao, PartnerDAO partnerDao, MisekDAO misekDao, CaissierDAO caissierDao){
+		this.gmcDao = gmcDao;
+		this.partnerDao = partnerDao;
+		this.misekDao = misekDao;
+		this.caissierDao = caissierDao;
+	}
+	
+	public void manage_admin(HttpServletRequest request){
+		
+		String action = request.getParameter( FIELD_CHOICE );
+		Partner partner;
+		erreurs.clear();
+		
+		if(action.equalsIgnoreCase("addturnover")) {
+			String percentage = request.getParameter( FIELD_PERCENTAGE );
+			String cycle = request.getParameter( FIELD_CYCLE );
+			String frequence = request.getParameter( FIELD_FREQUENCE );
+			String jeu = request.getParameter( FIELD_JEU );
+			String ipartner = request.getParameter( FIELD_ICODERACE );
+			int idmisek_max;
+			
+			partner = partnerDao.find(ipartner);
+			idPartner = partner.getIdpartner();
+			
+		    ArrayList<Caissier> list_cais = caissierDao.findByPartner(ipartner);
+		//Long idPartner = list_cais.get(0).getPartner();
+		  
+		  for(Caissier cais : list_cais) {
+			  if(cais.getProfil() != 1)
+				  IN = IN + cais.getId()+"' , '";
+		  }
+		  IN = IN + "0')";
+			//System.out.println("GAME: "+jeu+"\n"+percentage+"\n"+cycle+"\n"+frequence+"\nPartenaire: "+ipartner);
+			
+			if(ipartner == null) {
+				erreurs.put("FIELD_ICODERACE", "Veuillez choisir un partenaire");
+				resultat = "Veuillez selectionner un partenaire";
+				return;
+			}
+			
+			//System.out.println("GAME: "+jeu.substring(0, 1)+"\n"+percentage.replaceAll("%", "")+"\n"+cycle+"\n"+frequence+"\n"+ipartner);
+			String pos = "";
+			ArrayList<Integer> roundList = Params.getHitFrequency(Integer.parseInt(frequence.replaceAll("%", "")), Integer.parseInt(cycle.replaceAll("tours", "").trim()));
+			for(int nb : roundList) {
+				//System.out.print(" "+nb);
+				pos = pos +"-"+ nb;
+			}
+			pos = pos.substring(1);
+			System.out.print("\n"+pos);
+			System.out.print("\n"+IN);
+			
+			idmisek_max = misekDao.ifindId(IN);
+//			GameCycle gmt = gmcDao.findByGame(idPartner, jeu.substring(0, 1));
+			gmcDao.updateArchive(DateFormatUtils.format(new Date(), "dd-MM-yyyy,HH:mm"), 1, idPartner, jeu.substring(0, 1));
+//			summise = misekDao.getMiseKCycle(gmt.getMise(), IN);
+//			sumWin = misekDao.getMiseKCycleWin(gmt.getMise(), IN);
+//			curr_percent = sumWin/summise;
+//			curr_percent = (double)((int)(curr_percent*100))/100;
+			
+				  GameCycle gamecycle = new GameCycle();
+				  gamecycle.setRefundp(0);
+				  gamecycle.setPosition(0);
+				  gamecycle.setPartner(idPartner);
+				  gamecycle.setPercent(Double.parseDouble(percentage.replaceAll("%", "")));
+				  gamecycle.setTour(Integer.parseInt(cycle.replaceAll("tours", "").trim()));
+				  gamecycle.setArrangement(pos);
+				  gamecycle.setHitfrequence(Integer.parseInt(frequence.replaceAll("%", "")));
+				  gamecycle.setJeu(jeu.substring(0, 1));
+				  gamecycle.setArchive(0);
+				  gamecycle.setMise(idmisek_max);
+				  gamecycle.setDate_fin(DateFormatUtils.format(new Date(), "dd-MM-yyyy,HH:mm"));
+				  //gamecycle.setCurr_percent(curr_percent);
+				  gmcDao.create(gamecycle);
+				  
+				 
+		}
+		else {
+		  partneraire = request.getParameter( FIELD_CODERACE );
+		  
+			  
+		  if(partneraire != null && !partneraire.equalsIgnoreCase("")) {
+				partner = partnerDao.find(partneraire);
+				idPartner = partner.getIdpartner();
+				
+			ArrayList<Caissier> list_cais = caissierDao.findByPartner(partneraire);
+			//Long idPartner = list_cais.get(0).getPartner();
+			  
+			  for(Caissier cais : list_cais) {
+				  if(cais.getProfil() != 1)
+					  IN = IN + cais.getId()+"' , '";
+			  }
+			  IN = IN + "0')";
+			  
+			gmc = gmcDao.find(idPartner);
+			taille = gmc.size();
+			if(taille < 1) {
+				return;
+			}
+			
+			System.out.println("TURNOVERFORM GAME: "+taille);
+		    for(GameCycle gm : gmc) {
+		    	
+		    	switch(gm.getJeu()) {
+		    		case "K":
+		    			gm.setJeu("Keno");
+		    			summise = misekDao.getMiseKCycle(gm.getMise(), IN);
+		    			sumWin = misekDao.getMiseKCycleWin(gm.getMise(), IN);
+		    			curr_percent = sumWin/summise;
+		    			curr_percent = (double)((int)(curr_percent*100))/100;
+		    			gm.setCurr_percent(curr_percent);
+		    			break;
+		    		case "D":
+		    			gm.setJeu("Dogs race");
+		    			break;
+		    		case "B":
+		    			gm.setJeu("Bingo");
+		    			break;
+		    		case "S":
+		    			gm.setJeu("Spin");
+		    			break;
+		    		case "L":
+		    			gm.setJeu("Lotto rapide");
+		    			break;
+		    		default:
+		    			break;
+		    	}
+		    }
+		  }
+		  else {
+				erreurs.put("FIELD_CODERACE", "Veuillez choisir un partenaire");
+				resultat = "Veuillez choisir un partenaire";
+				return;
+		  }
+		}
+		
+	}
+
+	public String getResultat() {
+		return resultat;
+	}
+
+	public void setResultat(String resultat) {
+		this.resultat = resultat;
+	}
+
+	public Map<String, String> getErreurs() {
+		return erreurs;
+	}
+
+	public void setErreurs(Map<String, String> erreurs) {
+		this.erreurs = erreurs;
+	}
+
+	public int getTaille() {
+		return taille;
+	}
+
+	public void setTaille(int taille) {
+		this.taille = taille;
+	}
+
+	public void setGmc(ArrayList<GameCycle> gmc) {
+		this.gmc = gmc;
+	}
+
+	public ArrayList<GameCycle> getGmc() {
+		return gmc;
+	}
+	
+	public String getPartneraire() {
+		return partneraire;
+	}
+
+	public void setPartneraire(String partneraire) {
+		this.partneraire = partneraire;
+	}
+
+	public double getCurrent_percent() {
+		return current_percent;
+	}
+
+	public void setCurrent_percent(double current_percent) {
+		this.current_percent = current_percent;
+	}
+	
+	
+}

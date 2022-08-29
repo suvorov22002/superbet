@@ -1,0 +1,147 @@
+package servlets;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+
+import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import com.google.gson.Gson;
+
+import config.UtileKeno;
+import modele.Keno;
+import superbetDAO.DAOFactory;
+import superbetDAO.KenoDAO;
+import superbetDAO.PartnerDAO;
+
+/**
+ * Servlet implementation class Retrkieve
+ */
+//@WebServlet("/sumodd")
+public class RetrieveSumOdd extends HttpServlet {
+	private static final long serialVersionUID = 1L;
+	public static final String CONF_DAO_FACTORY = "daofactory";
+	private KenoDAO kenoDao;
+    
+	public void init() throws ServletException {
+		this.kenoDao = ( (DAOFactory)getServletContext().getAttribute( CONF_DAO_FACTORY )).getKenoDao();
+	}
+	
+	/**
+     * @see HttpServlet#HttpServlet()
+     */
+    public RetrieveSumOdd() {
+        super();
+        // TODO Auto-generated constructor stub
+    }
+
+	/**
+	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
+	 */
+	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		String coderace = request.getParameter("partner");
+		ArrayList<Keno> keno = kenoDao.getAllLastKdraw(coderace);
+		countAllNumOdds(keno);
+		
+		response.setContentType("application/json; charset=UTF-8");
+		response.setHeader("Cache-Control", "no-cache");
+		System.out.println("Soods: "+UtileKeno.sOdd);
+	    String json = new Gson().toJson(UtileKeno.sOdd);
+	    System.out.println("Sood: "+json);
+		response.getWriter().write(json);
+		
+		
+		//response.getWriter().append("Served at: ").append(request.getContextPath());
+	}
+
+	/**
+	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
+	 */
+	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		// TODO Auto-generated method stub
+		doGet(request, response);
+	}
+	
+	private void countAllNumOdds(ArrayList<Keno> allDraws) {
+//		
+		List<String> allDraw = new ArrayList<String>();
+		Map<String, String> allDrawNumOdds = new HashMap<String, String>();
+//		Utile.allDraw.clear();
+//		Utile.allDrawNumOdds.clear();
+		
+		
+		for(Keno k : allDraws) {
+			allDraw.add(k.getDrawnumbK());
+		}
+		
+		// Initialisation des coefficients
+		for(int i = 0; i < 80; i++) {
+			allDrawNumOdds.put(""+(i+1), ""+0);
+		}
+		
+		if(allDraw.size() > 0) {
+			String[] passDraw;
+			for(String ss : allDraw) {
+				passDraw  = ss.split("-");
+				for(int j=0; j<passDraw.length; j++) {
+					String key = passDraw[j];
+					String value = allDrawNumOdds.get(key);
+					
+					allDrawNumOdds.put(key, ""+(Integer.parseInt(value) + 1));
+				}
+			}
+			
+		Map<String, Integer> m = triAvecValeur( allDrawNumOdds );
+		System.out.println("Apres: "+m);
+		UtileKeno.sOdd.clear();
+		UtileKeno.sOdd = m;
+//		  Iterator it = m.entrySet().iterator();
+//	      while(it.hasNext()) {
+//	           Map.Entry entry = (Map.Entry)it.next();
+//	           UtileKeno.sOdd.put((String)entry.getKey(), ""+entry.getValue());
+//	        //   System.out.println(entry.getKey() + ": "+entry.getValue());
+//	      }
+			
+		}
+		
+		
+		
+	}
+	
+  private HashMap<String, Integer> triAvecValeur( Map<String, String> m ){
+		
+		HashMap<String, Integer> map = new HashMap<String, Integer>();
+		System.out.println("Avant: "+m);
+	      Iterator it = m.entrySet().iterator();
+	      while(it.hasNext()) {
+	           Map.Entry entry = (Map.Entry)it.next();
+	           map.put((String)entry.getKey(), Integer.parseInt((String)entry.getValue()));
+	        //   System.out.println(entry.getKey() + ": "+entry.getValue());
+	      }
+	
+		
+	   List<Map.Entry<String, Integer>> list = new LinkedList<Map.Entry<String, Integer>>( map.entrySet() );
+	   Collections.sort( list, new Comparator<Map.Entry<String, Integer>>(){
+	      public int compare( Map.Entry<String, Integer> o1, Map.Entry<String, Integer> o2 ){
+	          return (o2.getValue()).compareTo( o1.getValue());
+	      }
+	   });
+
+	   HashMap<String, Integer> map_apres = new LinkedHashMap<String, Integer>();
+	   for(Map.Entry<String, Integer> entry : list)
+	     map_apres.put( entry.getKey(), entry.getValue() );
+	   return map_apres;
+	}
+
+}

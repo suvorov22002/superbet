@@ -1,0 +1,259 @@
+body {
+  background-color: #ffffff/*#074e8c*/;
+  padding-top: 10px;
+}
+ 
+.succes{
+	color: green;
+}
+.erreur{
+	color: red;
+}
+
+.imenu1{
+  height: 563px;
+}
+ 
+/* administration css*/
+#e_partner,#e_caissier{
+	display:none;
+}
+#idpartner2{
+  display:none;
+}
+.solide{
+	display:block;
+}
+.invisible{
+	display:none;
+}
+
+.interf_finance{
+  display: block;
+}
+.nbar{
+   background-color: #0b614b;
+}
+.cpartner tr td, .cuser tr td, .cbonus tr td, .ccagnotte tr td, .cairtime tr td{
+	margin: 3px;
+	padding: 3px;
+}
+.interf_config{
+   display: none;
+}
+.interf_partner{
+	display: block;
+	padding:5px;
+	border:50%;
+}
+.interf_user{
+	display: none;
+	padding:5px;
+}
+.interf_bonus{
+	display: none;
+	padding:5px;
+}
+.interf_cagnotte{
+	display: none;
+	padding:5px;
+}
+
+/*fin css administration*/
+.interf_pari{
+  display:block;
+}
+
+.interf_paiement{
+  display: none;
+}
+
+.interf_soccer{
+   display: none;
+}
+
+.interf_bingo{
+   display: none;
+}
+
+.interf_dog{
+   display: none;
+}
+
+.interf_shift{
+   display: none;
+}
+
+.interf_spin{
+  display:none;
+}
+
+.interf_shift .col-sm-6{
+   padding: 20px;
+   /*padding-top: 50px*/
+   height: 400px;
+   /*line-height: 25px*/
+}
+
+.interf_shift .col-sm-3{
+  padding: 10px;
+  text-align: center;
+  height: 60px;
+}
+
+.code_barre,.detail{
+  background-color: #a2d6e3;
+  height: 245px;
+}
+
+.check_ticket{
+  background-color: #a2d6e3;
+}
+
+.ishift{
+  color: blue;
+}
+
+fieldset 
+  {
+    border: 2px solid #fff !important;
+    margin: 0 0 1.5em 0 !important;
+    xmin-width: 0;
+    padding: 0 1.4em 1.4em 1.4em !important;       
+    position: relative;
+    border-radius:4px;
+    background-color:#a2d6e3;
+    /*padding-left:10px!important;*/
+  } 
+  
+    legend
+    {
+      font-size: 1.2em !important;
+      font-weight: bold !important;
+      text-align: left !important;
+      margin-bottom: 10px; 
+      border-bottom: none;
+    }
+.pari{
+	text-align: left;
+}
+
+.pari tr td {
+  /*border: 1px inset black;
+  border-collapse: collapse;*/
+}
+
+.table-fixed {
+  width: 100%;
+  background-color: #f3f3f3;
+  text-align: left !important;
+}
+.table-fixed tbody {
+  height: 185px;
+  overflow-y: auto;
+  width: 100%;
+}
+.table-fixed thead, .table-fixed tbody, .table-fixed tr, .table-fixed td, .table-fixed th {
+  display: block; 
+
+}
+.table-fixed tbody td {
+  float: left !important;
+}
+.table-fixed thead tr th {
+  float: left !important;
+  background-color: #f1daa4;
+  border-color: #074e8c;
+}
+
+#tble_turn tbody tr:first-child td{
+	background-color: #7FFF00	;
+}
+
+.paiement_coupon tr td{
+  padding-top: 5px;
+  padding-bottom: 5px;
+  background-color:#a2d6e3;
+  /*border: 2px solid black;*/
+}
+/*
+.container-fluid {
+  padding-right: 15px;
+  padding-left: 15px;
+  margin-right: auto;
+  margin-left: auto;
+}*/
+
+.col-sm-6 img{
+  display: block;
+}
+
+.container-fluid .col-sm-2{
+  padding: 10px;
+  text-align: center;
+  height: 55px;
+  border-left: 0px;
+}
+
+.row {
+  margin-right: -15px;
+  margin-left: -15px;
+}  
+
+
+[class*="col-sm"]{
+  background-color: #dad0b7;
+  border: 1px solid black;
+  border-radius: 2px;
+  line-height: 20px;
+  /*text-align: center;*/
+}
+[class*="col-sm-6"]{
+  border: 0px solid white;
+  padding:5px;
+}
+[class*="col-xs-1"]{
+  border-radius: 2px;
+  line-height: 20px;
+}
+ 
+.cob{
+  height: 100% !important ;
+  /*line-height: 600px !important;*/
+}
+.footer{
+  /*background-color: #074e8c;*/
+  position: fixed;
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  background-color: #3a09ee;
+  color: black;
+  text-align: center;
+}
+
+.table-rapport {
+  height: 185px;
+  overflow-y: auto;
+  width: 100%;
+}
+
+.offers{
+  /*height: 200px;*/
+}
+
+@media (min-width: 768px) {
+  .container-fluid{
+    width: 100%;
+  }
+}
+@media (min-width: 992px) {
+  .container-fluid {
+    width: 100%;
+  }
+}
+@media (min-width: 1200px) {
+  .container-fluid {
+    width: 100%;
+  }
+}

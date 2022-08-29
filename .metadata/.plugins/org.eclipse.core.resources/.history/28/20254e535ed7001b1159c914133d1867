@@ -1,0 +1,182 @@
+package business;
+
+import java.io.IOException;
+import java.net.URISyntaxException;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
+
+import org.apache.commons.lang3.time.DateFormatUtils;
+import org.codehaus.jettison.json.JSONException;
+
+import config.Params;
+import config.UtileKeno;
+import modele.Caissier;
+import modele.Config;
+import modele.ControlDisplayKeno;
+import modele.GameCycle;
+import modele.Keno;
+import modele.KenoRes;
+import modele.Misek;
+import modele.Misek_temp;
+import modele.Miset;
+import modele.Partner;
+import superbetDAO.CaissierDAO;
+import superbetDAO.ConfigDAO;
+import superbetDAO.DAOFactory;
+import superbetDAO.GameCycleDAO;
+import superbetDAO.KenoDAO;
+import superbetDAO.MisekDAO;
+import superbetDAO.Misek_tempDAO;
+import superbetDAO.MisetDAO;
+import superbetDAO.PartnerDAO;
+import superbetDAO.api.exeception.DAOAPIException;
+import superbetDAO.api.implementations.SuperGameDAOAPI;
+import superbetDAO.api.interfaces.ISuperGameDAOAPILocal;
+
+
+@SuppressWarnings("deprecation")
+public class Refresh implements Runnable {
+	
+	private static Thread thread;
+	
+	
+	private String coderace;
+	public static ControlDisplayKeno cds;
+	
+	public static String RESULT  = "";
+	
+	private ControlDisplayKeno _cds;
+	public static boolean isDraw = false; //controle si le tirage est en cours
+	public static boolean countDown = true; //controle le compteur de temps avant tirage
+	public static String drawCombi = null;
+	public static int drawNum = 0;
+	private String multiplix;
+	private int drawCount;
+	private MisekDAO misekDao;
+	private MisetDAO misetDao;
+	private KenoDAO kenoDao;
+	private ConfigDAO configDao;
+	private CaissierDAO caissierDao;
+	private PartnerDAO partnerDao;
+	private GameCycleDAO gmcDao;
+	private Misek_tempDAO misektpDao;
+	private ArrayList<Misek> list_barcode;
+	private double miseTotale;
+	private double miseTotale_s; //cycle suivant
+	private String arrangement_pos;
+	private double sumdist, gMp, gmp;
+	private ArrayList<Misek> listTicket = new ArrayList();;
+	private  Map<Miset, Misek> mapTicket = new HashMap<Miset, Misek>();
+	private  Map<Miset, Misek> map_wait = new HashMap<Miset, Misek>();
+	private int refill;
+	private int xtour;
+	private Long misef;
+	private boolean search_draw;
+	private boolean dead_round = false;
+	private int idmisek_max;
+	private GameCycle gmc;
+	KenoRes b;
+	private  ISuperGameDAOAPILocal  supergameAPI;
+	
+	public Refresh(ControlDisplayKeno cds, String name){
+		Refresh.cds = cds;
+		this.coderace = name;
+		this.misekDao = DAOFactory.getInstance().getMisekDao();
+		this.misetDao = DAOFactory.getInstance().getMisetDao();
+		this.caissierDao = DAOFactory.getInstance().getCaissierDao();
+		this.gmcDao = DAOFactory.getInstance().getGameCycleDao();
+		this.configDao = DAOFactory.getInstance().getConfigDao();
+		this.misektpDao = DAOFactory.getInstance().getMisektpDao();
+		this.kenoDao = DAOFactory.getInstance().getKenoDao();
+		this.partnerDao = DAOFactory.getInstance().getPartnerDao();
+		supergameAPI = new SuperGameDAOAPI();
+	}
+	
+	
+	private String getName() {
+		return coderace;
+	}
+	
+	@Override
+	public void run() {
+		search_draw = false;
+		b = new KenoRes();
+		Keno k;
+	  
+		
+		while(true){
+			
+			try {
+				//recupération du temps
+				UtileKeno.timeKeno = this.supergameAPI.getSuperGameDAO().getTime(Params.url, coderace);
+				if(UtileKeno.timeKeno < 10 && UtileKeno.gamestate == 1) {
+					UtileKeno.canbet = false;
+					UtileKeno.messagek = "pari fermé";
+				}
+				
+				//recuperation de lobjet keno
+				b =  supergameAPI.getSuperGameDAO().retrieveCombi(Params.url, coderace);	
+				UtileKeno.drawKeno = b.getDrawnumbK();
+				UtileKeno.multiplicateur = b.getMultiplicateur();
+				UtileKeno.drawnumk = b.getDrawnumK();
+				UtileKeno.str_draw_combi = b.getStr_draw_combi();
+				UtileKeno.gamestate = b.getGameState();
+				UtileKeno.bonuskamount = b.getBonusKamount();
+				System.out.println("Refresh - state: "+UtileKeno.gamestate+" search_draw: "+search_draw);
+				if(UtileKeno.gamestate == 3) {
+					UtileKeno.canbet = true;
+					UtileKeno.messagek = "pari ouvert - tirage en cours";
+				}
+				if((UtileKeno.gamestate == 2)  && !search_draw) {
+					UtileKeno.drawKeno = "";
+					UtileKeno.drawKeno = b.getDrawnumbK();
+					
+				//	System.out.println("Refresh - time: "+UtileKeno.timeKeno+" search_draw: "+search_draw);
+					if(!UtileKeno.drawKeno.equalsIgnoreCase("")) {
+						System.out.println("Refresh - drawKeno: "+UtileKeno.drawKeno);
+						search_draw = true;
+						k = new Keno();
+						k.setBonusKamount(""+b.getBonusKamount());
+						k.setDrawnumbK(UtileKeno.drawKeno);
+						k.setHeureTirage(b.getHeureTirage());
+						k.setDrawnumK(""+b.getDrawnumK());
+						k.setMultiplicateur(b.getMultiplicateur());
+						k.setCoderace(coderace);
+						kenoDao.create(k);
+						
+					}
+					
+				}
+				else if(UtileKeno.gamestate == 1 && search_draw) {
+					search_draw = false;
+					UtileKeno.messagek = "pari ouvert";
+				}
+				
+				Thread.sleep(1000);
+			} catch (IOException | JSONException | URISyntaxException | DAOAPIException | InterruptedException e) {
+				e.printStackTrace();
+				search_draw = false;
+				UtileKeno.drawKeno = "";
+			}
+		}
+		
+	}
+	
+	public void start(){
+		thread = new Thread(this);
+		thread.start();
+	}
+	
+	public void stop(){
+		thread.stop();
+	}
+	public void suspend(){
+		thread.suspend();
+	}
+	public void resume(){
+		thread.resume();
+	}
+	
+}

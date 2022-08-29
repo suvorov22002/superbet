@@ -1,0 +1,1278 @@
+body {
+   /* background-color: rgb(56, 56, 56);*/
+    background-color: #000B18;
+    padding: 0.5em;
+    text-transform: uppercase;
+    overflow: hidden;
+}
+
+#partner,#errors{
+	display:none;
+}
+
+.show{
+    display: block !important;
+}
+
+.hide{
+    display: none !important;
+}
+
+.numOutput{
+    display: inline-block;
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    font-weight: bold;
+    font-size: 2.5em;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.animationOutputWithBorder{
+    width: 5.5em !important;
+    height: 5.5em !important;
+    border: 1px solid #ffb01d;
+}
+
+.zoom{
+    width: 5.5em !important;
+    height: 5.5em !important;
+}
+
+/* start style page 1 */
+#page1{
+    display: flex;
+    flex-direction: row;
+}
+
+.page1items{
+    height: 97vh;
+}
+
+#page1items-content{
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    justify-content: space-between;
+ }
+
+ /* start style for global table page 1*/
+ .itemtable{
+    border-collapse: collapse;
+    border-radius: 0.5em;
+    overflow: hidden;
+    text-align: center;
+    display: none;
+ }
+
+ .itemtable tr{
+    width: 100%;
+    height: 2em;
+ }
+ 
+ /* pair */
+ .itemtable tr:nth-child(even) {
+     background-color: #f2f2f2;
+ }
+ 
+ /* impair */
+ .itemtable tr:nth-child(odd):not(:first-child) {
+     background-color: #d1d0d0 ;
+ }
+ 
+ .itemtable tr:first-child {
+     background-color: #00008B ; /*background-color: red;*/
+     color:white;
+ }
+ 
+ .itemtable tr td{
+   font-weight: bold;
+   border :0.5px solid  rgb(117, 116, 116);;
+ }
+  /* end style for global table */
+
+
+/* start page 1 items 1 */
+div.logo-container {
+    background-color: red;
+    border-radius:0.5em;
+    width: 100%;
+    text-align: center;
+    color:white;
+    font-weight: bold;
+    height: 4em;
+}
+
+div.logo-container>img {
+  border-radius:0.5em;
+  height: 100%;
+  width: 100%;
+}
+
+div.cagnotte-container {
+    background-color: white;
+    border-radius:0.5em;
+    width: 50%;
+    text-align: center;
+    color:white;
+    font-weight: bold;
+    height: 4em;
+}
+
+div.cagnotte-container>img {
+  border-radius:0.5em;
+  height: 100%;
+  width: 100%;
+}
+
+#page1item1{
+    width: 15%;
+}
+
+/* start item1 table */
+#item1table{
+    width: 100%;
+    height: 60%;
+}
+/* end item 1 table */
+
+.shuffle{
+    height: 10em;
+    border-radius: 50%;
+    background-color: #f2f2f2;
+    width: 10em;
+    margin: 0.5em auto;
+    visibility: hidden;
+}
+
+.shuffle > img{
+    height: 100%;
+    border-radius: 50%;
+    background-color: rgb(56, 56, 56);
+    width: 100%;
+}
+/* end page 1 items 1 */
+
+
+/* start page 1 items 2 */
+#page1item2{
+    width: 70%;
+    padding-left: 1%;
+    padding-right: 1%;
+}
+
+/* start item2 bloc 1 */
+#page1item2-bloc1 {
+    width: 100%;
+    height: 15%;
+    display: flex;
+    flex-direction: row;
+    visibility: hidden;
+}
+
+#page1item2-bloc1-item-1{
+    width: 35%;
+    height: 100%;
+    background-color: #f2f2f2;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    border-top-left-radius: 0.5em;
+    border-bottom-left-radius: 0.5em;
+    border-top-right-radius: 0.5em;
+    border-bottom-right-radius: 0.5em;
+    border-right:1px solid  rgb(56, 56, 56);
+    margin: 0 auto;
+}
+
+#page1item2-bloc1-item-3{
+    width: 35%;
+    height: 100%;
+    background-color: #f2f2f2;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    border-top-left-radius: 0.5em;
+    border-bottom-left-radius: 0.5em;
+    border-top-right-radius: 0.5em;
+    border-bottom-right-radius: 0.5em;
+    border-right:1px solid  rgb(56, 56, 56);
+    margin: 0 auto;
+}
+
+.label-bloc1{
+    font-size: 1.8em !important;
+    font-weight: bold !important;
+}
+
+.label-race1{
+    font-size: 1.5em !important;
+    font-weight: bold !important;
+    color: red !important;
+}
+
+.jackpot-container{
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    overflow: hidden;
+}
+
+.jackpot-container-page-4{
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    overflow: hidden;
+    height: 45%;
+}
+
+.jackpot-container-page-2{
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    overflow: hidden;
+    height: 60%;
+}
+
+.jackpot-container-page-3{
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    overflow: hidden;
+    height: 45%;
+}
+
+.countJackpot{
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    overflow: hidden;
+}
+
+.countJackpot-2{
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    overflow: hidden;
+}
+
+.divider-jackpot{
+    display: inline-flex;
+    flex-direction: column;
+    width: 2em;
+    margin-right: 2em;
+    text-align: center;
+    margin: 0 auto;
+}
+
+.divider-jackpot>span{
+    font-size: 3.5em;
+    font-weight: bold;
+    color: red;
+}
+
+.numberJackpot{
+    display: inline-flex;
+    flex-direction: column;
+    width: 2em;
+    margin-right: 2em;
+    text-align: center;
+    margin: 0 auto;
+    transition: all 3s;
+}
+
+.numbJackpot{
+    flex-direction: column;
+    /*width: 2em;*/
+    margin-right: 2em;
+    text-align: center;
+    margin: 0 auto;
+	font-size: 3.5em;
+    font-weight: bold;
+    color: red;
+}
+
+.numberJackpot>span{
+    font-size: 3.5em;
+    font-weight: bold;
+    color: red;
+}
+
+.numberJackpot-2{
+    display: inline-flex;
+    flex-direction: column;
+    width: 2em;
+    margin-right: 2em;
+    text-align: center;
+    margin: 0 auto;
+    transition: all 0.5s;
+}
+
+.numberJackpot-2>span{
+    font-size: 3.5em;
+    font-weight: bold;
+    color: red;
+}
+
+
+
+.numberJackpot-page-4{
+    display: inline-flex;
+    flex-direction: column;
+    width: 2em;
+    margin-right: 2em;
+    text-align: center;
+    margin: 0 auto;
+    transition: all 3s;
+}
+
+.numberJackpot-page-4>span{
+    font-size: 3.5em;
+    font-weight: bold;
+    color: red;
+}
+
+.numberJackpot-page-4-2{
+    display: inline-flex;
+    flex-direction: column;
+    width: 2em;
+    margin-right: 2em;
+    text-align: center;
+    margin: 0 auto;
+    transition: all 0.5s;
+}
+
+.numberJackpot-page-4-2>span{
+    font-size: 3.5em;
+    font-weight: bold;
+    color: red;
+}
+
+
+.numberJackpot-page-2-2>span,.numberJackpot-page-3-2>span{
+    font-size: 3.5em;
+    font-weight: bold;
+}
+
+.numberJackpot-page-2>span,.numberJackpot-page-3>span{
+    font-size: 3.5em;
+    font-weight: bold;
+}
+
+.numberJackpot-page-2,.numberJackpot-page-3{
+    display: inline-flex;
+    flex-direction: column;
+    width: 2em;
+    margin-right: 2em;
+    text-align: center;
+    margin: 0 auto;
+    transition: all 3s;
+}
+
+.numberJackpot-page-2-2,.numberJackpot-page-3-2{
+    display: inline-flex;
+    flex-direction: column;
+    width: 2em;
+    margin-right: 2em;
+    text-align: center;
+    margin: 0 auto;
+    transition: all 0.5s;
+}
+
+.divider-jackpotPage2{
+    display: inline-flex;
+    flex-direction: column;
+    width: 2em;
+    margin-right: 2em;
+    text-align: center;
+    margin: 0 auto;
+}
+
+.divider-jackpotPage2>span{
+    font-size: 3.5em;
+    font-weight: bold;
+    color: white;
+}
+
+
+
+
+.value-bloc1{
+    font-size: 3em;
+    font-weight: bold;
+    color: black;
+    /*color: #00008B;*/
+}
+#page1item2-bloc1-item-2{
+    width: 30%;
+    height: 100%;
+    background-color: #f2f2f2;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    border-top-right-radius: 0.5em;
+    border-bottom-right-radius: 0.5em;
+    border-top-left-radius: 0.5em;
+    border-bottom-left-radius: 0.5em;
+    margin: 0 auto;
+}
+
+
+/* end item2 bloc 1 */
+
+/* start item2 bloc 2 */
+#page1item2-bloc2 {
+    width: 100%;
+    height: 85%;
+    display: flex;
+}
+
+/* start bloc2 items 1  */
+#page1item2-bloc2-item1{
+    width: 25%;
+    margin-top:0.8em;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+#page1item2-bloc2-item1:not(:last-child){
+    margin-right:0.5em;
+}
+
+/* start bloc2 items 1 table1 */
+#bloc2-item1table{
+    width: 100%;
+    height: 22%;
+}
+/* end bloc2 items 1 table1 */
+
+/* start bloc2 items 2 table2 */
+#bloc2-item2table{
+    width: 100%;
+    height: 72%;
+
+}
+/* end bloc2 items 2 table2 */
+
+/* start bloc2 items 2 table3 */
+#bloc2-item3table{
+    width: 100%;
+    height: 30%;
+
+}
+/* end bloc2 items 2 table3 */
+
+/* start bloc2 items 2 table4 */
+#bloc2-item4table{
+    width: 100%;
+    height: 65%;
+
+}
+/* end bloc2 items 2 table4 */
+
+/* start bloc2 items 2 table5 */
+#bloc2-item5table{
+    width: 100%;
+    height: 35%;
+
+}
+/* end bloc2 items 2 table5 */
+
+/* start bloc2 items 2 table6 */
+#bloc2-item6table{
+    width: 100%;
+    height: 60%;
+
+}
+/* end bloc2 items 2 table6 */
+
+/* start bloc2 items 2 table7 */
+#bloc2-item7table{
+    width: 100%;
+    height: 40%;
+
+}
+/* end bloc2 items 2 table7 */
+
+/* start bloc2 items 2 table8 */
+#bloc2-item8table{
+    width: 100%;
+    height: 54%;
+}
+/* end bloc2 items 2 table8 */
+/* end item 2 bloc2 items  */
+/* end item2 bloc 2 */
+/* end page 1 items 2 */
+
+/* start page 1 items 3 */
+#page1item3{
+    width: 15%;
+}
+
+/* start item3 table */
+#item9table{
+    width: 100%;
+    height: 35%;
+}
+
+#item10table{
+    width: 100%;
+    height: 58%;
+}
+/* end item 3 table */
+/* end page 1 items 3 */
+/* end style page 1 */
+
+
+/* start style page 2 */
+#page2 {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    height: 97vh;
+}
+
+.value{
+    font-size: 2em;
+}
+
+.tirage-item{
+    display: flex;
+    flex-direction: column;
+    justify-content: space-evenly;
+    align-items: center;
+}
+
+/* start bloc left */
+#page2-bloc-left{
+    width: 35%;
+    height: 100%;
+    /* background-color:red; */
+    display:flex;
+    flex-direction: column;
+
+}
+
+/* start page2 shuffle */
+#page2-shuffle{
+    height: 70%;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center; 
+}
+
+
+#shuffle-container {
+    border-radius: 50%;
+    background-color: rgb(56, 56, 56);
+    /* margin: 0.5em auto; */
+    position: absolute;
+    width: 27em;
+    height: 27em;
+    position: relative;
+    visibility: hidden;
+}
+
+#shuffle-container >img {
+    border-radius: 50%;
+    width: 100%;
+    height: 100%;
+    position: absolute;
+}
+
+
+/* end page 2 shuffle */
+
+/* start page2 jakpot */
+#page2-jackpot{
+    border-top-left-radius: 0.5em;
+    border-top-right-radius: 0.5em;
+    height: 15%;
+    width: 100%;
+    background-color: #00008B;
+    /*background-color: red;*/
+    color: white;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-evenly;
+    align-items: center;
+    visibility: hidden;
+}
+
+/* end page2 jakpot */
+
+/* start page 2 tirage */
+#page2-tirage{
+    border-bottom-left-radius: 0.5em;
+    border-bottom-right-radius: 0.5em;
+    height: 15%;
+    width: 100%;
+    background-color: #f2f2f2;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-evenly;
+    visibility: hidden;
+}
+/* end page 2 tirage */
+/* end bloc left */
+
+/* start bloc right */
+#page2-bloc-right{
+    width: 65%;
+    height: 100%;
+    display:flex;
+    flex-direction: column;
+    margin-left: 0.5em;
+    justify-content: space-between;
+}
+
+/* start bloc right 1 output  */
+#number-output-container{
+    width: 100%;
+    min-height: 20%;
+}
+
+.number-output{
+    width: 100%;
+    display:flex;
+    flex-direction: row;
+    justify-content:space-between;
+    margin-bottom: 0.5em;
+    visibility: hidden;
+}
+
+
+.number-output-item{
+   /* color: #5F9EA0;*/
+    color: #f2f2f2;
+    width: 4.5em;
+    height: 4.5em;
+    border-radius: 50%;
+    background-color: #f2f2f2;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    -webkit-box-shadow: 5px 7px 5px 0px rgba(0,0,0,0.75);
+    -moz-box-shadow: 5px 7px 5px 0px rgba(0,0,0,0.75);
+    box-shadow: 5px 7px 5px 0px rgba(0,0,0,0.75);
+}
+
+/* end bloc right 1 output  */
+
+/* start bloc right 1 input  */
+#number-input-container{
+    width: 100%;
+    height: 70%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    position: relative;
+    bottom: 0;
+}
+
+#outputZoom{
+    position: absolute;
+    width: 20em;
+    height: 20em;
+    border-radius: 50%;
+    background: red;
+    display: flex;
+    justify-content: center;
+    align-items: center; 
+    color:white;
+    -webkit-box-shadow: 0px -1px 5px 0px rgba(0,0,0,0.75);
+    -moz-box-shadow: 0px -1px 5px 0px rgba(0,0,0,0.75);
+    box-shadow: 0px -1px 5px 0px rgba(0,0,0,0.75);
+    visibility: hidden;
+}
+
+#multiplicateur{
+    position: absolute;
+    width:15em;
+    height: 10em;
+    border-radius: 2em;
+    background: #f2f2f2;
+    display: flex;
+    justify-content: center;
+    align-items: center; 
+    color:#3d3d3d !important;
+    -webkit-box-shadow: 0px -1px 5px 0px rgba(0,0,0,0.75);
+    -moz-box-shadow: 0px -1px 5px 0px rgba(0,0,0,0.75);
+    box-shadow: 0px -1px 5px 0px rgba(0,0,0,0.75);
+    visibility: hidden;
+}
+
+#multiplicateur>span{
+    font-weight: bold;
+    font-size: 5em;
+}
+
+
+
+
+#outputZoom>span{
+    font-weight: bold;
+    font-size: 10em;
+}
+
+.number-input{
+    width: 100%;
+    display:flex;
+    flex-direction: row;
+    justify-content:space-between;
+    visibility: hidden;
+}
+
+.number-input-item{
+    width: 5.5em;
+    height: 3.8em;
+    /*background-color: #f2f2f2;*/
+    background-color: #f2f2f2;
+    border: 2px solid  rgb(56, 56, 56);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.number{
+    font-weight: bold;
+    font-size: 2em;
+}
+
+.divide2-jackpotPage2{
+   /* display: inline-flex;*/
+    flex-direction: column;
+   /* width: 3.5em;*/
+    margin-right: 2em;
+    text-align: center;
+    margin: 0 auto;
+    font-size: 3.5em;
+    font-weight: bold;
+    color: white;
+}
+
+/* end bloc right 1 input  */
+/* end bloc right */
+/* end style page 2 */
+
+
+/* start style page 3 */
+
+#page3{
+    display: flex;
+    width: 100%;
+    height: 97vh;
+    flex-direction: column;
+    justify-content: flex-end;
+}
+
+#page3-output-winnner-container{
+    display: flex;
+    width: 100%;
+    height: 30%;
+    flex-direction:column;
+    margin-bottom: 5em;
+}
+
+#page3-output-winnner-1{
+    display: flex;
+    width: 100%;
+    flex-direction:row;
+    justify-content: space-evenly;
+    margin-top: 1em;
+    visibility: hidden;
+}
+
+#page3-output-winnner-2{
+    display: flex;
+    width: 100%;
+    flex-direction:row;
+    justify-content: space-evenly;
+    margin-top: 1em;
+    visibility: hidden;
+}
+
+#page3-logo{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 15%;
+    margin :1em auto;
+    visibility: hidden;
+}
+
+#page3-jackpot-tirage{
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    height: 20%;
+    visibility: hidden;
+}
+
+#page3-jackpot{
+    display:flex;
+    width: 50%;
+    flex-direction: column;
+    justify-content: center;
+    align-items:center;
+    height: 100%;
+    background-color: #00008B;
+    /*background-color: red;*/
+    color: #f2f2f2;
+    border-top-left-radius: 0.5em;
+    border-bottom-left-radius: 0.5em;
+    font-weight: bold;
+}
+
+.page3-tirage-item span:first-child,
+#page2-tirage span:first-child,
+{
+    font-size: 1.5em;
+}
+
+.page3-tirage-item span:last-child,
+#page2-tirage span:last-child
+{
+    font-weight: bold;
+    font-size: 3em;
+}
+
+
+#page3-tirage{
+    display:flex;
+    width: 50%;
+    flex-direction: row;
+    justify-content: center;
+    align-items:center;
+    height: 100%;
+    background-color: #f2f2f2;
+    border-top-right-radius: 0.5em;
+    border-bottom-right-radius: 0.5em;
+}
+
+.page3-tirage-item{
+    display:flex;
+    width: 50%;
+    flex-direction: column;
+    justify-content: center;
+    align-items:center;
+    height: 100%;
+    font-weight: bold;
+}
+
+.divide3-jackpotPage3{
+   /* display: inline-flex;*/
+    flex-direction: column;
+    /*width: 2em;*/
+    margin-right: 2em;
+    text-align: center;
+    margin: 0 auto;
+    font-size: 3.5em;
+    font-weight: bold;
+    color: white;
+    
+}
+
+/* end style page 3 */
+
+
+/* start page 4 */
+#page4{
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    width: 100%;
+    height: 97vh;
+}
+
+#page4bloc1{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    width: 100%;
+    height: 22%;
+}
+
+#page4bloc1-shuffle{
+    width: 15%;
+    height: 100%;
+    visibility: hidden;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#page4bloc1-shuffle > img{
+    width: 9em;
+    height: 9em;
+    border-radius: 50%;
+    margin: 0 auto;
+}
+
+#page4bloc1-jackpot{
+    width: 30%;
+    height: 100%;
+    background-color: #f2f2f2;
+    color: #00008B;
+    /*color: red;*/
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+    border-radius: 0.5em;
+    visibility: hidden;
+}
+
+#page4bloc1-jackpot>span:first-child{
+    font-size: 2em;
+    font-weight: bold;
+}
+
+#page4bloc1-jackpot>span:last-child{
+    font-size: 3em;
+    font-weight: bold;
+}
+
+#page4bloc1-bonus-last-tirage{
+    width: 35%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-evenly;
+    align-items: center;
+    border-radius: 0.5em;
+    background-color: #f2f2f2;
+    visibility: hidden;
+}
+
+#page4bloc1-bonus-last-tirage>span:first-child{
+    font-size: 1.5em;
+    font-weight: bold;
+}
+
+#page4bloc1-bonus-last-tirage-contain{
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+}
+
+.page4bloc1-bonus-last-tirage-item{
+    width: 33.33%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+  
+}
+
+.page4bloc1-bonus-last-tirage-item:not(:last-child){
+    border-right: 1px solid #3d3d3d;
+}
+
+.page4bloc1-bonus-last-tirage-item>span{
+    font-size: 1.2em;
+    display: inline-block;
+    font-weight: bold;
+}
+
+.page4bloc1-bonus-last-tirage-item>span:last-child{
+    font-size: 1.5em;
+}
+
+#page4bloc1-logo-time{
+    width: 18%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+#page4bloc1-logo-time-logo{
+    background-color: red;
+    height: 48%;
+    width: 100%;
+    border-radius: 0.5em;
+    border-radius: 0.5em;
+    color: white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-weight: bold;
+    visibility: hidden;
+}
+
+#page4bloc1-logo-time-logo>img{
+    border-radius:0.5em;
+    height: 100%;
+    width: 100%;
+}
+
+#page4bloc1-logo-time-time{
+    background-color: #f2f2f2;
+    height: 48%;
+    width: 100%;
+    border-radius: 0.5em;
+    border-radius: 0.5em;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-evenly;
+    align-items: center;
+    visibility: hidden;
+}
+
+#page4bloc1-logo-time-time>span:first-child{
+    font-size: 1em;
+    font-weight: bold;
+}
+
+#page4bloc1-logo-time-time>span:last-child{
+    font-size: 2em;
+    color: red;
+    font-weight: bold;
+}
+
+#page4bloc2{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    width: 100%;
+    height: 35%;
+    background: #f2f2f2;
+    border-radius: 0.5em;
+    font-weight: bold;
+    visibility: hidden;
+}
+
+#page4bloc2-table {
+    width: 100%;
+    height: 100%;
+    border-collapse: collapse;
+    border-radius: 0.5em;
+    overflow: hidden;
+    text-align: center;
+ }
+
+
+
+#page4bloc2-table tr{
+    width: 100%;
+    height: 20%;
+ }
+ 
+ /* pair */
+ #page4bloc2-table tr:nth-child(even) {
+    background-color:  #d1d0d0;
+ }
+ 
+ /* impair */
+ #page4bloc2-table tr:nth-child(odd) {
+     background-color: #f2f2f2;
+ }
+
+ .page4bloc2-table-number{
+     display: inline-block;
+     font-weight: bold;
+     height: 2em;
+     width: 2em;
+     font-size: 1.2em;
+     border-radius: 50%;
+     background-color: red;
+     color: white !important;
+     display: flex;
+     justify-content: center;
+     align-items: center;
+     margin: 0 auto;
+ }
+ 
+#page4bloc3{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    width: 100%;
+    height: 20%;
+    border-radius: 0.5em;
+}
+
+#page4bloc3-table-2{
+    width: 59.3%;
+    height: 100%;
+    border-collapse: collapse;
+    border-radius: 0.5em;
+    overflow: hidden;
+    text-align: center;
+    visibility: hidden;
+}
+
+
+#page4bloc4{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    width: 100%;
+    height: 20%;
+    border-radius: 0.5em;
+}
+
+
+#page4bloc3-table-1{
+    width: 40%;
+    height: 100%;
+    border-collapse: collapse;
+    border-radius: 0.5em;
+    overflow: hidden;
+    text-align: center;
+    visibility: hidden;
+}
+/*
+#page4bloc3-table-1 tr:last-child td:not(:first-child) span{
+  display: inline-block;
+  height: 2em;
+  width: 2em;
+  font-size: 1.1em;
+  border-radius: 50%;
+  background-color: red;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: white;
+  margin:0 auto;
+  font-weight: bold;
+}
+*/
+#page4bloc3-table-1 tr td span.num{
+  display: inline-block;
+  height: 2em;
+  width: 2em;
+  font-size: 1.1em;
+  border-radius: 50%;
+  background-color: #f2f2f2;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: white;
+  margin:0 auto;
+  font-weight: bold;
+}
+
+#page4bloc4-table-1{
+    width: 40%;
+    height: 100%;
+    border-collapse: collapse;
+    border-radius: 0.5em;
+    overflow: hidden;
+    text-align: center;
+    visibility: hidden;
+}
+
+.page4bloc-table tr{
+   width: 100%;
+   font-weight: bold;
+}
+
+.page4bloc-table tr:first-child{
+    height: 30%;
+}
+ 
+
+.page4bloc-table tr:first-child td{
+   color: white;
+   font-weight: bold;
+   background-color: #00008B;
+  /* background-color: red;*/
+}
+
+#page4bloc4-table-1 tr td span.num{
+  display: inline-block;
+  height: 2em;
+  width: 2em;
+  font-size: 1.1em;
+  border-radius: 50%;
+  background-color: #f2f2f2;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: white;
+  margin:0 auto;
+  font-weight: bold;
+}
+
+/* pour les cellules ayant des index pair */
+.page4bloc-table tr:not(:first-child) td:nth-child(even){
+    background-color:  #d1d0d0;
+    font-size: 1.2em;
+}
+
+/* pour les cellules ayant des index imppair */
+.page4bloc-table tr:not(:first-child) td:nth-child(odd){
+    background-color: #f2f2f2 ;
+    font-size: 1.2em;
+}
+
+#page4bloc4-table-2{
+    width: 59.3%;
+    height: 100%;
+    border-collapse: collapse;
+    border-radius: 0.5em;
+    overflow: hidden;
+    text-align: center;
+    visibility: hidden;
+}
+/* end page 4 */
+
+/*Bonus style*/
+/* modal dialog */
+#myBonus{
+	display:none;
+}
+
+.modal-dialog{
+	position: absolute;
+	width: 600px;
+	height: 600px !important;
+	z-index: 999999999999;
+	
+	display: flex !important;
+	flex-direction: column;
+	justify-content: center !important;
+}
+
+.modal-header{
+	background-color: #B8860B;
+	padding: 16px 16px;
+	color:#FFF;
+	border-bottom:2px dashed #337AB7;
+	/*opacity: 0.1;*/
+}
+.modal-content{
+	text-align: center;
+	font-size: 5em;
+	font-weight: 16em;
+	/*background: url(../assets/jackpot.jpg);
+    background-size: cover;*/
+}
+.modal-body{
+	height: 500px !important;
+	background-color: #FEAA01;/*DodgerBlue*/
+	text-align: center;
+	font-size: 0.8em;
+	/*opacity: 0.1;*/
+}
+.mbonus{
+	font-color: #B8860B;
+}
+.pbonus{
+   color: #F8F8FF;
+}
+._pbonus{
+	font-color: #F8F8FF;
+}

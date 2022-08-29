@@ -1,0 +1,10 @@
+package superbetDAO;
+
+import modele.Partner;
+
+public interface CagnotteDAO {
+	Long create(Cagnotte cagnotte) throws DAOException;
+	Cagnotte find(int coderace) throws DAOException;
+	Cagnotte update(Cagnotte cagnotte) throws DAOException;
+	void delete(Cagnotte cagnotte) throws DAOException;
+}

@@ -1,0 +1,4 @@
+url = jdbc:sqlserver://localhost:3306/ramatbet;encrypt=true;trustServerCertificate=true;
+driver = org.gjt.mm.mysql.Driver
+username = root
+password = suvorov1984

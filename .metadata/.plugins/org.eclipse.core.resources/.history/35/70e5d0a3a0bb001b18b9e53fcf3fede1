@@ -1,0 +1,5 @@
+package superbetDAO;
+
+public interface CagnotteDAO {
+
+}

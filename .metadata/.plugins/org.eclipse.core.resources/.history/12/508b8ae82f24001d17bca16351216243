@@ -1,0 +1,5 @@
+package modele;
+
+public class VersementDto extends Versement implements Seralizable{
+
+}

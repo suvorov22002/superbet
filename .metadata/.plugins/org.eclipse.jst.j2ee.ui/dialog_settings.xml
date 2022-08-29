@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<section name="Workbench">
+	<item key="J2EE_EXPORT_OVERWRITE" value="true"/>
+	<item key="J2EE_EXPORT_SOURCE" value="false"/>
+	<list key="J2EE_EXPORT_JST_WEB">
+		<item value="E:\apache-tomcat-7.0.47\webapps\superbet.war"/>
+		<item value="E:\servers\apache-tomcat-7.0.47\webapps\superbet.war"/>
+		<item value="E:\servers\apache-tomcat-7.0.47\superbet.war"/>
+	</list>
+</section>

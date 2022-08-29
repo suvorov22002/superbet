@@ -1,0 +1,112 @@
+package superbetDAO.api;
+
+import java.io.IOException;
+import java.net.URISyntaxException;
+import java.util.Map;
+
+import org.apache.http.client.ClientProtocolException;
+import org.codehaus.jettison.json.JSONException;
+
+import modele.BetTicketK;
+import modele.BonusSet;
+import modele.Cagnotte;
+import modele.Caissier;
+import modele.Keno;
+import modele.KenoRes;
+import modele.ShiftDay;
+import modele.Versement;
+import superbetDAO.api.exeception.DAOAPIException;
+
+public class SuperGameDAO extends AbstractDAOAPI<SuperGameDAO>{
+
+	public SuperGameDAO() {
+		super(SuperGameDAO.class);
+	}
+
+	@Override
+	public String getUrl() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	
+	public BetTicketK placeSlip(String url, BetTicketK slip) throws ClientProtocolException, IOException, JSONException, URISyntaxException, DAOAPIException{
+		return this.sendPostSlip(url, slip);
+	}
+	
+	public Long getBarcodes(String url, int jeu) throws ClientProtocolException, IOException, JSONException, URISyntaxException, DAOAPIException{
+		return this.getBarcode(url, jeu);
+	}
+	
+	public Caissier getCaissier(String url, Caissier cais, String partner) throws ClientProtocolException, IOException, JSONException, URISyntaxException, DAOAPIException{
+		return this.getUser(cais, url, partner);
+	}
+	
+	public Double getSolde(String url, Long ncp) throws ClientProtocolException, IOException, JSONException, URISyntaxException, DAOAPIException{
+		return this.getBalance(url, ncp);
+	}
+	
+	public Keno maxDraw(String url, String coderace) throws ClientProtocolException, IOException, JSONException, URISyntaxException, DAOAPIException{
+		return this.getMaxDraw(url, coderace);
+	}
+	
+	public BetTicketK checkTicket(String url, String coderace,  String barcode) throws ClientProtocolException, IOException, JSONException, URISyntaxException, DAOAPIException{
+		return this.verifyTicket(url, coderace, barcode);
+	}
+	
+	public Versement paidTicket(String url, String barcode,  Long caissier, double montant) throws ClientProtocolException, IOException, JSONException, URISyntaxException, DAOAPIException{
+		return this.registerVersement(url, barcode, caissier, montant);
+	}
+	
+	public KenoRes retrieveCombi(String url, String coderace) throws ClientProtocolException, IOException, JSONException, URISyntaxException, DAOAPIException{
+		return this.retrieveDrawCombi(url, coderace);
+	}
+	
+	public int getTime(String url, String coderace) throws ClientProtocolException, IOException, JSONException, URISyntaxException, DAOAPIException{
+		return this.getTimeKeno(url, coderace) ;
+	}
+	
+	public ShiftDay shift(String url, Long id, String debut, String fin) throws ClientProtocolException, IOException, JSONException, URISyntaxException, DAOAPIException{
+		return this.getShift(url, id, debut, fin) ;
+	}
+	
+	public boolean  endDraw(String url, String coderace) throws ClientProtocolException, IOException, JSONException, URISyntaxException, DAOAPIException{
+		return this. sendFinishDraw(url, coderace);
+	}
+	
+	public BonusSet  getbonuskeno(String url, String coderace) throws ClientProtocolException, IOException, JSONException, URISyntaxException, DAOAPIException{
+		return this.getbonusk(url, coderace);
+	}
+	
+	public int getStates(String url, int state, String coderace) throws ClientProtocolException, IOException, JSONException, URISyntaxException, DAOAPIException{
+		return this.getState(url, state, coderace);
+	}
+	
+	public String retrieveCombinaison(String url, int num, String coderace) throws ClientProtocolException, IOException, JSONException, URISyntaxException, DAOAPIException{
+		return this.retrievecombi(url, num, coderace);
+	}
+	
+	public Map<String, String> sumKeno(String url, String coderace) throws ClientProtocolException, IOException, JSONException, URISyntaxException, DAOAPIException{
+		return this.sumOddKeno(url, coderace);
+	}
+	 
+	public Caissier  saveUser(String url, Caissier cais) throws ClientProtocolException, IOException, JSONException, URISyntaxException, DAOAPIException{
+		return this.addUser(url, cais);
+	}
+	
+	public Cagnotte getCagnot(String url, String coderace) throws ClientProtocolException, IOException, JSONException, URISyntaxException, DAOAPIException{
+		return this.getCagnotte(url, coderace);
+	}
+
+	public BonusSet  getcagnotte(String url, String coderace) throws ClientProtocolException, IOException, JSONException, URISyntaxException, DAOAPIException{
+		return this.getcagnot(url, coderace);
+	}
+	
+	public Double Airtime(String url, Long id, double credit) throws ClientProtocolException, IOException, JSONException, URISyntaxException, DAOAPIException{
+		return this.setAirtime(url, id, credit);
+	}
+
+	private Double setAirtime(String url, Long id, double credit) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+}

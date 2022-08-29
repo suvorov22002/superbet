@@ -1,0 +1,7 @@
+INDEX VERSION 1.4+E:\projets\eclipse\superbet\.metadata\.plugins\org.eclipse.wst.jsdt.core\indexes
+2002765586.index
+4042347494.index
+1905747793.index
+3932331723.index
+3699407695.index
+1103039724.index

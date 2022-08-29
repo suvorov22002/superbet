@@ -1,0 +1,23 @@
+package superbetDAO;
+
+import java.util.ArrayList;
+
+import modele.Partner;
+import superbetDAOImpl.PartnerDto;
+
+public interface PartnerDAO {
+	
+	Long create(Partner partner) throws DAOException;
+	Partner find(String coderace) throws DAOException;
+	Partner update(Partner partner) throws DAOException;
+	void delete(Partner partner) throws DAOException;
+	int update_bonusk(double dbl, int bncd, String coderace) throws DAOException;
+	int update_bonusp(double dbl, int bncd, String coderace) throws DAOException;
+	int update_reset_bonusk(double dbl, String coderace) throws DAOException;
+	int update_reset_bonusp(double dbl, String coderace) throws DAOException;
+	Partner findById(int id) throws DAOException;
+	ArrayList<Partner> getAllPartners() throws DAOException;
+	int update_cob(String cob,String coderace) throws DAOException;
+	ArrayList<Partner> getAllPartnersByGroup(String idgrp) throws DAOException;
+	PartnerDto find2(String coderace) throws DAOException;
+}

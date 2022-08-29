@@ -1,0 +1,705 @@
+package business;
+
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
+
+import org.apache.commons.lang3.time.DateFormatUtils;
+
+import config.Params;
+import config.UtileKeno;
+import modele.Caissier;
+import modele.Config;
+import modele.ControlDisplayKeno;
+import modele.GameCycle;
+import modele.Keno;
+import modele.Misek;
+import modele.Misek_temp;
+import modele.Miset;
+import superbetDAO.CaissierDAO;
+import superbetDAO.ConfigDAO;
+import superbetDAO.DAOFactory;
+import superbetDAO.GameCycleDAO;
+import superbetDAO.KenoDAO;
+import superbetDAO.MisekDAO;
+import superbetDAO.Misek_tempDAO;
+import superbetDAO.MisetDAO;
+
+
+@SuppressWarnings("deprecation")
+public class Refresh implements Runnable {
+	
+	private static Thread thread;
+	
+	
+	private String coderace;
+	public static ControlDisplayKeno cds;
+	
+	public static String RESULT  = "";
+	
+	private ControlDisplayKeno _cds;
+	public static boolean isDraw = false; //controle si le tirage est en cours
+	public static boolean countDown = true; //controle le compteur de temps avant tirage
+	public static String drawCombi = null;
+	public static int drawNum = 0;
+	private String multiplix;
+	private int drawCount;
+	private MisekDAO misekDao;
+	private MisetDAO misetDao;
+	private KenoDAO kenoDao;
+	private ConfigDAO configDao;
+	private CaissierDAO caissierDao;
+	private GameCycleDAO gmcDao;
+	private Misek_tempDAO misektpDao;
+	private ArrayList<Misek> list_barcode;
+	private double miseTotale;
+	private double miseTotale_s; //cycle suivant
+	private String arrangement_pos;
+	private double sumdist, gMp, gmp;
+	private ArrayList<Misek> listTicket = new ArrayList();;
+	private  Map<Miset, Misek> mapTicket = new HashMap<Miset, Misek>();
+	private  Map<Miset, Misek> map_wait = new HashMap<Miset, Misek>();
+	private int refill;
+	private int xtour;
+	private Long misef;
+	private boolean search_draw;
+	private boolean dead_round = false;
+	private int idmisek_max;
+	private GameCycle gmc;
+	
+	public Refresh(ControlDisplayKeno cds, String name){
+		Refresh.cds = cds;
+		this.coderace = name;
+		this.misekDao = DAOFactory.getInstance().getMisekDao();
+		this.misetDao = DAOFactory.getInstance().getMisetDao();
+		this.caissierDao = DAOFactory.getInstance().getCaissierDao();
+		this.gmcDao = DAOFactory.getInstance().getGameCycleDao();
+		this.configDao = DAOFactory.getInstance().getConfigDao();
+		this.misektpDao = DAOFactory.getInstance().getMisektpDao();
+		this.kenoDao = DAOFactory.getInstance().getKenoDao();
+	}
+	
+	
+	private String getName() {
+		return coderace;
+	}
+	
+	@Override
+	public void run() {
+		
+	    _cds = UtileKeno._display_draw.get(cds.getRang());
+		_cds.setTimeKeno(UtileKeno.timeKeno);
+		System.out.println("Screens connected: "+UtileKeno._display_draw.size());
+		Keno _keno = _cds.lastDrawNum(coderace);
+		_cds.setDrawNumk(Integer.parseInt(_keno.getDrawNumK()));
+		refill = 0;
+		
+		//Recherche des caissiers du partner
+		ArrayList<Caissier> list_cais = caissierDao.findByPartner(coderace);
+		Long idPartner = list_cais.get(0).getPartner();
+		  String IN = "('";
+		  for(Caissier cais : list_cais) {
+			  if(cais.getProfil() != 1)
+				  IN = IN + cais.getId()+"' , '";
+		  }
+		  IN = IN + "0')";
+		
+		
+		Config config = configDao.find(coderace);
+		double bonusrate = config.getBonusrate() * 100;
+		
+		
+		////////////////////////////////
+		
+		
+		while(true){
+			_cds.setTimeKeno(UtileKeno.timeKeno);
+			_cds.setDrawCount(130);
+			//UtileKeno.canbet = true;
+			boolean trouve = false;
+			search_draw = false;
+			
+			//recherche gmc
+			gmc = gmcDao.findByGame(idPartner, "K");
+			//gmcDao.updatePos(pos, idPartner);
+			int position = gmc.getPosition();
+			int tour = gmc.getTour();
+			int roundSize = gmc.getHitfrequence();
+			double percent = gmc.getPercent();
+			String arrang = gmc.getArrangement();
+			String[] arrangement = arrang.split("-");
+			
+			_cds.setPos(position);
+			_cds.setArrangement(gmc.getArrangement());
+			_cds.setRtp(gmc.getRefundp());
+			_cds.setTour(tour);
+		//	System.out.println("Position: "+position+" Tour: "+tour);
+			
+			
+			
+			while(_cds.isCountDown()){
+				try {
+					_cds.setTimeKeno(_cds.getTimeKeno()-1);
+				//	System.out.println("TIME KENO: "+_cds.getTimeKeno());
+					if(_cds.getTimeKeno() < 0){
+						_cds.setTimeKeno(UtileKeno.timeKeno);
+						_cds.setCountDown(false);//lancement du tirage
+					//	System.out.println("REFRESH KENO: TERMINE "+UtileKeno.timeKeno);
+					}
+					if(_cds.getTimeKeno() < 10){
+						UtileKeno.canbet = false; // impossible de placer les mises
+					}
+					
+		
+					
+					if(_cds.getTimeKeno() < 10 && !search_draw){
+					//if(UtileKeno.timeKeno == 1){
+						search_draw = true;
+						System.out.println(IN);
+						listTicket.clear(); 
+						miseTotale = 0;
+						miseTotale_s = 0;
+						listTicket = misekDao.searchWaitingKenoBet(IN, _cds.getDrawNumk());
+						  //System.out.println("waiting bet: "+list_barcode.size());
+						mapTicket.clear();
+						miseTotale = miseTotale + refill;
+						int nvlepos = 0;
+						boolean cycle_en_cour = true;
+						boolean fini = false;
+						
+						  for(Misek m : listTicket) {
+							  Miset mt = misetDao.findById(m.getIdMiset());
+							 misef = m.getIdmisek();
+							 if(cycle_en_cour) {
+								 miseTotale = miseTotale + mt.getSummise();
+								 xtour = (int) (miseTotale/Params.MISE_MIN);
+								 nvlepos = position + xtour;
+								 if(nvlepos >= tour) {
+									 cycle_en_cour = false;
+									 miseTotale_s = miseTotale_s + (nvlepos - tour)*Params.MISE_MIN;
+								 }
+							 }
+							 else {
+								 miseTotale_s = miseTotale_s + mt.getSummise();
+//								  if(!fini) {
+//									  misef = m.getIdmisek();
+//									  fini = true;
+//								  }
+							 }
+							  
+							 
+//							  if(nvlepos > tour) {
+//								  cycle_en_cour = false;
+//								  miseTotale_s = miseTotale_s + mt.getSummise();
+//								  if(!fini) {
+//									  misef = m.getIdmisek();
+//									  fini = true;
+//								  }
+//							  }
+//							  else if(nvlepos == tour) {
+//								  miseTotale_s = miseTotale_s + Params.MISE_MIN/2;	
+//								  if(!fini) {
+//									  misef = m.getIdmisek();
+//									  fini = true;
+//								  }
+//							  }
+//							  
+//							  if(cycle_en_cour) {
+//								  nvlepos = position + xtour;
+//							  }
+							  
+							 // System.out.println("listTicket bet: "+m.getIdmisek());
+							  mapTicket.put(mt, m);
+						  }
+						//  System.out.println("mapTicket bet: "+mapTicket.size());
+						  
+							  ArrayList<Misek_temp>  misektp = misektpDao.searchWaitingBet();
+							  int nombre = misektp.size();
+						//	  System.out.println("temporaire "+nombre);
+							  
+							  if(nombre > 0) {
+								  listTicket.clear();
+								  for(Misek_temp mktp : misektp) {
+									  Misek m = misekDao.searchMiseK(""+mktp.getIdmisek());
+									  listTicket.add(m);
+									  
+								  }
+								  for(Misek m : listTicket) {
+									  Miset mt = misetDao.findById(m.getIdMiset());
+									  
+									 // System.out.println("listTicket bet: "+m.getIdmisek());
+									  if(Integer.parseInt(m.getDrawNumK()) != _cds.getDrawNumk()) {
+										  mapTicket.put(mt, m);
+									  }
+							
+								  }
+							  }
+						 
+						  
+						  //System.out.println("mapTicket: "+mapTicket.size());				  
+						  gMp = UtileKeno.verifTicketMax(mapTicket, coderace);
+						  gmp = UtileKeno.verifTicketMin(mapTicket, coderace);
+						  System.out.println("Gain Max Probable: "+gMp+" Gain Min Probable: "+gmp+" MiseTotale: "+miseTotale);
+						  dead_round = false;
+						  int xdist = 0;
+						  sumdist = 0;
+						  if(mapTicket.size() == 0) {
+							  dead_round = true;
+						  }
+						  else {
+							 // miseTotale = miseTotale + refill;
+							  refill = 0;
+							  
+							  xtour = (int) (miseTotale/Params.MISE_MIN);
+							  refill = (int) (miseTotale%Params.MISE_MIN);
+							  System.out.println("refill: "+refill+" xtour Pos: "+xtour);
+							 nvlepos = position + xtour;
+							 int pp = position + 1;
+							 System.out.println("Position: "+position+" Nvelle Pos: "+nvlepos);
+							 while(pp <= nvlepos) {
+								 for(int l=0;l<arrangement.length;l++) {
+									 if(pp < Integer.parseInt(arrangement[l])) break;
+									 if(pp == Integer.parseInt(arrangement[l])) {
+										 xdist = xdist + 1;
+										 break;
+									 }
+								 }
+								 pp++;
+							 }
+							 
+							 
+//							 if(miseTotale_s > 0) {
+								 
+//								 ArrayList<Integer> roundList = Params.getHitFrequency(gmc.getHitfrequence(), gmc.getTour());	
+//								String posi = "";
+//								for(int nb : roundList) {
+//									
+//									posi = posi +"-"+ nb;
+//								}
+//								posi = posi.substring(1);
+//								arrangement_pos = posi;
+//								
+//								arrangement_s = posi.split("-");
+//								
+//								xtour = (int) (miseTotale_s/Params.MISE_MIN);
+//								refill = (int) (miseTotale_s%Params.MISE_MIN);
+//								System.out.println("refill: "+refill+" xtour Pos: "+xtour);
+//								 int nvlepos_s = xtour;
+//								 pp = 1;
+//							
+//								 while(pp <= nvlepos_s) {
+//									 for(int l=0;l<arrangement_s.length;l++) {
+//										 if(pp < Integer.parseInt(arrangement_s[l])) break;
+//										 if(pp == Integer.parseInt(arrangement_s[l])) {
+//											 xdist = xdist + 1;
+//											 break;
+//										 }
+//									 }
+//									 pp++;
+//								 }
+								
+//							 }
+							 
+							 System.out.println("Percent: "+percent+" RoundSize: "+roundSize+" Tour: "+tour+" Bonus: "+bonusrate);
+							 double rounded = Params.getRoundPayed(percent, roundSize, tour, bonusrate);
+							 System.out.println("xdist: "+xdist+" rounded: "+rounded);
+							 sumdist = (miseTotale_s*percent)/100 + xdist * rounded;
+							 System.out.println("miseTotale_s: "+miseTotale_s+"   sumdist: "+sumdist);
+							if(xdist != 0) {
+								sumdist = sumdist + _cds.getRtp();
+							}
+							else{
+								if((position > Integer.parseInt(arrangement[arrangement.length-1]) && position <= tour && _cds.getRtp() > 0) || (_cds.getRtp() >= rounded)) {
+									xdist = 1;
+									sumdist = sumdist +_cds.getRtp();
+								}
+								else if(miseTotale_s > 0) {
+									xdist = 1;
+									sumdist = sumdist + _cds.getRtp();
+								}
+//								
+							}
+							
+							position = nvlepos;
+							_cds.setPos(position);
+							//gmcDao.updatePos(nvlepos, idPartner, "K");
+							    
+						  }
+						  
+						  
+						  
+						  
+						System.out.println("Gain Max Probable: "+sumdist); 
+						synchronized (this) {
+							_cds.setDrawCombik("");
+							Refresh.RESULT = "";
+						//	System.out.println("refresh synchro: "+_cds.getTimeKeno());
+							System.out.println("DeadRound: "+dead_round); 
+						//	ControlDisplayKeno control_draw = new ControlDisplayKeno(sumdist,mapTicket,gMp,gmp);
+							_cds.setSumdist(sumdist);
+							_cds.setMapTicket(mapTicket);
+							_cds.setgMp(gMp);
+							_cds.setGmp(gmp);
+						//	do{
+								if(dead_round) {
+								//	_cds.setDrawCombik(_cds.buscarDraw());
+									Refresh.RESULT = _cds.buscarDraw();
+									//System.out.println("RESULTAT: "+Refresh.RESULT); 
+									_cds.setDrawCombik(Refresh.RESULT);
+								}
+								else {
+									
+									//_cds.setDrawCombik(_cds.buscarDraw(sumdist,mapTicket,gMp,gmp));
+									
+									//control_draw.start();
+									_cds.start();
+									
+//									ExecutorService executor = Executors.newFixedThreadPool(5);
+//									Future<String> futureTask = executor.submit(new Callable<String>() {
+//										@Override
+//										public String call() {
+//											//System.out.println("Im callable");
+//										
+//											return _cds.buscarDraw(sumdist,mapTicket,gMp,gmp);
+//										}
+//									});
+//									try {
+//										
+//										//Integer result = futureTask.get(5, TimeUnit.SECONDS);
+//										String result = futureTask.get();
+//										//_cds.setDrawCombik(_cds.buscarDraw(sumdist,mapTicket,gMp,gmp));
+//										_cds.setDrawCombik(result);
+//				
+//										
+//									}
+//									catch(Exception ex) {
+//										ex.printStackTrace();
+//									}
+//									finally {
+//										executor.shutdown();
+//									}
+									
+									
+									
+								}
+								
+//								if(_cds.getDrawCombik() != ""){
+//									trouve = true;
+//								}
+						//	}
+						//	while(!trouve);
+							
+							//System.out.println("REFRESK COMBI "+ _cds.getDrawCombik());
+							
+							if(!dead_round) {
+							  // gmcDao.updateRfp(_cds.getRtp(), idPartner, "K");
+							   gmcDao.updatePos(_cds.getPos(), idPartner, "K");
+							   
+							   for(Misek m : listTicket) {
+								   if(Integer.parseInt(m.getDrawNumK()) != _cds.getDrawNumk()) {
+									   misektpDao.update(m.getIdmisek());
+								   }
+								
+							   }
+							}
+							
+							if(_cds.getPos() >= tour) {
+								idmisek_max = misekDao.ifindId(IN);
+							
+//								//ArrayList<Integer> roundList = Params.getHitFrequency(gmc.getHitfrequence(), gmc.getTour());
+//								 ArrayList<Integer> roundList = Params.getHitFrequency(gmc.getHitfrequence(), gmc.getTour());	
+//									String posi = "";
+//									for(int nb : roundList) {
+//										
+//										posi = posi +"-"+ nb;
+//									}
+//									posi = posi.substring(1);
+//									arrangement_pos = posi;
+//									
+//								int idmisek_max;
+//								
+//								ArrayList<GameCycle> _gmc = gmcDao.find(idPartner);
+//								int idmax = misekDao.ifindId(IN);
+//								int taille = _gmc.size();
+//								double curr_percent = 1;
+//								double summise = 1;
+//								double sumWin = 0;
+//								double jkpt = 0;
+//								if(taille > 1) {
+//									GameCycle gm = _gmc.get(0); 
+//									summise = misekDao.getMiseKCycle(gm.getMise(),misef, IN);
+//									sumWin = UtileKeno.bonusrate*summise + misekDao.getMiseKCycleWin(gm.getMise(),misef, IN);
+//									curr_percent = sumWin/summise;
+//									curr_percent = (double)((int)(curr_percent*100))/100;
+//									jkpt = UtileKeno.bonusrate*summise;
+//					    			jkpt = (double)((int)(jkpt*100))/100;
+//					    			sumWin = (double)((int)(sumWin*100))/100;
+//					    			summise = (double)((int)(summise*100))/100;
+//								}
+//								
+//								
+//								idmisek_max = misekDao.ifindId(IN);
+//								int add = gmcDao.updateArchive(curr_percent, DateFormatUtils.format(new Date(), "dd-MM-yyyy,HH:mm"), 1, idPartner, "K", misef, summise, sumWin, jkpt);
+//
+//									  GameCycle gamecycle = new GameCycle();
+//									  gamecycle.setRefundp(_cds.getRtp());
+//									  gamecycle.setPosition((int) (miseTotale_s/Params.MISE_MIN));
+//									  gamecycle.setPartner(idPartner);
+//									  gamecycle.setPercent(percent);
+//									  gamecycle.setTour(tour);
+//									  gamecycle.setArrangement(arrangement_pos);
+//									  gamecycle.setHitfrequence(roundSize);
+//									  gamecycle.setJeu("K");
+//									  gamecycle.setArchive(0);
+//									  gamecycle.setMise(misef);
+//									  gamecycle.setMisef(idmisek_max);
+//									  gamecycle.setDate_fin(DateFormatUtils.format(new Date(), "dd-MM-yyyy,HH:mm"));
+//									 
+//								//	  if(add != 0) {
+//										  gmcDao.create(gamecycle);
+//										  _cds.setRtp(0);
+//								//	  }
+//									  
+//								  
+//								  
+							} 
+						  
+					//	boolean trouve = false;
+					//	synchronized (this) {
+					//		drawCombi = "";
+					//		do{
+					//			drawCombi = buscarDraw();
+					//			if(drawCombi != ""){
+					//				trouve = true;
+					//			}
+					//		}
+					//		while(!trouve);
+					//		double n = generate(3);
+							
+//							multiplix = _cds.getMultiplix();
+//     						String str_draw = "";					   
+//     						_cds.setDrawCombik(Refresh.RESULT);
+//			                
+//							str_draw = _cds.getDrawCombik();
+//							Keno keno = new Keno();
+//							keno.setDrawnumbK(str_draw);
+//							keno.setMultiplicateur(multiplix);
+//							keno.setHeureTirage(DateFormatUtils.format(new Date(), "dd-MM-yyyy,HH:mm"));
+//							//keno.setHeureTirage(new SimpleDateFormat("dd/MM/yyyy,HH:mm", Locale.FRANCE).format(new Date()));
+//							keno.setDrawNumK(""+_cds.getDrawNumk());
+//							keno.setCoderace(getName());
+//							
+//							int	line = _cds.addUpKeno(keno);
+//							System.out.println("Keno mis a jour "+line);
+							
+						}
+					}
+					Thread.sleep(1000);
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+			
+			
+			//MISE A JOUR DE GAME_CYCLE
+			
+			 if(!dead_round) {
+				   gmcDao.updateRfp(_cds.getRtp(), idPartner, "K");
+				   //gmcDao.updatePos(position, idPartner, "K");
+				   
+//				   for(Misek m : listTicket) {
+//					   if(Integer.parseInt(m.getDrawNumK()) != _cds.getDrawNumk()) {
+//						   misektpDao.update(m.getIdmisek());
+//					   }
+//					
+//				   }
+			 }
+			
+			//recherche du tirage correspondant
+           //System.out.println("RRESULT "+Refresh.RESULT);
+			
+			multiplix = _cds.getMultiplix();
+				String str_draw = "";					   
+			//_cds.setDrawCombik(Refresh.RESULT);
+			
+			//System.out.println("_cds.DrawCombik(Refresh.RESULT) "+_cds.getDrawCombik());
+            
+			str_draw = _cds.getDrawCombik();
+			Keno keno = new Keno();
+			keno.setDrawnumbK(str_draw);
+			keno.setMultiplicateur(multiplix);
+			keno.setHeureTirage(DateFormatUtils.format(new Date(), "dd-MM-yyyy,HH:mm"));
+			//keno.setHeureTirage(new SimpleDateFormat("dd/MM/yyyy,HH:mm", Locale.FRANCE).format(new Date()));
+			keno.setDrawNumK(""+_cds.getDrawNumk());
+			keno.setCoderace(getName());
+			
+			int	ligne = _cds.addUpKeno(keno);
+	//		System.out.println("Keno mis a jour "+ligne);
+			
+			_cds.setDraw(true);
+			while(_cds.isDraw()){
+				
+				try {
+					
+					//drawCount--;
+					_cds.setDrawCount(_cds.getDrawCount()-1);
+					drawCount = _cds.getDrawCount();
+				//	System.out.println("TIME DRAW "+drawCount);
+					if(drawCount == 110){
+						int num_tirage = 1+_cds.getDrawNumk();
+						System.out.println("DRAW Ajout d'une nouvelle ligne de tirage "+num_tirage );
+						int line = _cds.addKenos(num_tirage, getName());
+						
+					//	System.out.println("Nouvelle ligne de tirage added "+line );
+						if(line > 0){
+						//	System.out.println("num added "+num_tirage );
+							_cds.setDrawNumk(num_tirage);
+						}
+					//	_cds.setTimeKeno(UtileKeno.timeKeno);
+						UtileKeno.canbet = true;
+					}
+					
+					if(drawCount < 0 ){
+						_cds.setDraw(false);
+						_cds.setCountDown(true);
+						_cds.setTimeKeno(UtileKeno.timeKeno);
+					}
+				
+			
+					if(drawCount == 10 ){ //verification du bonus
+					 boolean bonusk = _cds.manageBonusK();
+					  //System.out.println("REFRESH BONUS: "+bonusk);
+					  if(bonusk){
+						  _cds.setBonus(1);
+					  }
+					  else{
+						  _cds.setBonus(0);
+					  }
+					}
+					//System.out.println("TIME DRAW "+drawCount);
+				//	if(drawCount == 100){
+				//		System.out.println("DRAW Ajout d'une nouvelle ligne de tirage" );
+				//		int num_tirage = Refresh.drawNum + 1;
+				//		System.out.println("DRAW Ajout: "+num_tirage );
+				//		int line = addKenos(num_tirage, coderace);
+				//		
+				//		System.out.println("Nouvelle ligne de tirage added "+line );
+				//		if(line > 0){
+				//			Refresh.drawNum = num_tirage;
+				//		}
+				//		
+				//		UtileKeno.canbet = true;
+				//   }
+					Thread.sleep(1000);
+				} catch (InterruptedException e) {
+			//		// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			//	 System.out.println("drawcount: "+drawCount+" __ "+_cds.getTimeKeno());
+			}
+			  //mise a jour du tirage terminé (started = 1)
+			  //     endDraw(Refresh.drawNum);
+			       
+			     //mise a jour du tirage terminé (started = 1)
+				  _cds.endDraw(_cds.getDrawNumk());
+				  
+				  _cds.setEnd(1); //fin du tour
+				  list_barcode = new ArrayList();
+				  list_barcode = misekDao.searchWaitingBet(IN, _cds.getDrawNumk());
+				  System.out.println("waiting bet: "+list_barcode.size());
+				  map_wait.clear();
+				  for(Misek m : list_barcode) {
+					  Miset mt = misetDao.findById(m.getIdMiset());
+					  map_wait.put(mt, m);
+				  }
+				  UtileKeno.verifTicket(map_wait, coderace);
+				  if(!dead_round) {
+					  if(position >= tour) {
+							//ArrayList<Integer> roundList = Params.getHitFrequency(gmc.getHitfrequence(), gmc.getTour());
+							 ArrayList<Integer> roundList = Params.getHitFrequency(gmc.getHitfrequence(), gmc.getTour());	
+								String posi = "";
+								for(int nb : roundList) {
+									
+									posi = posi +"-"+ nb;
+								}
+								posi = posi.substring(1);
+								arrangement_pos = posi;
+								
+							
+							
+							ArrayList<GameCycle> _gmc = gmcDao.find(idPartner);
+							int taille = _gmc.size();
+							double curr_percent = 1;
+							double summise = 1;
+							double sumWin = 0;
+							double jkpt = 0;
+							if(taille > 1) {
+								GameCycle gm = _gmc.get(0); 
+								summise = misekDao.getMiseKCycle(gm.getMise(),misef, IN);
+								sumWin = UtileKeno.bonusrate*summise + misekDao.getMiseKCycleWin(gm.getMise(),misef, IN);
+								curr_percent = sumWin/summise;
+								curr_percent = (double)((int)(curr_percent*100))/100;
+								//jkpt = UtileKeno.bonusrate*summise;
+				    			
+				    			sumWin = (double)((int)(sumWin*100))/100;
+				    			summise = (double)((int)(summise*100))/100;
+				    			
+				    			//recherche du jackpot
+				    			Misek m1 = misekDao.searchMiseK(""+gm.getMise());
+				    			Misek m2 = misekDao.searchMiseK(""+misef);
+				    			int k1 = Integer.parseInt(m1.getIdKeno());
+				    			int k2 = Integer.parseInt(m2.getIdKeno());
+				    			jkpt  = kenoDao.findTotalBonusAmount(k1, k2);
+				    			jkpt = (double)((int)(jkpt*100))/100;
+							}
+							
+							
+							//idmisek_max = misekDao.ifindId(IN);
+							int add = gmcDao.updateArchive(curr_percent, DateFormatUtils.format(new Date(), "dd-MM-yyyy,HH:mm"), 1, idPartner, "K", misef, summise, sumWin, jkpt);
+
+								  GameCycle gamecycle = new GameCycle();
+								  gamecycle.setRefundp(_cds.getRtp());
+								  gamecycle.setPosition(0);
+								  gamecycle.setPartner(idPartner);
+								  gamecycle.setPercent(percent);
+								  gamecycle.setTour(tour);
+								  gamecycle.setArrangement(arrangement_pos);
+								  gamecycle.setHitfrequence(roundSize);
+								  gamecycle.setJeu("K");
+								  gamecycle.setArchive(0);
+								  gamecycle.setMise(misef);
+								  gamecycle.setMisef(idmisek_max);
+								  gamecycle.setDate_fin(DateFormatUtils.format(new Date(), "dd-MM-yyyy,HH:mm"));
+								 
+							//	  if(add != 0) {
+									  gmcDao.create(gamecycle);
+									  _cds.setRtp(0);
+							//	  }
+								  
+							  
+							  
+						} 
+				  }
+				  
+		}
+		
+	}
+	
+	public void start(){
+		thread = new Thread(this);
+		thread.start();
+	}
+	
+	public void stop(){
+		thread.stop();
+	}
+	public void suspend(){
+		thread.suspend();
+	}
+	public void resume(){
+		thread.resume();
+	}
+	
+}

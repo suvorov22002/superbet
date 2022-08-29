@@ -1,0 +1,131 @@
+package servlets;
+
+import java.io.IOException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.Locale;
+
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import config.Timestamp;
+import modele.Airtime;
+import modele.Caissier;
+import modele.Partner;
+import superbetDAO.AirtimeDAO;
+import superbetDAO.CaissierDAO;
+import superbetDAO.DAOFactory;
+import superbetDAO.KenoDAO;
+import superbetDAO.MisekDAO;
+import superbetDAO.PartnerDAO;
+import superbetDAO.VersementDAO;
+
+public class ExecuteCob extends HttpServlet {
+
+public static final String CONF_DAO_FACTORY = "daofactory";
+	
+	private KenoDAO kenoDao;
+	private CaissierDAO caissierDao;
+	private PartnerDAO partnerDao;
+	private AirtimeDAO airtimeDao;
+	private MisekDAO misekDao;
+	private VersementDAO versementDao;
+	public void init() throws ServletException {
+		
+			this.kenoDao = ( (DAOFactory)getServletContext().getAttribute( CONF_DAO_FACTORY )).getKenoDao();
+			this.misekDao = ( (DAOFactory)getServletContext().getAttribute( CONF_DAO_FACTORY )).getMisekDao();
+			this.airtimeDao = ( (DAOFactory)getServletContext().getAttribute( CONF_DAO_FACTORY )).getAirtimeDao();
+			this.caissierDao = ( (DAOFactory)getServletContext().getAttribute( CONF_DAO_FACTORY )).getCaissierDao();
+			this.partnerDao = ( (DAOFactory)getServletContext().getAttribute( CONF_DAO_FACTORY )).getPartnerDao();
+			this.versementDao = ( (DAOFactory)getServletContext().getAttribute( CONF_DAO_FACTORY )).getVersementDao();
+	}
+	
+	public ExecuteCob() {
+		super();
+	}
+	
+	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		String action = request.getParameter("action");
+		
+		if("OPENBIZ".equals(action)) {
+			process_open();
+		}
+		else if("CLOSEBIZ".equals(action)) {
+			process_close();
+		}
+	}
+	
+	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		// TODO Auto-generated method stub
+		doGet(request, response);
+	}
+	
+	private void process_open() {
+		
+	}
+	
+	private void process_close() {
+		ArrayList<Partner> listPartners = partnerDao.getAllPartners();
+		String txtDate=new SimpleDateFormat("dd/MM/yyyy,H:m:s", Locale.FRANCE).format(new Date());
+		String fecha = txtDate.toString().substring(0,10);
+		long t1;
+		long t2;
+		double balance = 0;
+		System.out.println("Partner COB: "+listPartners.size());
+		try {
+			t1 = Timestamp.givetimestamp(fecha+",00:00:00");
+			t2 = Timestamp.givetimestamp(fecha+",23:59:00");
+			
+			for(Partner partn : listPartners) {
+				if("opened".equalsIgnoreCase(partn.getCob())) {
+				  partnerDao.update_cob("closed",partn.getCoderace());
+				//recherche des caissiers par partenaires
+				ArrayList<Caissier> list_cais = caissierDao.findByPartner(partn.getCoderace());
+				System.out.println("list_cais COB: "+list_cais.size());
+				  for(Caissier cais : list_cais) {
+					  balance = 0;
+					  if(cais.getProfil() != 1) {
+						  Airtime airtime = airtimeDao.find(cais);
+							
+							
+							/** à ajouter balance autres jeux**/
+							
+							if(airtime != null) {
+							//	if(!"VA".equalsIgnoreCase(airtime.getEta())) {
+									double in = misekDao.getMiseRK(""+cais.getId(), ""+t1, ""+t2);
+									double out = versementDao.getVersementD(""+t1, ""+cais.getId(), ""+t2);
+									balance = airtime.getBalance() - in + out;
+									balance = (double)((int)(balance*100))/100;
+									
+									airtimeDao.updateMvt(cais.getId(), balance);
+									Airtime airti = new Airtime();
+									airti.setCredit(out);
+									System.out.println("new Date() "+new Date());
+									airti.setDate(new Date());
+									airti.setDebit(in);
+									airti.setCaissier(cais.getId());
+									airti.setBalance(balance);
+									airti.setLibelle("MAJ CAISSE");
+									airti.setEta("VA");
+									airtimeDao.create(airti);
+							//	}
+							}
+					  }
+						  
+				  }
+				  System.out.println("FIN DU COB");
+			 }
+				  
+			}
+			
+		} catch (ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+
+}

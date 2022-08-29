@@ -1,0 +1,68 @@
+package servlets;
+
+import java.io.IOException;
+
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import superbetDAO.AirtimeDAO;
+import superbetDAO.CaissierDAO;
+import superbetDAO.DAOFactory;
+import superbetDAO.KenoDAO;
+import superbetDAO.MisekDAO;
+import superbetDAO.PartnerDAO;
+import superbetDAO.VersementDAO;
+
+public class ExecuteCob extends HttpServlet {
+
+public static final String CONF_DAO_FACTORY = "daofactory";
+	
+	private KenoDAO kenoDao;
+	private CaissierDAO caissierDao;
+	private PartnerDAO partnerDao;
+	private AirtimeDAO airtimeDao;
+	private MisekDAO misekDao;
+	private VersementDAO versementDao;
+	private DAOFactory daof;
+	
+	public void init() throws ServletException {
+		
+			this.kenoDao = ( (DAOFactory)getServletContext().getAttribute( CONF_DAO_FACTORY )).getKenoDao();
+			this.misekDao = ( (DAOFactory)getServletContext().getAttribute( CONF_DAO_FACTORY )).getMisekDao();
+			this.airtimeDao = ( (DAOFactory)getServletContext().getAttribute( CONF_DAO_FACTORY )).getAirtimeDao();
+			this.caissierDao = ( (DAOFactory)getServletContext().getAttribute( CONF_DAO_FACTORY )).getCaissierDao();
+			this.partnerDao = ( (DAOFactory)getServletContext().getAttribute( CONF_DAO_FACTORY )).getPartnerDao();
+			this.versementDao = ( (DAOFactory)getServletContext().getAttribute( CONF_DAO_FACTORY )).getVersementDao();
+	}
+	
+	public ExecuteCob() {
+		super();
+	}
+	
+	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		String action = request.getParameter("action");
+		
+		if("OPENBIZ".equals(action)) {
+			process_open();
+		}
+		else if("CLOSEBIZ".equals(action)) {
+			process_close();
+		}
+	}
+	
+	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		// TODO Auto-generated method stub
+		doGet(request, response);
+	}
+	
+	private void process_open() {
+		
+	}
+	
+	private void process_close() {
+		
+	}
+
+}

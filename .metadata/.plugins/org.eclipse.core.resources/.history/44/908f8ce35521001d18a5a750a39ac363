@@ -1,0 +1,157 @@
+package business;
+
+import java.io.IOException;
+import java.net.URISyntaxException;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
+
+import javax.servlet.http.HttpServletRequest;
+
+import org.codehaus.jettison.json.JSONException;
+
+import config.Params;
+import modele.Airtime;
+import modele.Caissier;
+import superbetDAO.AirtimeDAO;
+import superbetDAO.CaissierDAO;
+import superbetDAO.api.exeception.DAOAPIException;
+import superbetDAO.api.implementations.SuperGameDAOAPI;
+import superbetDAO.api.interfaces.ISuperGameDAOAPILocal;
+
+public class AirtimeForm {
+	
+	private static final String FIELD_SALLE = "airtime_room";
+	private static final String FIELD_CAISSE = "airtime_user";
+	private static final String FIELD_MONTANT = "airtime_sum";
+	private  String resultat = null;
+	private  double credit;
+	private  Map<String, String> erreurs = new HashMap<String, String>();
+	private String coderace,user,sum;
+	private int taille = 0;
+	private AirtimeDAO airtimeDao;
+	private CaissierDAO caissierDao;
+	private  ISuperGameDAOAPILocal  supergameAPI;
+	
+	public AirtimeForm(AirtimeDAO airtimeDao,CaissierDAO caissierDao){
+		this.airtimeDao = airtimeDao;
+		this.caissierDao = caissierDao;
+		supergameAPI = new SuperGameDAOAPI();
+	}
+	
+	public void manage_admin(HttpServletRequest request){
+		Airtime airtime = new Airtime();
+		Caissier cais = new Caissier();
+		double balance = 0;
+		coderace = getPartner(request, FIELD_SALLE);
+		user = getPartner(request, FIELD_CAISSE);
+		sum = getPartner(request, FIELD_MONTANT);
+		credit = 0;
+		
+		try{
+			if(sum != null && !sum.equalsIgnoreCase("")){
+				credit = Double.parseDouble(sum);
+			}
+		}
+		catch(Exception e){
+			credit = 0;
+			e.printStackTrace();
+		}
+		
+		if(credit == 0) return;
+			cais = caissierDao.findByLogin(user);
+			if(cais.getIdCaissier() == 1) return;
+			if(cais != null){
+				try {
+				
+					Airtime airtme = airtimeDao.find(cais);
+					if(airtme !=null)
+						balance = airtme.getBalance();
+					//System.out.println(cais.getIdCaissier());
+					airtime.setCredit(credit);
+					airtime.setDate(new Date());
+					airtime.setDebit(0);
+					airtime.setCaissier(cais.getIdCaissier());
+					airtime.setBalance(balance+credit);
+					airtime.setLibelle("CREDIT EN CAISSE");
+					airtime.setEta("NV");
+					
+					airtimeDao.create(airtime);
+					double mvt = airtimeDao.findMvt(cais.getIdCaissier());
+					airtimeDao.updateMvt(cais.getIdCaissier(), mvt+credit);
+				
+				
+					double credit = supergameAPI.getSuperGameDAO().airtime(Params.url, cais.getIdCaissier(), credit);
+					resultat = "Caisse creditée de: "+credit;
+					
+			} catch (IOException | JSONException | URISyntaxException | DAOAPIException e) {
+				e.printStackTrace();
+			}
+			
+		}
+		else{
+			erreurs.put("error", "caisse absente");
+			resultat = "Erreur lors de l'ajout";
+		}
+		return;
+	}
+	
+	private String getPartner( HttpServletRequest request,String nomChamp ) {
+        String valeur = request.getParameter( nomChamp );
+       
+       if ( valeur == null) {
+           return valeur;
+       } else{
+    	  return valeur.trim(); 
+       }
+       
+	}
+
+	public String getResultat() {
+		return resultat;
+	}
+
+	public void setResultat(String resultat) {
+		this.resultat = resultat;
+	}
+
+	public double getCredit() {
+		return credit;
+	}
+
+	public void setCredit(double credit) {
+		this.credit = credit;
+	}
+
+	public Map<String, String> getErreurs() {
+		return erreurs;
+	}
+
+	public void setErreurs(Map<String, String> erreurs) {
+		this.erreurs = erreurs;
+	}
+
+	public String getCoderace() {
+		return coderace;
+	}
+
+	public void setCoderace(String coderace) {
+		this.coderace = coderace;
+	}
+
+	public String getUser() {
+		return user;
+	}
+
+	public void setUser(String user) {
+		this.user = user;
+	}
+
+	public String getSum() {
+		return sum;
+	}
+
+	public void setSum(String sum) {
+		this.sum = sum;
+	}
+}

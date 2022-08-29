@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<qualifiedTypeNameHistroy>
+<fullyQualifiedTypeName name="modele.GameCycle"/>
+<fullyQualifiedTypeName name="superbetDAO.GameCycleDAO"/>
+<fullyQualifiedTypeName name="modele.Partner"/>
+<fullyQualifiedTypeName name="javax.servlet.ServletRequest"/>
+<fullyQualifiedTypeName name="javax.servlet.FilterChain"/>
+<fullyQualifiedTypeName name="javax.servlet.ServletResponse"/>
+<fullyQualifiedTypeName name="javax.servlet.annotation.WebFilter"/>
+<fullyQualifiedTypeName name="javax.servlet.Filter"/>
+<fullyQualifiedTypeName name="java.io.IOException"/>
+<fullyQualifiedTypeName name="modele.Keno"/>
+<fullyQualifiedTypeName name="modele.Caissier"/>
+<fullyQualifiedTypeName name="modele.ControlDisplayKeno"/>
+<fullyQualifiedTypeName name="modele.PartnerDto"/>
+<fullyQualifiedTypeName name="modele.Cagnotte"/>
+<fullyQualifiedTypeName name="superbetDAO.PartnerDAO"/>
+<fullyQualifiedTypeName name="superbetDAO.api.SuperGameDAO"/>
+<fullyQualifiedTypeName name="javax.annotation.PostConstruct"/>
+<fullyQualifiedTypeName name="com.fasterxml.jackson.databind.ObjectMapper"/>
+<fullyQualifiedTypeName name="org.apache.commons.lang3.StringUtils"/>
+<fullyQualifiedTypeName name="org.codehaus.jettison.json.JSONArray"/>
+<fullyQualifiedTypeName name="org.codehaus.jettison.json.JSONObject"/>
+<fullyQualifiedTypeName name="org.apache.http.client.HttpClient"/>
+<fullyQualifiedTypeName name="org.apache.http.HttpEntity"/>
+<fullyQualifiedTypeName name="org.apache.http.HttpHost"/>
+<fullyQualifiedTypeName name="org.apache.http.client.methods.HttpGet"/>
+<fullyQualifiedTypeName name="javax.ejb.EJB"/>
+<fullyQualifiedTypeName name="superbetDAO.api.interfaces.ISuperGameDAOAPILocal"/>
+<fullyQualifiedTypeName name="modele.BetTicketK"/>
+<fullyQualifiedTypeName name="superbetDAO.api.implementations.SuperGameDAOAPI"/>
+<fullyQualifiedTypeName name="java.util.List"/>
+<fullyQualifiedTypeName name="config.Jeu"/>
+<fullyQualifiedTypeName name="com.fasterxml.jackson.annotation.JsonIgnore"/>
+<fullyQualifiedTypeName name="org.apache.http.Header"/>
+<fullyQualifiedTypeName name="javax.servlet.http.HttpServlet"/>
+<fullyQualifiedTypeName name="org.codehaus.jettison.json.JSONException"/>
+<fullyQualifiedTypeName name="java.io.Serializable"/>
+<fullyQualifiedTypeName name="modele.CaissierDto"/>
+</qualifiedTypeNameHistroy>

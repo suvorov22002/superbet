@@ -1,0 +1,154 @@
+package business;
+
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
+
+import javax.servlet.http.HttpServletRequest;
+
+import modele.AdminTicketDto;
+import superbetDAO.MisekDAO;
+import superbetDAO.api.implementations.SuperGameDAOAPI;
+import superbetDAO.api.interfaces.ISuperGameDAOAPILocal;
+
+public class TicketForm {
+	
+	private static final String FIELD_DATE1 = "ddebut";
+	private static final String FIELD_DATE2 = "dfin";
+	private static final String FIELD_CODERACE = "selcoderace1";
+	private  String resultat = null;
+	private  Map<String, String> erreurs = new HashMap<String, String>();
+	private MisekDAO misekDao;
+	private String dat1, dat2, coderace;
+	private ArrayList<AdminTicketDto> misekt = new ArrayList<AdminTicketDto>();
+	private int taille = 0;
+	private  ISuperGameDAOAPILocal  supergameAPI;
+	
+	public TicketForm(MisekDAO misekDao){
+		this.misekDao = misekDao;
+		supergameAPI = new SuperGameDAOAPI();
+	}
+	
+	public void manage_admin(HttpServletRequest request){
+		long t1,t2;
+		dat1 = getDate(request, FIELD_DATE1);
+		dat2 = getDate(request, FIELD_DATE2);
+		coderace = getPartner(request, FIELD_CODERACE);
+		
+		try {
+			t1 = givetimestamp(dat1+",00:00:00");
+			t2 = givetimestamp(dat2+",23:59:00");
+		//	System.out.println(t1+" : "+t2);
+			if(t1 > t2){
+				resultat = "Periode pas correcte";
+				return;
+			}
+			//System.out.println("coderace: "+coderace);
+			misekt = misekDao.getMisekt(""+t2, ""+t1, coderace);
+			taille = misekt.size();
+			//System.out.println("taille: "+taille);
+		} catch (ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
+	public String getCoderace() {
+		return coderace;
+	}
+
+	public void setCoderace(String coderace) {
+		this.coderace = coderace;
+	}
+
+	public String getResultat() {
+		return resultat;
+	}
+
+	public void setResultat(String resultat) {
+		this.resultat = resultat;
+	}
+
+	public Map<String, String> getErreurs() {
+		return erreurs;
+	}
+
+	public void setErreurs(Map<String, String> erreurs) {
+		this.erreurs = erreurs;
+	}
+
+	public String getDat1() {
+		return dat1;
+	}
+
+	public void setDat1(String dat1) {
+		this.dat1 = dat1;
+	}
+
+	public String getDat2() {
+		return dat2;
+	}
+
+	public void setDat2(String dat2) {
+		this.dat2 = dat2;
+	}
+
+	public ArrayList<AdminTicketDto> getMisekt() {
+		return misekt;
+	}
+
+	public void setMisekt(ArrayList<AdminTicketDto> misekt) {
+		this.misekt = misekt;
+	}
+
+	public int getTaille() {
+		return taille;
+	}
+
+	public void setTaille(int taille) {
+		this.taille = taille;
+	}
+
+	private String getDate( HttpServletRequest request,String nomChamp ) {
+        String valeur = request.getParameter( nomChamp );
+        if(valeur == null)
+        	return valeur;
+        else
+    	    return valeur.trim(); 
+	}
+	
+	private String getPartner( HttpServletRequest request,String nomChamp ) {
+        String valeur = request.getParameter( nomChamp );
+       
+       if ( valeur == null) {
+           return valeur;
+       } else{
+    	  return valeur.trim(); 
+       }
+       
+	}
+	
+	private long givetimestamp(String str) throws ParseException{
+		DateFormat formatter = new SimpleDateFormat("yyyy-MM-dd,HH:mm:ss");
+		
+		Date date;
+		try{
+			date = (Date)formatter.parse(str);
+		}
+		catch(Exception e){
+			date = new Date();
+		}
+		
+		long output = date.getTime()/1000L;
+		
+		String d_str = Long.toString(output);
+		
+		long timestamp = Long.parseLong(d_str)*1000;
+		
+		return timestamp;
+	}
+}

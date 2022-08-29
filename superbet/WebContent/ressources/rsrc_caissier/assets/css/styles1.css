@@ -1,0 +1,433 @@
+body {
+  background-color: #074e8c;
+  padding-top: 10px;
+}
+
+#idpartner, #idcaissier{
+	display:none;
+}
+#idpath{
+	display:none;
+}
+
+#idbc{
+	margin-left:100px; 
+	display:table !important;
+}
+
+.succes {
+    background-color: #009920;
+}
+.info {
+    font-style: italic;
+    color: #E8A22B;
+}
+.erreur,.state {
+     background-color: #ff1100;
+}
+.pending{
+	background-color: #cdcdcd;
+}
+.imenu1{
+  height: 563px;
+}
+
+.hide{
+	display
+}
+
+.interf_pari{
+  display:none;
+}
+
+.interf_paiement{
+  display: none;
+}
+
+.interf_soccer{
+   display: none;
+}
+
+.interf_bingo{
+   display: none;
+}
+
+.interf_dog{
+   display: none;
+}
+
+.interf_shift{
+   display: none;
+}
+
+.interf_spin{
+  display:none;
+}
+
+.interf_shift .col-sm-6{
+   padding: 20px;
+   /*padding-top: 50px*/
+   height: 400px;
+   /*line-height: 25px*/
+}
+
+.interf_shift .col-sm-3{
+  padding: 10px;
+  text-align: center;
+  height: 60px;
+}
+
+.code_barre,.detail{
+  background-color: #a2d6e3;
+  height: 245px;
+}
+
+.check_ticket{
+  background-color: #a2d6e3;
+}
+
+.ishift{
+  color: blue;
+}
+
+/* administration css*/
+.c_partner,.e_partner{
+	display:none;
+}
+.interf_finance{
+  display: block;
+}
+.nbar{
+   background-color: #0b614b;
+}
+.cpartner,.cuser tr td{
+	margin: 3px;
+	padding: 3px;
+}
+.interf_config{
+   display: none;
+}
+.interf_partner{
+	display: block;
+	padding:5px;
+	border:50%;
+}
+.interf_user{
+	display: none;
+	padding:5px;
+}
+.interf_bonus{
+	display: none;
+	padding:5px;
+}
+.interf_cagnotte{
+	display: none;
+	padding:5px;
+}
+/*fin css administration*/
+
+fieldset 
+  {
+    border: 2px solid #fff !important;
+    margin: 0 0 1.5em 0 !important;
+    xmin-width: 0;
+    padding: 0 1.4em 1.4em 1.4em !important;       
+    position: relative;
+    border-radius:4px;
+    background-color:#a2d6e3;
+    /*padding-left:10px!important;*/
+  } 
+  
+    legend
+    {
+      font-size: 1.2em !important;
+      font-weight: bold !important;
+      text-align: left !important;
+      margin-bottom: 10px; 
+      border-bottom: none;
+    }
+.pari tr td{
+	text-align: left;
+	background-color:#a2d6e3;
+}
+
+.fixed_headers tr td{
+  border: 1px solid white;
+  border-collapse: collapse;
+}
+
+.table-fixed {
+  width: 100%;
+  /*background-color: #f3f333;*/
+  text-align: left;
+}
+.table-fixed tbody {
+  height: 185px;
+  overflow-y: auto;
+  width: 100%;
+}
+
+.table-fixed thead, .table-fixed tbody, .table-fixed tr, .table-fixed td, .table-fixed th {
+  display: block; 
+
+}
+.table-fixed tbody td {
+  float: left;
+}
+.table-fixed thead th {
+  float: left;
+  background-color: #f1daa4;
+  border-color: #074e8c;
+}
+table.t_pay tbody>tr{
+	heigth:50px;
+}
+table.t_pay tbody{
+	/*color:red;*/
+	background-color: #cdcdcd;
+}
+
+.paiement_coupon tr td{
+  padding-top: 5px;
+  padding-bottom: 5px;
+  background-color:#a2d6e3;
+  /*border: 2px solid black;*/
+}
+/*
+.container-fluid {
+  padding-right: 15px;
+  padding-left: 15px;
+  margin-right: auto;
+  margin-left: auto;
+}*/
+
+.col-sm-6 img{
+  display: block;
+}
+
+.row {
+  margin-right: -15px;
+  margin-left: -15px;
+}  
+
+
+[class*="col-sm"] {
+  background-color: #dad0b7;
+  border: 1px solid black;
+  border-radius: 2px;
+  line-height: 20px;
+  /*text-align: center;*/
+}
+[class*="col-xs"] {
+  background-color: #f3f3f3;
+  line-height: 15px;
+}
+[class*="col-md"] {
+  /*background-color: #f3f000;*/
+  line-height: 15px;
+  border: 1px solid white;
+  border-collapse: collapse;
+}
+[class*="col-md-5"] {
+  /*background-color: #f3f000;*/
+  line-height: 30px;
+}
+
+.footer{
+  /*background-color: #074e8c;*/
+  position: fixed;
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  background-color: #dad0b7;
+  color: black;
+  text-align: center;
+}
+
+.logo {
+
+  /* Location of the image */
+  background-image: url(../images/logo.jpeg);
+  
+  /* Background image is centered vertically and horizontally at all times */
+  background-position: center center;
+  
+  /* Background image doesn't title */
+  background-repeat: no-repeat;
+  
+  /* Background image is fixed in the viewport so that it doesn't move when 
+     the content's height is greater than the image's height 
+  background-attachment: fixed;*/
+  
+  /* This is what makes the background image rescale based
+     on the container's size */
+  background-size: cover;
+  
+  /* Set a background color that will be displayed
+     while the background image is loading */
+  background-color: #464646;
+  height: 200px;
+
+}
+
+.modale-header{
+    		/*	background-image: url("./ressources/rsrc_caissier/assets/images/logo.jpeg");*/
+    			background-image: url("../images/logo.jpeg");
+    			background-repeat: no-repeat;
+    			/*background-attachment: fixed;*/
+    			background-position: center center;
+    			background-size: 200px 50px;
+    			/*background-size: cover;*/
+   				/*height: 50px;*/
+   				top:5px;
+    		}
+#img_coupon{
+    			background-image: url("../images/logo.jpeg");
+    			background-repeat: no-repeat;
+    			background-attachment: fixed;
+    			background-position: left;
+    			top:1px;
+    			margin:10px;
+    			
+    		/*	background-size: 200px 50px;
+    			max-width: inherit;
+   				width: inherit;*/
+    }
+
+.offers{
+  /*height: 200px;*/
+}
+
+@media screen and (min-width: 768px) {
+  .container-fluid{
+    width: 100%;
+  }
+  
+  .modal-dialog{
+  	width:300px;
+  }
+  
+  .modal-sm{
+  	width:300px;
+  }
+  
+  #printSection{
+	    /*position: absolute;
+		left:0;
+		top:0;
+		overflow: auto;
+		z-index:1;*/
+		width:300px;;
+		height:auto;
+		
+	}
+	
+  #printThis, #printThis *{
+  	font-size: 12px;
+    font-family: 'Times New Roman';
+  }
+}
+
+@media print {
+	#img_coupon{
+    			background-image: url("../images/logo.jpeg");
+    			background-repeat: no-repeat;
+    			background-attachment: fixed;
+    			background-position: left;
+    			left: 0;
+    		}
+}
+
+
+@media screen and (min-width: 992px) {
+  .container-fluid {
+    width: 100%;
+  }
+}
+@media screen and (min-width: 1200px) {
+  .container-fluid {
+    width: 100%;
+  }
+  
+
+/*
+.fixed_headers{
+	table-layout:fixed;
+	border-collapse:collapse;
+	width: 100%;
+}
+.fixed_headers th, .fixed_headers td{
+	text-align:left;
+	padding:5px;
+}
+.fixed_headers td:nth-child(1),
+.fixed_headers th:nth-child(1){
+	width: 14%;
+}
+.fixed_headers td:nth-child(2),
+.fixed_headers th:nth-child(2){
+	width: 8%;
+}
+.fixed_headers td:nth-child(3),
+.fixed_headers th:nth-child(3){
+	width: 12%;
+}
+.fixed_headers td:nth-child(4),
+.fixed_headers th:nth-child(4){
+	width: 16%;
+}
+.fixed_headers td:nth-child(5),
+.fixed_headers th:nth-child(5){
+	width: 16%;
+}
+.fixed_headers td:nth-child(6),
+.fixed_headers th:nth-child(6){
+	width: 21%;
+}
+.fixed_headers td:nth-child(7),
+.fixed_headers th:nth-child(7){
+	width: 8%;
+}
+.fixed_headers thead{
+	background-color:#f1daa4;
+}
+.fixed_headers thead tr{
+	display:block;
+	
+}
+.fixed_headers tbody{
+	display:block;
+	overflow:auto;
+	width:100%;
+	height:215px;
+}*/
+
+.fixed_headers {
+  width: 100%;
+  /*background-color: #f3f333;*/
+  text-align: left;
+}
+.fixed_headers tbody {
+  height: 185px;
+  overflow-y: auto;
+  width: 100%;
+}
+
+.fixed_headers thead, .fixed_headers tbody, .fixed_headers tr, .fixed_headers td, .fixed_headers th {
+  display: block; 
+
+}
+.fixed_headers tbody td {
+  float: left;
+}
+.fixed_headers thead th {
+  float: left;
+  background-color: #f1daa4;
+  border-color: #074e8c;
+}
+
+
+/*
+.fixed_headers tbody tr:nth-child(even){
+	background-color:#DDD;
+}*/
