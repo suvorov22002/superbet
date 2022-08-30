@@ -782,8 +782,7 @@ public abstract class AbstractDAOAPI<T> {
 	}
 	
 	public Partner partner(String url, PartnerDto part) throws ClientProtocolException, IOException, JSONException, URISyntaxException, DAOAPIException {
-		
-		Partner p = null;
+		 Partner pdto = null;
 		String playload = null;
 		String resp_code;
 		HttpPost post;
@@ -818,9 +817,8 @@ public abstract class AbstractDAOAPI<T> {
 	                }
 	                
 	                
-	                Partner pdto = new Partner();
 	                if (j.has("part")) {
-	                	System.out.println("j: "+j.getJSONObject("part"));
+	                	//System.out.println("j: "+j.getJSONObject("part"));
 	                	pdto = this.mapToPartner(j.getJSONObject("part"));
 	                }
 	                else {
@@ -836,7 +834,7 @@ public abstract class AbstractDAOAPI<T> {
       		return null;
       	}
           
-          return p;
+          return pdto;
       }
 	}
 	public Caissier getUser(Caissier caissier, String url, String partner) throws ClientProtocolException, IOException, JSONException, URISyntaxException, DAOAPIException {
@@ -2304,6 +2302,52 @@ public abstract class AbstractDAOAPI<T> {
           return c;
       }
     }
+    
+    public int setbonusk(String url, double k_rate, double mbonusk0, double mbonusk1, Long coderace) throws ClientProtocolException, IOException, JSONException, URISyntaxException, DAOAPIException {
+    	String resp_code;
+		HttpGet getRequest = new HttpGet(url+"/bonusk-cf/"+coderace+"/"+mbonusk0+"/"+mbonusk1+"/"+k_rate);
+		// add request parameter, form parameters
+		getRequest.setHeader("content-type", "application/json");
+		
+		try (CloseableHttpResponse response = this.getClosableHttpClient().execute(getRequest)) {
+			int cfgBonus = 0;
+			HttpEntity entity = null;
+			
+			try{
+				entity = response.getEntity();
+				
+				if (entity != null) {
+		    		String content = EntityUtils.toString(entity);
+		      	//	//System.out.println("time: "+content); 
+		      		JSONObject json = new JSONObject(content);
+		      	    resp_code = json.getString("entity");
+		 	     
+ 	                JSONObject j = new JSONObject(resp_code);
+ 	                
+ 	                String code = j.getString("code");
+ 	                if(!code.equalsIgnoreCase("200")) {
+ 	                	return 0;
+ 	                }
+ 	               String retSrc = j.getString("data");
+  	          //      System.out.println(retSrc);
+  	                JSONObject jsonObj = new JSONObject(retSrc.toString());
+  	                
+  	                if(jsonObj.has("cfgBonus")) {
+  	                	cfgBonus = jsonObj.getInt("cfgBonus");
+  	                }
+  	                else {
+  	                	cfgBonus = 0;
+  	                }
+		    	
+				}
+			}
+			catch(Exception e) {
+				e.printStackTrace();
+			}
+			
+			return cfgBonus;
+		  }
+	}
     
     public List<Airtime> airtimes(String url, String dat1, String dat2, Long coderace, String login) throws ClientProtocolException, IOException, JSONException, URISyntaxException, DAOAPIException {
     	List<Airtime> miset = null;

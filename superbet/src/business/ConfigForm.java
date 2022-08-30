@@ -263,14 +263,17 @@ public final class ConfigForm {
 					//ajout d'un tirage par defaut
 					Keno ken = new Keno();
 					ken.setDrawnumK("1");
+					ken.setMultiplicateur("0");
+					ken.setDrawnumbK("'1-2-3-4-5-6-7-8-9-10-11-12-13-14-15-16-17-18-19-20'");
 					ken.setCoderace(coderace);
+					ken.setHeureTirage("01/01/2020-00:00:00");
 					int nb_race = kenoDao.create(ken);
 					
 					//ajout d'une ligne spin
-					Spin spin = new Spin();
-					spin.setCoderace(coderace);
-					spin.setDrawNumP("0");
-					int nbspin = spinDao.create(spin);
+//					Spin spin = new Spin();
+//					spin.setCoderace(coderace);
+//					spin.setDrawNumP("0");
+//					int nbspin = spinDao.create(spin);
 				    
 					//ajout freeslip
 					misetDao.createFree(n);
@@ -426,6 +429,7 @@ public final class ConfigForm {
 			coderace = getName( request, FIELD_KCODERACE );
 			String bonusk_rate = getName(request,  FIELD_BONUSK_RATE);
 			//System.out.println("coderace: "+coderace+" | "+bonusk_rate);
+			Long idpartner = partnerDao.find(coderace).getIdpartner();
 			resultat_b = "";
 			erreurs_b.clear();
 			if(jeu == null || jeu.equalsIgnoreCase("")){
@@ -471,16 +475,24 @@ public final class ConfigForm {
 					return;
 				}
 				double k_rate = Double.parseDouble(bonusk_rate)/100;
-				ajout = configDao.updateBonusK(k_rate, mbonusk0, mbonusk1, coderace );
-				if(ajout != 0){
-					erreurs.clear();
-					resultat_b = "Mise à jour du bonus effectué avec succès";
+				
+				try {
+					//ajout = configDao.updateBonusK(k_rate, mbonusk0, mbonusk1, coderace );
+					ajout = supergameAPI.getSuperGameDAO().updateBonusK(Params.url, k_rate, mbonusk0, mbonusk1, idpartner);
+					if(ajout != 0){
+						erreurs.clear();
+						resultat_b = "Mise à jour du bonus effectué avec succès";
+					}
+					else{
+						setErreurs_b("Update", "Echec de la mise à jour");
+						resultat_b = "Echec de la mise à jour";
+						return;
+					}
+				} catch (IOException | JSONException | URISyntaxException | DAOAPIException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
 				}
-				else{
-					setErreurs_b("Update", "Echec de la mise à jour");
-					resultat_b = "Echec de la mise à jour";
-					return;
-				}
+				
 			}
 			else if(jeu.equalsIgnoreCase("spin")){
 				

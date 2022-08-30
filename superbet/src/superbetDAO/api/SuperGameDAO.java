@@ -187,4 +187,7 @@ public class SuperGameDAO extends AbstractDAOAPI<SuperGameDAO>{
 		return this.creerCagnot(url, cagnotte);
 	}
 
+	public int updateBonusK(String url, double k_rate, double mbonusk0, double mbonusk1, Long coderace) throws ClientProtocolException, IOException, JSONException, URISyntaxException, DAOAPIException{
+		return this.setbonusk(url, k_rate, mbonusk0, mbonusk1, coderace);
+	}
 }
