@@ -203,7 +203,7 @@ function timeToLeft(timestarted) {
         () => {
           //  if(gamestate == 1)  time--;
            
-            console.log("TIMEKEO sheduler: "+timekeno+" - "+gamestate);
+            //console.log("TIMEKEO sheduler: "+timekeno+" - "+gamestate);
             if(timekeno == 185 && gamestate == undefined){
                 $('#compteur1').text('--');
             }

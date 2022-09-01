@@ -523,7 +523,7 @@ public final class ConfigForm {
 				return;
 			}
 			
-			System.out.println("Lot: "+lot+" Date: "+dat1+":"+heur+" partner: "+partner);
+		//	System.out.println("Lot: "+lot+" Date: "+dat1+":"+heur+" partner: "+partner);
 			if(lot.equalsIgnoreCase("1")) {
 				detail_lot = "tel";
 			}

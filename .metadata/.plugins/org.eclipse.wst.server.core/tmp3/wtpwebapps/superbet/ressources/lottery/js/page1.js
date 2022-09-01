@@ -38,7 +38,7 @@ let page1content =
 
     "<div id='page1item2-bloc1-item-3'>" +
     "<span class='label-bloc1' id='label-cagnotte'>cagnotte</span>" + 
-    "<div class='cagnotte-container' id='cagnotte-container'><img  src='' id='myImage' alt='1'/></div>" +
+    "<div class='cagnotte-container' id='cagnotte-container'><img  src='' id='myImage' alt='cagnotte'/></div>" +
     "</div>" +
 
     "<div id='page1item2-bloc1-item-2'><span class='label-bloc1'>temp</span><span class='value-bloc1 ' id='compteur1' ></span></div>" +

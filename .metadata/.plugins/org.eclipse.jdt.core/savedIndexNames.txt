@@ -63,6 +63,5 @@ INDEX VERSION 1.131+E:\projets\eclipse\superbet\.metadata\.plugins\org.eclipse.j
 3271193799.index
 658409102.index
 36199935.index
-1905747793.index
 3506022793.index
 3507415630.index
