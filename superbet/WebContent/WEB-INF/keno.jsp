@@ -128,7 +128,7 @@
 					//	}
 						   
 						
-					//	console.log("_nbre: "+_nbre+" | "+value.bonus1);
+						console.log("_nbre: "+_nbre+" | "+value.bonus1);
 						switch(nbre){
 							case 1:
 								draw_1 = (value.draw1).split("_");

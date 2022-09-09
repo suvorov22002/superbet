@@ -2349,6 +2349,67 @@ public abstract class AbstractDAOAPI<T> {
 		  }
 	}
     
+    public List<KenoRes> bonus(String url, Long coderace) throws ClientProtocolException, IOException, JSONException, URISyntaxException, DAOAPIException {
+    	
+    	List<KenoRes> kenres = null;
+    	
+    	String resp_code;
+		HttpGet getRequest = new HttpGet(url+"/bonus/"+coderace);
+		// add request parameter, form parameters
+		getRequest.setHeader("content-type", "application/json");
+		
+		try (CloseableHttpResponse response = this.getClosableHttpClient().execute(getRequest)) {
+        	
+        	HttpEntity entity = null;
+        	
+        	try{
+        		entity = response.getEntity();
+        		
+        		if (entity != null) {
+        			
+	        		String content = EntityUtils.toString(entity);
+	        		//System.out.println("result "+content);
+	        		if(!isValidJson(content)) {
+	        			return null;
+	        		}
+	                JSONObject json = new JSONObject(content);
+	                
+	                //Verification du code reponse
+	                resp_code = json.getString("entity");
+	              
+	                JSONObject j = new JSONObject(resp_code);
+	                
+	                String code = j.getString("code");
+	                if(!code.equalsIgnoreCase("200")) {
+	                	return null;
+	                }
+	                
+	                String retSrc = j.getString("data");
+	                JSONObject jsonObj = new JSONObject(retSrc.toString());
+	                
+	                if(jsonObj.has("bonus")) {
+	                	String list_json = jsonObj.getString("bonus");
+	                	JSONArray jObj = new JSONArray(list_json.toString());
+	                	
+	        			int n = jObj.length();
+	        			kenres = new ArrayList<>(n);
+	        			
+	        			for(int i=0 ; i< n ; i++) {
+	        				JSONObject jo = jObj.getJSONObject(i);
+	        				//System.out.println("tickets "+jo);
+	        				kenres.add(this.mapToKenoRes(jo));
+	        			}
+	                	
+	                }   	           
+    			}
+        	}
+        	catch(Exception e) {
+        		e.printStackTrace();
+        	}
+			return kenres;
+		}
+	}
+    
     public List<Airtime> airtimes(String url, String dat1, String dat2, Long coderace, String login) throws ClientProtocolException, IOException, JSONException, URISyntaxException, DAOAPIException {
     	List<Airtime> miset = null;
 		String resp_code;

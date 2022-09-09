@@ -80,7 +80,7 @@ public class TurnoverForm {
 			String frequence = request.getParameter( FIELD_FREQUENCE );
 			String jeu = request.getParameter( FIELD_JEU );
 			String ipartner = request.getParameter( FIELD_ICODERACE );
-			System.out.println("frequence: "+frequence+" cycle: "+cycle);
+		//	System.out.println("frequence: "+frequence+" cycle: "+cycle);
 			if(ipartner == null || ipartner == "" ) {
 				erreurs.put("FIELD_ICODERACE", "Veuillez choisir un partenaire");
 				resultat = "Veuillez selectionner un partenaire";
@@ -240,10 +240,10 @@ public class TurnoverForm {
 			    			
 			    			summise = supergameAPI.getSuperGameDAO().getMiseKCycle(Params.url, idPartner,gm.getMise(), 1+idmax);
 			    			//summise = misekDao.getMiseKCycle(gm.getMise(),1+idmax, IN);
-			    			System.out.println("[TURNOVER - MISE TOTALE]: "+summise);
+			    	//		System.out.println("[TURNOVER - MISE TOTALE]: "+summise);
 			    			
 			    			sumWin = supergameAPI.getSuperGameDAO().getMiseKCycleWin(Params.url, idPartner,gm.getMise(), 1+idmax);
-			    			System.out.println("[TURNOVER - VERSEMENT TOTAL]: "+sumWin);
+			    	//		System.out.println("[TURNOVER - VERSEMENT TOTAL]: "+sumWin);
 			    			//sumWin = misekDao.getMiseKCycleWin(gm.getMise(), 1+idmax, IN);
 			    			//System.out.println("summise "+summise+" SumWin "+sumWin);
 			    		    //System.out.println("UtileKeno.bonusrate*summise "+UtileKeno.bonusrate*summise);

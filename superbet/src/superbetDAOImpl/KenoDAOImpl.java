@@ -469,6 +469,7 @@ public class KenoDAOImpl implements KenoDAO {
 			PreparedStatement preparedStatement = null;
 			ResultSet resultSet = null;
 			String[] idkeno;
+			int n = 0;
 			
 			try {
 				/* Récupération d'une connexion depuis la Factory */
@@ -478,13 +479,12 @@ public class KenoDAOImpl implements KenoDAO {
 				
 				/* Parcours de la ligne de données de l'éventuel ResulSet retourné */
 				idkeno = lireResultBD(resultSet);
+				n = Integer.parseInt(idkeno[1]);
 			} catch ( SQLException e ) {
-				throw new DAOException( e );
+				e.printStackTrace();
 			} finally {
 				fermeturesSilencieuses( resultSet, preparedStatement, connexion );
 			}
-			
-			int n = Integer.parseInt(idkeno[1]);
 			
 			return n;
 		}
@@ -514,7 +514,7 @@ public class KenoDAOImpl implements KenoDAO {
 			PreparedStatement preparedStatement = null;
 			ResultSet valeursAutoGenerees = null;
 			
-			int statut;
+			int statut = 0;
 			
 			try {
 				/* Récupération d'une connexion depuis la Factory */
@@ -523,13 +523,13 @@ public class KenoDAOImpl implements KenoDAO {
 				
 				statut = preparedStatement.executeUpdate();
 				
-				/* Analyse du statut retourné par la requête d'insertion */
-				if ( statut == 0 ) {
-					throw new DAOException( "Échec de la création d'un tirage, aucune ligne ajoutée dans la table." );
-				}
+//				/* Analyse du statut retourné par la requête d'insertion */
+//				if ( statut == 0 ) {
+//					throw new DAOException( "Échec de la création d'un tirage, aucune ligne ajoutée dans la table." );
+//				}
 				
 			} catch ( SQLException e ) {
-				throw new DAOException( e );
+				e.printStackTrace();
 			} finally {
 				fermeturesSilencieuses( valeursAutoGenerees, preparedStatement, connexion );
 			}

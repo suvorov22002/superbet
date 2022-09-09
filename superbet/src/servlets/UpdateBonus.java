@@ -2,6 +2,8 @@ package servlets;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.json.Json;
 import javax.json.JsonArrayBuilder;
@@ -113,6 +115,7 @@ public class UpdateBonus extends HttpServlet {
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// TODO Auto-generated method stub
 		String coderace = request.getParameter("partner");
+		Partner p = partnerDao.find(coderace);
 		//System.out.println("coderace updatebonus: "+coderace);
 		Keno keno = kenoDao.find_Max_draw(coderace);
 		//System.out.println("UPDATE BONUS KENO: "+keno);
@@ -120,6 +123,12 @@ public class UpdateBonus extends HttpServlet {
 		String[] last = kenoDao.getLastKdraw(coderace);
 		String[] last_bonus = kenoDao.getLastKBonus(coderace);
 		
+		List<KenoRes> last_bns = new ArrayList<>();
+		try {
+			last_bns = this.supergameAPI.getSuperGameDAO().getbonus(Params.url, p.getIdpartner());
+		} catch (JSONException | URISyntaxException | DAOAPIException e) {
+			e.printStackTrace();
+		}
 		//System.out.println("SV-TOKEN: "+this.token);
 		
 		String new_draw = keno.getDrawnumbK();
@@ -161,17 +170,28 @@ public class UpdateBonus extends HttpServlet {
 		   
 		   
 		 //mise a jour des derniers bonus
-		//  System.out.println("last_bonus: "+last_bonus.length);
-		   _nbre = (last_bonus.length-1)/Integer.parseInt(last_bonus[0]);
-		   lastB = new String[nbre];
-		   j = 1;
+		  System.out.println("last_bonus: "+last_bonus.length);
+		  String str = "";
+//		   _nbre = (last_bonus.length-1)/Integer.parseInt(last_bonus[0]);
+//		   lastB = new String[nbre];
+//		   j = 1;
+//		   l = 0;
+//		   String str = "";
+//		   for(int i=0;i<_nbre;i++){
+//			   str = str + last_bonus[j++] + "_" + last_bonus[j++] + "_" + last_bonus[j++] + "_" + last_bonus[j++];
+//			   lastB[l++] = str;
+//			 //  System.out.println(str);
+//		   }
+		   
+		   _nbre = last_bns.size();
+		   lastB = new String[_nbre];
 		   l = 0;
-		   for(int i=0;i<_nbre;i++){
-			   String str = "";
-			   str = str + last_bonus[j++] + "_" + last_bonus[j++] + "_" + last_bonus[j++] + "_" + last_bonus[j++];
+		   for (KenoRes ks : last_bns) {
+			   str = str + coderace + "_" + ks.getBonuscod() + "_" + ks.getHeureTirage() + "_" + ks.getBonusKamount(); 
 			   lastB[l++] = str;
-			 //  System.out.println(str);
 		   }
+		   
+		   
 		/* Refresh refresh = new Refresh();
 		 refresh.start();*/
 		  
