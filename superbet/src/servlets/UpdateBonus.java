@@ -114,6 +114,10 @@ public class UpdateBonus extends HttpServlet {
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// TODO Auto-generated method stub
+		int j,nbre,_nbre = 0,l;
+		String[] lastsK,lastB = null;
+		String str = "";
+		
 		String coderace = request.getParameter("partner");
 		Partner p = partnerDao.find(coderace);
 		//System.out.println("coderace updatebonus: "+coderace);
@@ -126,8 +130,17 @@ public class UpdateBonus extends HttpServlet {
 		List<KenoRes> last_bns = new ArrayList<>();
 		try {
 			last_bns = this.supergameAPI.getSuperGameDAO().getbonus(Params.url, p.getIdpartner());
+			
+			   _nbre = last_bns.size();
+			   lastB = new String[_nbre];
+			   l = 0;
+			   for (KenoRes ks : last_bns) {
+				   str = str + coderace + "_" + ks.getHeureTirage().replace('h',':') + "_" + ks.getBonuscod() + "_" + ks.getBonusKamount(); 
+				   lastB[l++] = str;
+			   }
 		} catch (JSONException | URISyntaxException | DAOAPIException e) {
 			e.printStackTrace();
+			_nbre = 0;
 		}
 		//System.out.println("SV-TOKEN: "+this.token);
 		
@@ -153,8 +166,7 @@ public class UpdateBonus extends HttpServlet {
 //				kenoDao.updateDrawEnd(Integer.parseInt(maj_last[2]));
 //			}
 		
-		int j,nbre,_nbre,l;
-		String[] lastsK,lastB;
+		
 		//mise a jour des courses precedentes   
 		   nbre = (last.length-1)/Integer.parseInt(last[0]);
 		   lastsK = new String[nbre];
@@ -162,7 +174,7 @@ public class UpdateBonus extends HttpServlet {
 		   l = 0;
 		   System.out.println("nbre "+nbre+" last: "+last.length);
 		   for(int i=0;i<nbre;i++){
-			   String str = "";
+			   str = "";
 			   str = str + last[j--] + "_" + last[j--] + "_" + last[j--] + "_" + last[j--].substring(11);
 			   lastsK[l++] = str;
 			   System.out.println(str);
@@ -170,8 +182,8 @@ public class UpdateBonus extends HttpServlet {
 		   
 		   
 		 //mise a jour des derniers bonus
-		  System.out.println("last_bonus: "+last_bonus.length);
-		  String str = "";
+		 // System.out.println("last_bonus: "+last_bonus.length);
+		  
 //		   _nbre = (last_bonus.length-1)/Integer.parseInt(last_bonus[0]);
 //		   lastB = new String[nbre];
 //		   j = 1;
@@ -183,13 +195,7 @@ public class UpdateBonus extends HttpServlet {
 //			 //  System.out.println(str);
 //		   }
 		   
-		   _nbre = last_bns.size();
-		   lastB = new String[_nbre];
-		   l = 0;
-		   for (KenoRes ks : last_bns) {
-			   str = str + coderace + "_" + ks.getBonuscod() + "_" + ks.getHeureTirage() + "_" + ks.getBonusKamount(); 
-			   lastB[l++] = str;
-		   }
+		  
 		   
 		   
 		/* Refresh refresh = new Refresh();

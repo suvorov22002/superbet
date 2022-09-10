@@ -2368,7 +2368,7 @@ public abstract class AbstractDAOAPI<T> {
         		if (entity != null) {
         			
 	        		String content = EntityUtils.toString(entity);
-	        		//System.out.println("result "+content);
+	        		System.out.println("result "+content);
 	        		if(!isValidJson(content)) {
 	        			return null;
 	        		}
