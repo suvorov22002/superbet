@@ -195,4 +195,10 @@ public class SuperGameDAO extends AbstractDAOAPI<SuperGameDAO>{
 		return this.bonus(url, coderace);
 	}
 
+	public List<KenoRes> getLdraw(String url, Long coderace) throws ClientProtocolException, IOException, JSONException, URISyntaxException, DAOAPIException{
+		return this.lDraw(url, coderace);
+	}
+
+	
+
 }

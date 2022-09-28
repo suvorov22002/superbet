@@ -2,29 +2,23 @@ package business;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.commons.lang3.StringUtils;
 import org.codehaus.jettison.json.JSONException;
 
 import config.Params;
-import config.Timestamp;
 import modele.BetTicketK;
 import modele.Caissier;
 import modele.EffChoicek;
-import modele.Miset;
 import modele.Partner;
 import modele.Versement;
 import superbetDAO.AirtimeDAO;
-import superbetDAO.DAOException;
 import superbetDAO.EffChoicekDAO;
 import superbetDAO.EffChoicepDAO;
 import superbetDAO.KenoDAO;
@@ -50,7 +44,7 @@ public final class ManageVersForm {
 	private String draw_result;
 	private Map<String, String> drawData = new HashMap<String, String>();
 	private Map<String, String> details_tickets = new HashMap<String, String>();
-	ArrayList<Map<String, String>> evenements = new ArrayList<Map<String, String>>();
+	List<Map<String, String>> evenements = new ArrayList<Map<String, String>>();
 	private int multiplicite;
 	
 	private boolean isTesting = false; // test de ticket en cours
@@ -86,7 +80,7 @@ public final class ManageVersForm {
 		return drawData;
 	}
 
-	public ArrayList<Map<String, String>> getEvenements() {
+	public List<Map<String, String>> getEvenements() {
 		return evenements;
 	}
 
@@ -135,22 +129,35 @@ public final class ManageVersForm {
 	public Versement traiterTicket(HttpServletRequest request, Caissier caissier){
 		
 		Versement verst = null;
+		Partner part = null;
 		boolean already_paid = Boolean.FALSE;
 		bonusDown = Boolean.FALSE;
 		
 		String versement = getVersement( request, FIELD_VERS);
 		String barcode = getBarcode( request,FIELD_CODE ) ;
 		System.out.println("BARCODE h: "+barcode);
-		if(barcode==null || barcode.length() < 10) return null;
-		barcode = barcode.substring(0, 10);
+		if(barcode==null || barcode.length() < 12) {
+			resultat = "Code du ticket incorrect<br/>";
+			setErreurs(FIELD_CODE, resultat);
+			return null;
+		}
 		
-		Partner part = partnerDao.findById(Integer.parseInt(""+caissier.getPartner()));
+		barcode = barcode.length() > 12 ? barcode.substring(0, 12) : barcode;
+		try {
+			part = partnerDao.findById(Integer.parseInt(""+caissier.getPartner()));
+		}
+		catch(NumberFormatException e) {
+			e.printStackTrace();
+			return null;
+		}
+		
+		
 		String coderace = part.getCoderace();
 		 
 	//	System.out.println("BARCODE h: "+barcode);
 		 if ( versement == null || versement.trim().length() == 0 || versement.equalsIgnoreCase("")
 				 ) {
-			// System.out.println("traiter ticket: "+versement);
+			 System.out.println("traiter ticket: "+versement);
 			 
 	        verst = new Versement();
 	       
@@ -166,42 +173,60 @@ public final class ManageVersForm {
 					BetTicketK b = null;
 					try {
 						b =  supergameAPI.getSuperGameDAO().checkTicket(Params.url, coderace,  barcode);
+						//System.out.println("BETK: "+b.getList_efchk().size());
 					} catch (IOException | JSONException | URISyntaxException | DAOAPIException e) {
 						e.printStackTrace();
-						return null;
+						resultat = "ERREUR LORS DE LA VERIFICATION<br/>";
+						setErreurs(FIELD_CODE, resultat);
+						return verst;
 					}
 					
+					if (b == null || "TICKET CHOIX ERROR".equalsIgnoreCase(b.getMessage())) {
+						resultat = "ERREUR LORS DE LA VERIFICATION<br/>";
+						setErreurs(FIELD_CODE, resultat);
+						return verst;
+					}
 						
-					   if(b.getMessage().equalsIgnoreCase("TICKET INCONNU")){
-							resultat = "TICKET NON EVALUE<br/>";
+					   // Ticket pas existant
+					   if("TICKET INCONNU".equalsIgnoreCase(b.getMessage())){
+							resultat = "TICKET INCONNU,<br/>Veuillez bien saisir le code.<br/>";
 							setErreurs(FIELD_CODE, resultat);
+							setDrawData("montant", " ");
+							setDrawData("prix_total", " ");
+				    		setDrawData("gain_total", " ");
 							return verst;
 					        
 					   }
-					   if(b.getMessage().equalsIgnoreCase("TICKET NON RECONNU")){
-							resultat = "TICKET NON EVALUE<br/>";
-							setErreurs(FIELD_CODE, resultat);
-							return verst;
-					        
-					   }
-					   if(b.getMessage().equalsIgnoreCase("TICKET ALREADY PAID")){
-							Versement v = b.getVers();
-							System.out.println("Versement v "+v);
+					   
+					   // Ticket deja paye
+					   if("TICKET ALREADY PAID".equalsIgnoreCase(b.getMessage())){
 							already_paid = Boolean.TRUE;
 							//le ticket a deja été traité
 							resultat = "TICKET DEJA PAYE<br/>"+barcode+"<br/>"+b.getVers().getMontant();
 							setErreurs(FIELD_CODE, resultat);
-							/* implementation here */
+							setDrawData("montant", " ");
+							setDrawData("prix_total", " ");
+				    		setDrawData("gain_total", " ");
 							return verst;
 					        
 					   }
-					   if(b.getMessage().equalsIgnoreCase("TICKET NON EVALUE")){
-							resultat = "TICKET NON EVALUE<br/>";
+					   
+					   // Mauvais partenaire
+					   if("TICKET NON RECONNU".equalsIgnoreCase(b.getMessage())){
+							resultat = "TICKET NON RECONNU DANS CETTE SALLE<br/>";
 							setErreurs(FIELD_CODE, resultat);
 							return verst;
 					        
 					   }
 					   
+					   // Ticket non enregistre
+					   if("TICKET NON ENREGISTRE".equalsIgnoreCase(b.getMessage())){
+							resultat = "TICKET NON ENREGISTRE,<br/>CONTACTER RESPONSABLE.<br/>";
+							setErreurs(FIELD_CODE, resultat);
+							return verst;
+					        
+					   }
+// 
 					   
 					//	  System.out.println("b.getParil(): "+b.getList_efchk().get(0).getIdparil());
 						   String lib_pari = utilDao.searchPariLById(b.getList_efchk().get(0).getIdparil())[3];
@@ -226,21 +251,26 @@ public final class ManageVersForm {
 			    		   for(EffChoicek efck : list_efchk) {
 			    			   
 			    			   Map<String, String> details_tick = new HashMap<String, String>();
-			    			   if(efck.getDrawresult() != null) {
+			    			   if(StringUtils.isNotBlank(efck.getDrawresult())) {
 			    				   details_tick.put("cote", efck.getCote());
 			    				   details_tick.put("resultTour", efck.getDrawresult());
 			    				   details_tick.put("etat", efck.isState() ? "true" : "false");
 			    			   }
 			    			   else {
 			    				   eval = false;
+			    				   details_tick.put("cote", "-");
+			    				   details_tick.put("resultTour", "-");
 			    			   }
 			    			   this.evenements.add(details_tick);
 			    		   }
 			    		   
-			    		   if(multiplicite != list_efchk.size() || !eval) {
-			    			   resultat = "TICKET NON EVALUE, EN COURS.";
-							   setErreurs(FIELD_CODE, resultat);
-			    		   }
+			    		   if("TICKET NON EVALUE".equalsIgnoreCase(b.getMessage())){
+								resultat = "TICKET NON EVALUE,<br/>TIRAGE EN COURS.<br/>";
+								setErreurs(FIELD_CODE, resultat);
+								return verst;
+						   }
+			    		   
+			    		   
 			    		   
 			    		   double gg = b.getSumWin();
 			    		   bonusDown = b.isBonus();
@@ -248,11 +278,6 @@ public final class ManageVersForm {
 			    			   resultat = "Ticket perdant";
 			    			   setErreurs(FIELD_CODE, resultat);
 			    		   }
-//			    		   else if(already_paid){
-//			    			   resultat = "Ticket deja pay�<br/>"+barcode+"<br/>"+vers.getMontant();
-//							   setErreurs(FIELD_CODE, resultat);
-//							  // gain_total = 0;
-//			    		   }
 			    		   else if(eval && gg != 0){
 			    			   if(bonusDown) {
 			    				   resultat = "Ticket bonus gagnant";

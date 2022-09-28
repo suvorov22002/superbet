@@ -3,6 +3,7 @@ package servlets;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import javax.json.Json;
@@ -114,8 +115,8 @@ public class UpdateBonus extends HttpServlet {
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// TODO Auto-generated method stub
-		int j,nbre,_nbre = 0,l;
-		String[] lastsK,lastB = null;
+		int j,nbre = 0,_nbre = 0,l;
+		String[] lastsK = null,lastB = null;
 		String str = "";
 		
 		String coderace = request.getParameter("partner");
@@ -128,19 +129,67 @@ public class UpdateBonus extends HttpServlet {
 		String[] last_bonus = kenoDao.getLastKBonus(coderace);
 		
 		List<KenoRes> last_bns = new ArrayList<>();
+		List<KenoRes> last_draw = new ArrayList<>();
 		try {
 			last_bns = this.supergameAPI.getSuperGameDAO().getbonus(Params.url, p.getIdpartner());
+			
+			last_draw = this.supergameAPI.getSuperGameDAO().getLdraw(Params.url, p.getIdpartner());
 			
 			   _nbre = last_bns.size();
 			   lastB = new String[_nbre];
 			   l = 0;
 			   for (KenoRes ks : last_bns) {
+				   str = "";
 				   str = str + coderace + "_" + ks.getHeureTirage().replace('h',':') + "_" + ks.getBonuscod() + "_" + ks.getBonusKamount(); 
+				   //System.out.println("new_draw updatebonus: "+str);
 				   lastB[l++] = str;
+			   }
+			   
+			   nbre = last_draw.size();
+			   lastsK = new String[nbre];
+			   l = 0;
+			   //System.out.println("nbre "+nbre+" last: "+last.length);
+			   Collections.reverse(last_draw);
+			   for(KenoRes ks : last_draw){
+				   str = "";
+				   str = str + ks.getDrawnumK() + "_" + ks.getDrawnumbK() + "_" + ks.getMultiplicateur() + "_" + ks.getHeureTirage().replace('h',':').substring(11);
+				   lastsK[l++] = str;
+				  // System.out.println(str);
 			   }
 		} catch (JSONException | URISyntaxException | DAOAPIException e) {
 			e.printStackTrace();
 			_nbre = 0;
+			nbre = 0;
+			
+			//mise a jour des courses precedentes   
+			   nbre = (last.length-1)/Integer.parseInt(last[0]);
+			   lastsK = new String[nbre];
+			   j = last.length-1;
+			   l = 0;
+			  // System.out.println("nbre "+nbre+" last: "+last.length);
+			   for(int i=0;i<nbre;i++){
+				   str = "";
+				   str = str + last[j--] + "_" + last[j--] + "_" + last[j--] + "_" + last[j--].substring(11);
+				   lastsK[l++] = str;
+				  // System.out.println(str);
+			   }
+			   
+			   
+			 //mise a jour des derniers bonus
+				 // System.out.println("last_bonus: "+last_bonus.length);
+				  
+				   _nbre = (last_bonus.length-1)/Integer.parseInt(last_bonus[0]);
+				   lastB = new String[nbre];
+				   j = 1;
+				   l = 0;
+				   for(int i=0;i<_nbre;i++){
+					   str = "";
+					   str = str + last_bonus[j++] + "_" + last_bonus[j++] + "_" + last_bonus[j++] + "_" + last_bonus[j++];
+					   lastB[l++] = str;
+					 //  System.out.println(str);
+				   }
+			   
+			   
 		}
 		//System.out.println("SV-TOKEN: "+this.token);
 		
@@ -166,36 +215,6 @@ public class UpdateBonus extends HttpServlet {
 //				kenoDao.updateDrawEnd(Integer.parseInt(maj_last[2]));
 //			}
 		
-		
-		//mise a jour des courses precedentes   
-		   nbre = (last.length-1)/Integer.parseInt(last[0]);
-		   lastsK = new String[nbre];
-		   j = last.length-1;
-		   l = 0;
-		   System.out.println("nbre "+nbre+" last: "+last.length);
-		   for(int i=0;i<nbre;i++){
-			   str = "";
-			   str = str + last[j--] + "_" + last[j--] + "_" + last[j--] + "_" + last[j--].substring(11);
-			   lastsK[l++] = str;
-			   System.out.println(str);
-		   }
-		   
-		   
-		 //mise a jour des derniers bonus
-		 // System.out.println("last_bonus: "+last_bonus.length);
-		  
-//		   _nbre = (last_bonus.length-1)/Integer.parseInt(last_bonus[0]);
-//		   lastB = new String[nbre];
-//		   j = 1;
-//		   l = 0;
-//		   String str = "";
-//		   for(int i=0;i<_nbre;i++){
-//			   str = str + last_bonus[j++] + "_" + last_bonus[j++] + "_" + last_bonus[j++] + "_" + last_bonus[j++];
-//			   lastB[l++] = str;
-//			 //  System.out.println(str);
-//		   }
-		   
-		  
 		   
 		   
 		/* Refresh refresh = new Refresh();

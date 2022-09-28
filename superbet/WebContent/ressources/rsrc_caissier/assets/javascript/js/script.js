@@ -1052,7 +1052,7 @@ function verif_amount(evt) {
 
       let accept = '0123456789';
       let keyCode = evt.which ? evt.which : evt.keyCode;
-      var balance1 = $("#balance1").val();
+      var balance1 = $("#balance1").text();
       if (accept.indexOf(String.fromCharCode(keyCode)) >= 0 || evt.keyCode===13) {
       	if (evt.keyCode === 13) {
 			evt.preventDefault();
@@ -1060,18 +1060,22 @@ function verif_amount(evt) {
 			document.getElementById('amount_error').innerHTML = "";
 
 			if(amount ==='' || parseInt(amount) < 200 || parseInt(amount) > 20000 || parseInt(balance1) < parseInt(amount)){
-				console.log('error');
+				console.log('error: '+parseInt(balance1));
 				document.getElementById('amount_error').innerHTML = "montant incorrect";
 				if(parseInt(balance1) < parseInt(amount)){
 					document.getElementById('amount_error').innerHTML = "Credit insuffisant";
 				}
-					
-				return;
+				$("#print").prop("disabled",true);
+				return false;
 			}
 
-			console.log('no error');
+			console.log('no error: '+parseInt(balance1));
+			
+			$("#print").prop("disabled",false); //active le button imprimer
 			document.getElementById('print').focus();
 		}
+		
+		
         return true;
       } else {
         //not an accept character
@@ -1108,88 +1112,259 @@ function verif_sp_amount(evt) {
  
 function manage_keno(evt) {
     console.log('manage_keno');
+	$("#print").prop("disabled",true);
+	
+	var balance1 = $("#balance1").text();
+	var amount = $("#montant").val();
+	if(parseInt(balance1) < parseInt(amount)){
+		document.getElementById('amount_error').innerHTML = "Credit insuffisant";
+		return false;
+	}
+	if(amount ==='' || parseInt(amount) < 200 || parseInt(amount) > 20000){
+		document.getElementById('amount_error').innerHTML = "montant incorrect";
+		return false;
+	}
+	
+	
 	evt.preventDefault();
+	var amount = $("#montant").val();
+	var multi = $("input[name='multi1']:checked").val();
+	var code = $("#code").val();
 	//submit du formulaire
-    document.forms["form_man_keno"].submit();
+    //document.forms["form_man_keno"].submit();
+    // $("#print").prop("disabled",true);
+	
+    $.ajax({
+				url:"manageKeno",
+				type:"GET",
+				data:{
+						'montant':amount,
+						'multi1':multi,
+						'code':code
+					},
+				success:function(result){
+					
+					console.log('result evenements: '+JSON.stringify(result));
+					var multi = result.multiplicite;
+					var _fecha = result._fecha;
+					var idpath0 = result.path;
+					var coupon = result.coupon;
+					
+					setCouponValue(coupon, multi, _fecha);
+					
+					$("#idpath").text(idpath0);
+					
+					//Ajout du logo au coupon
+         		    var partn = $('#idpartner0').text();
+                    console.log('path: '+partn);
+
+                    var imag = idpath0+'/ressources/rsrc_caissier/assets/images/logo_'+partn+'.jpeg'
+                    console.log('imag: '+imag);
+          
+                    $("#myImage0").attr("src", imag);
+                    document.getElementById("myImage0").src = imag;
+					
+					// clear du formulaire
+					document.getElementById('code').value='';
+					// on vide d'abord le tableau
+					$('.t_pari').find('tbody').empty();
+					document.getElementById("icode").innerHTML = "";
+					$('#alea_nbre').val('');
+					$("#print").prop("disabled",true);
+				
+				//----------------------------------------------------------
+          
+					
+					
+					var modale = document.getElementById('imprimer');
+				    if(modale != null) {
+				    	
+				    	   let idbarcode = $('#idbc').text();
+				    	   $('#imprimer').modal('show');
+				    	   
+				    	   $("#bcTarget").barcode(idbarcode,"ean13",{barWidth:2, barHeight:40, output:"css",posX:100});
+				    	   document.getElementById('btnprint').focus();
+				    	   console.log('code barre: '+idbarcode);
+				    	   
+				    }
+					
+				}
+			  });
+    
+    
+    
     return false;
 }
+
+function setCouponValue(coupon, multi, _fecha) {
+	
+	var TR;
+	var tr1;
+	var tr2;
+	var tr3 = '';
+	var tr4 = '';
+	var tr5;
+	var tr6;
+	var tr7;
+	var tr8, tr9, tr10, tr11, tr12, tr13, tr14;
+	
+	$("#idbc").text(coupon.barcode);
+	$("#idpartner0").text(coupon.room);
+	var login = $("#login_pari").text();
+	
+	//TR = document.createElement("tr");
+	//$(TR).attr('colspan',3);
+	
+	console.log("Multi: "+multi)
+	
+	if (multi === 1) {
+		tr1 = '<tr><td style="text-align:left;" colspan="2">[1/1]&nbsp;simple</td><td style="text-align:center;"><span>Sel Cote</span></td></tr>';
+	}
+	else {
+		tr1 = '<tr><td style="text-align:left;" colspan="2">[1/'+multi+']&nbsp;multiple</td><td style="text-align:center;"><span>Sel Cote</span></td></tr>';
+	}
+	
+	tr2 = '<tr><td style="text-align:left;">Coupon Keno</td><td  style="text-align:center;">'+coupon.codepari+'</td><td  style="text-align:center;">'+coupon.eventscote+'</td></tr>';
+	
+	for(let cp=1; cp<=multi; cp++){
+	    
+		tr3 = tr3 + '<tr style="text-align:left;"><td  style="text-align:left;" colspan="3">'+_fecha[cp-1]+'</td></tr>';
+		tr3 = tr3 + '<tr style="text-align:center;"><td  style="text-align:left;">'+(coupon.nbEvents+cp-1)+'</td><td style="font-weight:bold;" colspan="2" >'+coupon.events+'</td></tr>';
+		
+	}
+	
+	tr5 = '<tr><td style="text-align:center;" colspan="3" >-----------------------------</td></tr>'
+	tr6 = '<tr><td  style="text-align:left;">Code Bonus:</td><td style="font-weight:bold;" colspan="2" >'+coupon.nbreCombi+'</td></tr>'
+	tr7 = '<tr><td  style="text-align:left;">Total mise:</td><td style="font-weight:bold;" colspan="2" >'+coupon.mtMise+'</td></tr>'
+	tr8 = '<tr><td  style="text-align:left;">Gain Maximum:</td><td style="font-weight:bold;" colspan="2" >'+coupon.gainMax+'</td></tr>'
+	tr9 = '<tr><td style="text-align:left;">Gain Minimum:</td><td style="font-weight:bold;" colspan="2" >'+coupon.gainMin+'</td></tr>'
+	tr10 = '<tr><td  style="text-align:left;">Combinaison:</td><td  style="font-weight:bold;" colspan="2" >'+multi+'</td></tr>'
+	tr11 = '<tr><td  style="text-align:left;">Boutique:</td><td style="font-weight:bold;" colspan="2" >'+coupon.room+'</td></tr>'
+	tr12 = '<tr><td style="text-align:left;" >Caissier:</td><td style="font-weight:bold;" colspan="2" class="login">'+login+'</td></tr>'
+	tr13 = '<tr><td style="text-align:left;" >Multiplicateur:</td><td style="font-weight:bold;" colspan="2" class="login">'+coupon.multiplicateur+'</td></tr>'
+	tr14 = '<tr><td style="text-align:center;word-break: break-all;" colspan="3" >Ce ticket est valable 07 jours, à compter du jour du dernier evènement. <span style="font-weight:bold;text-transform:capitalize;" id="idpartner0">'+coupon.room+'</span> vous remercie pour votre fidelité.</td></tr>'
+	
+	
+	//document.getElementById('sp_prono').appendChild(TR);
+	$('#coupon_keno').append(tr1);
+	$('#coupon_keno').append(tr2);
+	$('#coupon_keno').append(tr3);
+	//$('#coupon_keno').append(tr4);
+	$('#coupon_keno').append(tr5);
+	$('#coupon_keno').append(tr6);
+	$('#coupon_keno').append(tr7);
+	$('#coupon_keno').append(tr8);
+	$('#coupon_keno').append(tr9);
+	$('#coupon_keno').append(tr10);
+	$('#coupon_keno').append(tr11);
+	$('#coupon_keno').append(tr12);
+	$('#coupon_keno').append(tr13);
+	$('#coupon_keno').append(tr14);
+	
+}
+
 function checkCoupon(){
 	console.log("load");
 	document.getElementById('barcode').focus();
 }
-function check_barcode(evt){
-	//console.log("je teste le code avec le barre code");
-	evt.preventDefault();
-			var code = $("#barcode").val();
-			
-			document.getElementById('coupon_error').innerHTML = "";
-		//	console.log("code: "+code);
-			if(code ==='' || code.length < 10){
-			//if(code ==='' || code.length != 10){
-				//console.log('error');
-				//document.getElementById('coupon_error').innerHTML = "code ticket incorrect";
-				return;
-			}
 
-			//submit du formulaire
-			document.forms["form_ver"].submit();
-		//	console.log('no error');
-			
+function check_barcode(evt){
+
+	
+	var code = $("#barcode").val();
+	var vers = $("#versement").val();
+	
+	document.getElementById('coupon_error').innerHTML = "";
+	console.log("code input: "+code);
+	
+	if(code ==='' || code.length < 13){
+		evt.preventDefault();
+	//if(code ==='' || code.length != 10){
+		//console.log('error');
+		//document.getElementById('coupon_error').innerHTML = "code ticket incorrect";
+		return;
+	}
+
+	//submit du formulaire
+	//document.forms["form_ver"].submit();
+	callCheckSlip(code, vers);
+		
 }
 function verif_coupon(evt) {
 
     let accept = '0123456789';
     let keyCode = evt.which ? evt.which : evt.keyCode;
-    
+	
+   // console.log("evt.keyCode: "+evt.keyCode);
     if (accept.indexOf(String.fromCharCode(keyCode)) >= 0 || evt.keyCode===13) {
         var code = $("#barcode").val();
-        console.log("le code: "+code);
+        var vers = $("#versement").val();
         
         
-//    	if (evt.keyCode === 13) {
-//			evt.preventDefault();
-//			var code = $("#barcode").val();
-//			
-//			document.getElementById('coupon_error').innerHTML = "";
-//			console.log("code: "+code);
-//			if(code ===''){
-//			//if(code ==='' || code.length != 10){
-//				console.log('error');
-//				document.getElementById('coupon_error').innerHTML = "code ticket incorrect";
-//				return;
-//			}
-//
-//			//submit du formulaire
-//			document.forms["form_ver"].submit();
-//		//	$.ajax({
-//			//	url:"versement",
-//			//	type:"POST",
-//			//	data:{
-//			//			'barcode':code,
-//						
-//			//		},
-//			//	success:function(result){
-//				//	$.each(result, function(index, value){
-//				//		$('.pari_state').toggleClass('erreur', true);
-//				//		$('.pari_state').toggleClass('succes', false);
-//				//		$('.pari_state').empty();
-//				//		$('.pari_state').prepend("Non Connecté");
-//				//		$('.canprint').prop('disabled', true);
-//				//		$('.endshift').prop('disabled', true);
-//				//	});
-//			//	}
-//			//  });
-//
-//			console.log('no error');
-//			//document.getElementById('print').focus();
-//			//$('#myModal').modal('show');
-//
-//		}
+        
+    	if (evt.keyCode === 13) {
+			evt.preventDefault();
+			console.log("le code: "+code+" versement: "+vers);
+			callCheckSlip(code, vers);
+
+		}
       return true;
     } else {
       //not an accept character
         return false;
     }
+}
+
+function do_effVers() {
+	var vers = $("#versement").val();
+	var code = $("#barcode").val();
+	
+	callCheckSlip(code, vers);
+}
+function callCheckSlip(code, vers) {
+		
+		var code = $("#barcode").val();
+			
+			document.getElementById('coupon_error').innerHTML = "";
+			console.log("code: "+code+" Versement: "+vers);
+			if(code ===''){
+				console.log('error');
+				document.getElementById('coupon_error').innerHTML = "code ticket incorrect";
+				return;
+			}
+
+			//submit du formulaire
+			//document.forms["form_ver"].submit();
+			$.ajax({
+				url:"versement",
+				type:"GET",
+				data:{
+						'barcode':code,
+						'versement':vers
+					},
+				success:function(result){
+//					console.log('result evenements: '+JSON.stringify(result.evenements));
+//					console.log('result drawData: '+JSON.stringify(result.drawData));
+//					console.log('result multiplicité: '+JSON.stringify(result.multiplicite));
+//					console.log('result Resultat: '+JSON.stringify(result.resultat));
+					
+					var span = document.getElementById("coupon_error");
+				
+					result.resultat === 'Ticket perdant' ? span.style.color = "red" : span.style.color = "green"
+					$('#coupon_error').prepend(result.resultat);
+				    addlinesTableVers(result);
+				    
+				    if (result.resultat === 'Ticket gagnant' || result.resultat === 'Ticket bonus gagnant') {
+						$("#effVers").prop("disabled",false);
+				    }
+				    else{
+						$("#effVers").prop("disabled",true);
+					}
+				}
+			  });
+
+			console.log('no error');
+
 }
 
 
@@ -1521,6 +1696,88 @@ function addlinesTable_pari(value, multi){
 		$(TD3).toggleClass('col-xs-3', true);
 		$(TD4).toggleClass('col-xs-3', true);
 	}
+} 
+
+function addlinesTableVers(value){
+	
+	var events = value.evenements;
+	var drawData = value.drawData;
+	var multi = value.multiplicite;
+	var statut = value.resultat;
+	var etat;
+	$('.t_pay').find('tbody').empty();
+	
+	
+  var res = drawData['prix_total'] !== undefined ? drawData['prix_total'] : " ";
+  document.getElementById('prix').value = res;
+  
+  res = drawData['montant'] !== undefined ? drawData['montant'] : " ";
+  document.getElementById('mise').value = res;
+  
+  res = drawData['gain_total'] !== undefined ? drawData['gain_total'] : " ";
+  document.getElementById('versement').value = res;
+	console.log('MULTI: '+multi);
+	
+  for(let i=0;i<multi;i++){
+
+	let TR = document.createElement("tr");
+	let TD1= document.createElement("td");
+	let TD2= document.createElement("td");
+	let TD3= document.createElement("td");
+	let TD4= document.createElement("td");
+	let TD5= document.createElement("td");
+	var num = i + parseInt(drawData['draw_num']);
+	let txt1 = document.createTextNode(num);
+	var expr = (events[i])['cote'] !== undefined ? (events[i])['cote'] : 0;
+	let txt2 = document.createTextNode(expr);
+	let txt3 = document.createTextNode(drawData['cparil']);
+	let txt4 = document.createTextNode(drawData['player_choice']);
+	expr = (events[i])['resultTour'] !== undefined ? (events[i])['resultTour'] : '';
+	let txt5 = document.createTextNode(expr);
+	$('.pari_state').toggleClass('erreur', true);
+	TD1.appendChild(txt1);
+	TD2.appendChild(txt2);
+	TD3.appendChild(txt3);
+	TD4.appendChild(txt4);
+	TD5.appendChild(txt5);
+	
+
+	TR.appendChild(TD1);
+	TR.appendChild(TD2);
+	TR.appendChild(TD3);
+	TR.appendChild(TD4);
+	TR.appendChild(TD5);
+		
+		document.getElementById('res_tirage').appendChild(TR);
+		$(TD1).addClass('col-md-1');
+		$(TD2).toggleClass('col-md-1', true);
+		$(TD3).toggleClass('col-md-2', true);
+		$(TD4).toggleClass('col-md-3', true);
+		$(TD5).toggleClass('col-md-5', true);
+		
+		etat = (events[i])['etat'];
+		
+		
+	    if (etat == 'false') {
+			$(TD1).toggleClass('erreur', true);
+			//$(TD2).toggleClass('erreur', true);
+			//$(TD3).toggleClass('erreur', true);
+			//$(TD4).toggleClass('erreur', true);
+			//$(TD5).toggleClass('erreur', true);
+		} 
+		else if (etat == 'true') {
+			$(TD1).toggleClass('succes', true);
+			//$(TD2).toggleClass('succes', true);
+			//$(TD3).toggleClass('succes', true);
+			//$(TD4).toggleClass('succes', true);
+			//$(TD5).toggleClass('succes', true);
+		}
+		else {
+			$(TD1).toggleClass('pending', true);
+		}
+		
+	}
+	
 } 
 
 function addlinesTable_spin(value, multi){

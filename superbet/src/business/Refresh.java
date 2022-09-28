@@ -174,68 +174,73 @@ public class Refresh implements Runnable {
 				//recuperation de lobjet keno
 				b =  supergameAPI.getSuperGameDAO().retrieveCombi(Params.url, coderace);	
 			//	System.out.println("KRES : "+UtileKeno.drawKeno);
-				UtileKeno.drawKeno = b.getDrawnumbK();
-				UtileKeno.multiplicateur = b.getMultiplicateur();
-				UtileKeno.drawnumk = b.getDrawnumK();
-		//		System.out.println("KRES drawnumk: "+UtileKeno.drawnumk);
-				UtileKeno.str_draw_combi = b.getStr_draw_combi();
-			//	UtileKeno.gamestate = b.getGameState();
-				UtileKeno.bonuskamount = b.getBonusKamount();
-			//	System.out.println("Refresh - state: "+UtileKeno.gamestate+" search_draw: "+search_draw);
-				if(UtileKeno.gamestate == 3) {
-					UtileKeno.canbet = true;
-					UtileKeno.messagek = "pari ouvert - tirage en cours";
-				}
-				
-				if((UtileKeno.gamestate == 2)  && !search_draw) {
-					//UtileKeno.drawKeno = "";
-				//	UtileKeno.drawKeno = b.getDrawnumbK();
+				if (b != null) {
 					
-					System.out.println("Refresh - time: "+UtileKeno.timeKeno+" search_draw: "+search_draw);
-					if(!UtileKeno.drawKeno.equalsIgnoreCase("")) {
-						System.out.println("Refresh - drawKeno: "+b.getDrawnumK()+"  "+UtileKeno.drawKeno);
-						search_draw = true;
-						k = new Keno();
-						k.setBonusKamount(""+b.getBonusKamount());
-						k.setDrawnumbK(UtileKeno.drawKeno);
-						k.setHeureTirage(b.getHeureTirage());
-						k.setDrawnumK(""+b.getDrawnumK());
-						k.setMultiplicateur(b.getMultiplicateur());
-						k.setCoderace(coderace);
-						int n = kenoDao.create(k);
-						System.out.println("line cree: "+n);
-						
-					}
-					
-				}
-			/*	else if(UtileKeno.gamestate == 1 && search_draw) {
-					search_draw = false;
-					UtileKeno.messagek = "pari ouvert";
-					countDown = true;
-				}
-				*/
-				while(!countDown) {
-
-				//	System.out.println("Tirage en cours: "+drawCount);
-					Thread.sleep(5000);
-					drawCount = drawCount - 5;
+					UtileKeno.drawKeno = b.getDrawnumbK();
+					UtileKeno.multiplicateur = b.getMultiplicateur();
+					UtileKeno.drawnumk = b.getDrawnumK();
+			//		System.out.println("KRES drawnumk: "+UtileKeno.drawnumk);
+					UtileKeno.str_draw_combi = b.getStr_draw_combi();
+				//	UtileKeno.gamestate = b.getGameState();
+					UtileKeno.bonuskamount = b.getBonusKamount();
+				//	System.out.println("Refresh - state: "+UtileKeno.gamestate+" search_draw: "+search_draw);
 					if(UtileKeno.gamestate == 3) {
 						UtileKeno.canbet = true;
 						UtileKeno.messagek = "pari ouvert - tirage en cours";
-						b =  supergameAPI.getSuperGameDAO().retrieveCombi(Params.url, coderace);	
-						UtileKeno.drawKeno = b.getDrawnumbK();
-						UtileKeno.multiplicateur = b.getMultiplicateur();
-						UtileKeno.drawnumk = b.getDrawnumK();
-				//		System.out.println("KRES drawnumk: "+UtileKeno.drawnumk);
-						UtileKeno.str_draw_combi = b.getStr_draw_combi();
-						UtileKeno.bonuskamount = b.getBonusKamount();
 					}
-					if(UtileKeno.gamestate == 1) {
-						countDown = true;
+					
+					if((UtileKeno.gamestate == 2)  && !search_draw) {
+						//UtileKeno.drawKeno = "";
+					//	UtileKeno.drawKeno = b.getDrawnumbK();
+						
+						//System.out.println("Refresh - time: "+UtileKeno.timeKeno+" search_draw: "+search_draw);
+						if(!UtileKeno.drawKeno.equalsIgnoreCase("")) {
+							//System.out.println("Refresh - drawKeno: "+b.getDrawnumK()+"  "+UtileKeno.drawKeno);
+							search_draw = true;
+							k = new Keno();
+							k.setBonusKamount(""+b.getBonusKamount());
+							k.setDrawnumbK(UtileKeno.drawKeno);
+							k.setHeureTirage(b.getHeureTirage());
+							k.setDrawnumK(""+b.getDrawnumK());
+							k.setMultiplicateur(b.getMultiplicateur());
+							k.setCoderace(coderace);
+							int n = kenoDao.create(k);
+							System.out.println("line local cree: "+n);
+							
+						}
+						
+					}
+				/*	else if(UtileKeno.gamestate == 1 && search_draw) {
 						search_draw = false;
-						UtileKeno.canbet = true;
+						UtileKeno.messagek = "pari ouvert";
+						countDown = true;
 					}
+					*/
+					while(!countDown) {
+
+					//	System.out.println("Tirage en cours: "+drawCount);
+						Thread.sleep(5000);
+						drawCount = drawCount - 5;
+						if(UtileKeno.gamestate == 3) {
+							UtileKeno.canbet = true;
+							UtileKeno.messagek = "pari ouvert - tirage en cours";
+							b =  supergameAPI.getSuperGameDAO().retrieveCombi(Params.url, coderace);	
+							UtileKeno.drawKeno = b.getDrawnumbK();
+							UtileKeno.multiplicateur = b.getMultiplicateur();
+							UtileKeno.drawnumk = b.getDrawnumK();
+					//		System.out.println("KRES drawnumk: "+UtileKeno.drawnumk);
+							UtileKeno.str_draw_combi = b.getStr_draw_combi();
+							UtileKeno.bonuskamount = b.getBonusKamount();
+						}
+						if(UtileKeno.gamestate == 1) {
+							countDown = true;
+							search_draw = false;
+							UtileKeno.canbet = true;
+						}
+					}
+					
 				}
+				
 	/*			
 				while(isDraw) {
 					System.out.println("isDraw: "+drawCount);
@@ -293,7 +298,6 @@ public class Refresh implements Runnable {
 	}
 	
 	public void stop(){
-		System.out.println("Arret");
 		this.alive = false;
 		thread.stop();
 	}

@@ -205,7 +205,8 @@
             
          <!-- Modal -->
              
-                  <div class="modal fade" tabindex="-1" aria-hidden="true" id="${k_form.imprimer == 'imprimer' ? 'imprimer':'myModale'}" role="dialog">
+                  <div class="modal fade" tabindex="-1" aria-hidden="true" id="imprimer" role="dialog">
+				  <!--<div class="modal fade" tabindex="-1" aria-hidden="true" id="${k_form.imprimer == 'imprimer' ? 'imprimer':'myModale'}" role="dialog">-->
                     <div class="modal-dialog modal-sm">
                     
                       <!-- Modal content-->
@@ -223,8 +224,9 @@
                          <!--<div style="margin-left:1px;width:100%;padding-top:5px;" id="bcTarget">${coupon.barcode}</div>-->
                         </div>
                         <div class="modal-body" style="text-align:center;width:inherit;margin:0px;">
-                        	<table class="ticket_keno" style="width:280px;margin:3px;padding-left:5px;border-top:1px solid black;border-bottom:1px solid black;">
-				                <tr>
+                        	<table class="ticket_keno" id="coupon_keno" style="width:280px;margin:3px;padding-left:5px;border-top:1px solid black;border-bottom:1px solid black;">
+				               <!-- 
+								<tr>
 				                    <td style="text-align:left;" colspan="2">
 				                     <c:choose>
 				                          <c:when test="${k_form.multiplicite > 1}">
@@ -245,8 +247,8 @@
 				                </tr>
 				                <c:forEach var="i" begin="1" end="${k_form.multiplicite}">
 					                <tr style="text-align:left;">
-					                	<!--<td  style="text-align:left;" colspan="3">${coupon.horaYfecha}</td>-->
-                            <td  style="text-align:left;" colspan="3">${k_form._fecha[i-1]}</td>
+					                	
+                                       <td  style="text-align:left;" colspan="3">${k_form._fecha[i-1]}</td>
 					                </tr>
 					                <tr style="text-align:center;">
 					                    <td  style="text-align:left;">${coupon.nbEvents+i-1}</td>
@@ -293,6 +295,8 @@
 				                    </td>
 				                    
 				                </tr>
+								
+								-->
 				            </table>
               
                         </div>
@@ -415,7 +419,7 @@
        <div class="row">
         <div class="col-sm-2 code_barre">
            <h3>CODE BARE</h3>
-           <span id="coupon_error" style="color:${v_form.resultat == 'Ticket perdant' ? 'red':'green'};font-style:plain;font-weight:bold;">${v_form.resultat}</span><br/>
+           <span id="coupon_error" class="coupon_error" style="color:${v_form.resultat == 'Ticket perdant' ? 'red':'green'};font-style:plain;font-weight:bold;">${v_form.resultat}</span><br/>
         </div>
         <div class="col-sm-10 check_ticket">
            <!--<table class="table table-fixed  table-paid">-->
@@ -431,7 +435,7 @@
                   <!--  <th class="col-md-1">Resultat</th>-->
                 </tr>
              </thead>
-              <tbody class='t_fixed_hedears'>
+              <tbody class='t_fixed_hedears' id="res_tirage">
                <c:forEach var="i" begin="1" end="${v_form.multiplicite}">
 	             <!--   <tr class="${(v_form.evenements[i-1])['etat'] == 'true' ? 'succes':'erreur'}">-->
 	              <tr>
@@ -476,7 +480,7 @@
            <table class="paiement_coupon">
               <tr>
                   <td class="col-xs-1"><label for="prix">Total Prix</label></td>
-                  <td class="col-xs-1"><input type="text" id="prix"size="20" maxlength="60" disabled value="${v_form.drawData['prix_total']}" autocomplete="off"/></td>
+                  <td class="col-xs-1"><input type="text" id="prix" size="20" maxlength="60" disabled value="${v_form.drawData['prix_total']}" autocomplete="off"/></td>
 
                   <td class="col-xs-1"><label for="mise">Total Mise</label></td>
                   <td class="col-xs-1"><input type="text" id="mise" size="20" maxlength="60" disabled value="${v_form.drawData['montant']}" autocomplete="off"/></td>
@@ -490,13 +494,13 @@
            
               <tr>
                  <td class="col-xs-1"><label for="prix">Code Barre</label></td>
-                 <td class="col-xs-1"><input type="text" size="20" style="text-align:center;" maxlength="15" id="barcode" name="barcode" value="${v_form.drawData['barcode']}" onkeypress="return verif_coupon(event);" oninput="return check_barcode(event);" autocomplete="off"/></td>
+                 <td class="col-xs-1"><input type="text" size="20" style="text-align:center;" maxlength="15" id="barcode" name="barcode" onkeypress="return verif_coupon(event);" oninput="return check_barcode(event);" autocomplete="off"/></td>
 
                  <td class="col-xs-1"><label for="mise">Code Paiement</label></td>
                  <td class="col-xs-1"><input type="text" id="paiement" size="20" maxlength="60" value="" disabled autocomplete="off"/></td>
 
-                 <td class="col-xs-1"><button type="submit" id="btn_barcode" onclick="verifCoupon()" class="btn btn-primary btn-block">Valider</button></td>
-                 <td class="col-xs-1"><button type="submit" class="btn btn-primary btn-block" ${(v_form.resultat == 'Ticket gagnant' || v_form.resultat == 'Ticket bonus gagnant') ? '' : 'disabled'} >Effectuer Versement</button></td>
+                 <td class="col-xs-1"><button type="submit" id="btn_barcode" onclick="verifCoupon()" disabled class="btn btn-primary btn-block">Valider</button></td>
+                 <td class="col-xs-1"><button type="button" id="effVers" class="btn btn-primary btn-block btnVers" onclick="return do_effVers();">Effectuer Versement</button></td>
 
                  <td class="col-xs-1"><button type="button" id="void_pay" class="btn btn-primary btn-block" onclick="clear_form()">Annuler</button></td>
                  <td class="col-xs-5"></td>
@@ -1371,22 +1375,22 @@
       let alea_choice;
 
 
-       var modale = document.getElementById('imprimer');
-       if(modale != null){
-    	 //  console.log('modal');
+//        var modale = document.getElementById('imprimer');
+//        if(modale != null){
+//     	 //  console.log('modal');
     	   
-    	   let idbarcode = $('#idbc').text();
-    	   //$('#idbc').css('display','none');
-    	   //console.log('code barre: '+idbarcode);
-    	   //$('#bcTarget').barcode(idbarcode,'ean13');code11
-    	   $('#imprimer').modal('show');
+//     	   let idbarcode = $('#idbc').text();
+//     	   //$('#idbc').css('display','none');
+//     	   //console.log('code barre: '+idbarcode);
+//     	   //$('#bcTarget').barcode(idbarcode,'ean13');code11
+//     	   $('#imprimer').modal('show');
     	   
-    	   $("#bcTarget").barcode(idbarcode,"code11",{barWidth:2, barHeight:30, output:"css",posX:100});
-    	   document.getElementById('btnprint').focus();
-    	   //$("#btnprint").click();
-    	   console.log('code barre: '+idbarcode);
+//     	   $("#bcTarget").barcode(idbarcode,"ean13",{barWidth:2, barHeight:40, output:"css",posX:100});
+//     	   document.getElementById('btnprint').focus();
+//     	   //$("#btnprint").click();
+//     	   console.log('code barre: '+idbarcode);
     	   
-       }
+//        }
        
        //impression spin 2 win
        var pmodale = document.getElementById('p_imprimer');
@@ -1423,6 +1427,7 @@
           // on vide d'abord le tableau
           $('.t_pari').find('tbody').empty();
           document.getElementById("icode").innerHTML = "";
+		  $('#alea_nbre').val('');
        });
        $('#clear_sp').click(function(){
            console.log('clear');
@@ -1746,6 +1751,8 @@
 			     formValues: false 
 			});
 		}*/
+		$("#effVers").prop("disabled",true); // disabled versement button
+		$("#print").prop("disabled",true); //disabled keno print button
 
     </script>
    </body>

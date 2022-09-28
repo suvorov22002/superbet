@@ -15,6 +15,9 @@ body {
 	display:table !important;
 }
 
+.btnVers {
+	active:false
+}
 .succes {
     background-color: #009920;
 }
@@ -88,6 +91,14 @@ body {
 
 .ishift{
   color: blue;
+}
+
+.win{
+  color: green;
+}
+
+.lose{
+  color: red;
 }
 
 /* administration css*/

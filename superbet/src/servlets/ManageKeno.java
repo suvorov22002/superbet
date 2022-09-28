@@ -8,8 +8,12 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import com.google.gson.Gson;
+
+import business.ManageKenoForm;
 import modele.Caissier;
 import modele.Coupon;
+import modele.SlipForm;
 import superbetDAO.AirtimeDAO;
 import superbetDAO.ConfigDAO;
 import superbetDAO.DAOFactory;
@@ -20,7 +24,6 @@ import superbetDAO.Misek_tempDAO;
 import superbetDAO.MisetDAO;
 import superbetDAO.PartnerDAO;
 import superbetDAO.UtilDAO;
-import business.ManageKenoForm;
 
 public class ManageKeno extends HttpServlet {
 	
@@ -54,7 +57,33 @@ public class ManageKeno extends HttpServlet {
 	}
 	
 	public void doGet(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException{
-		this.getServletContext().getRequestDispatcher(VUE_CAISSIER).forward(req, res);
+		
+		SlipForm slip = new SlipForm();
+		
+		HttpSession session = req.getSession();
+	    Caissier caissier = (Caissier)session.getAttribute("caissier");
+	    if(caissier != null){
+	    	ManageKenoForm k_form = new ManageKenoForm(kenoDao,misetDao,utilDao,effchoicekDao,misekDao,misektpDao,partnerDao,airtimeDao,configDao);
+			Coupon coupon = k_form.print(req, caissier);
+			slip.setCoupon(coupon);
+			slip.set_fecha(k_form.get_fecha());
+			slip.setMultiplicite(k_form.getMultiplicite());
+			slip.setResultat(k_form.getResultat());
+			slip.setPath(req.getContextPath());
+			
+	    }
+	    else {
+	    	session.invalidate();
+	    	res.sendRedirect(req.getContextPath()+VUE);
+	    }
+		
+	    res.setContentType("application/json; charset=UTF-8");
+		res.setHeader("Cache-Control", "no-cache");
+	    
+		String json = new Gson().toJson(slip);
+		res.getWriter().write(json);
+		
+		//this.getServletContext().getRequestDispatcher(VUE_CAISSIER).forward(req, res);
 	}
 	
 	public void doPost(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException{
@@ -65,12 +94,12 @@ public class ManageKeno extends HttpServlet {
 	    if(caissier != null){
 	    	ManageKenoForm k_form = new ManageKenoForm(kenoDao,misetDao,utilDao,effchoicekDao,misekDao,misektpDao,partnerDao,airtimeDao,configDao);
 			Coupon coupon = k_form.print(req, caissier);
-			if(coupon !=null){
-				System.out.println("IMPRIMER: "+k_form.getImprimer()+" MULTI: "+k_form.getMultiplicite());
-				System.out.println("PARI: "+coupon.getCodepari()+" COTE: "+coupon.getEventscote());
-			}
+//			if(coupon !=null){
+//				System.out.println("IMPRIMER: "+k_form.getImprimer()+" MULTI: "+k_form.getMultiplicite());
+//				System.out.println("PARI: "+coupon.getCodepari()+" COTE: "+coupon.getEventscote());
+//			}
 			
-			System.out.println("PATH: "+req.getContextPath());
+//			System.out.println("PATH: "+req.getContextPath());
 			
 			req.setAttribute( ATT_FORM, k_form );
 			req.setAttribute( ATT_COUPON, coupon );

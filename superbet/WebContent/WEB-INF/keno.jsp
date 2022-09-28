@@ -315,6 +315,7 @@
 								bonus_1 = (value.bonus1).split("_");
 								bonus_2 = (value.bonus2).split("_");
 								bonus_3 = (value.bonus3).split("_");
+								console.log("arrayLastBonus: "+value.bonus3);
 								arrayLastBonus = [
 									{
 										coderace:bonus_1[0],

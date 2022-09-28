@@ -1,5 +1,5 @@
 INDEX VERSION 1.131
-E:\projets\eclipse\superbet\.metadata\.plugins\org.eclipse.jst.jsp.core\jspsearch\2404556370.index
+D:\projets_JC\superbet\.metadata\.plugins\org.eclipse.jst.jsp.core\jspsearch\2404556370.index
 \superbet\src
-E:\projets\eclipse\superbet\.metadata\.plugins\org.eclipse.jst.jsp.core\jspsearch\784364876.index
+D:\projets_JC\superbet\.metadata\.plugins\org.eclipse.jst.jsp.core\jspsearch\784364876.index
 \superbet\src

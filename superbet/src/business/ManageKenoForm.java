@@ -136,10 +136,10 @@ public final class ManageKenoForm {
 		betk = new BetTicketK();
 		
 		EDraw = "";
-		System.out.println("caissier.getPartner(): "+caissier.getPartner());
+	//	System.out.println("caissier.getPartner(): "+caissier.getPartner());
 		Partner partner;
 	//	partner = partnerDao.findById(Integer.parseInt(""+caissier.getPartner()));
-		ArrayList<Partner> partners = partnerDao.getAllPartners();
+		List<Partner> partners = partnerDao.getAllPartners();
 		
 		if(partners.size() != 1) {
 			return null;
@@ -201,7 +201,7 @@ public final class ManageKenoForm {
 					mt = Double.parseDouble(amount);
 					mt = mt * tp;
 					mt = (double)((int)(mt*100))/100;
-					System.out.println("mt: "+mt+"  1mount: "+amount+" BALANCE: "+balance);
+			//		System.out.println("mt: "+mt+"  1mount: "+amount+" BALANCE: "+balance);
 			//		System.out.println("Credit insuffisant: "+(balance < mt));
 					if(balance < mt){
 						resultat = "Credit insuffisant";
@@ -282,7 +282,7 @@ public final class ManageKenoForm {
 						betk.setCaissier(caissier.getIdCaissier());
 						betk.setHeureMise(""+tms);
 						betk.setDateMise(txtDate);
-						System.out.println("k_max.getDrawnumK(): "+k_max.getDrawnumK());
+//						System.out.println("k_max.getDrawnumK(): "+k_max.getDrawnumK());
 						betk.setDrawnumk(Integer.parseInt(k_max.getDrawnumK()));
 						betk.setXmulti((xmulti.equalsIgnoreCase("Oui")) ? 1 : 0);
 						
@@ -363,11 +363,12 @@ public final class ManageKenoForm {
 							
 							crd.setRoom(coderace);
 							crd.setBarcode(b.getBarcode());
+							//crd.setBarcode("770008849808");
 							crd.setCodepari(codeParil);
 							crd.setEventscote(""+typejeu);
 							crd.setEvents(EDraw);
 							crd.setGainMax(getBigWin(mt));
-							crd.setGainMin(gain_min);
+							crd.setGainMin(getMinWin(mt, multiplicite));
 							crd.setHoraYfecha(fecha+"  "+hora);
 							crd.setIdTicket(""+b.getIdMiseT());
 							crd.setMtMise(""+b.getSummise());
@@ -842,7 +843,7 @@ public final class ManageKenoForm {
   	     		
   	           else{
   	        	   //pari simple 
-  	        	   System.out.println("CHOIX: "+ichoice);
+  	        	  // System.out.println("CHOIX: "+ichoice);
   	        	   __echar = ichoice.split("\\.");
   	        	   System.out.println("CHOIX LENGTH: "+__echar.length);
   					_echar = new String[__echar.length];
@@ -1161,6 +1162,15 @@ public final class ManageKenoForm {
 	  
 	   mts = max * amount;
 	   mts = (double)((int)(mts*100))/100;
+	   return mts;
+  }
+  
+  private double getMinWin(double amount, int multi) {
+	   int mts = 0;
+	   double max = typejeu;
+	   
+	   mts = (int) ((max * amount) / multi);
+	   //mts = ((int)(mts*100))/100;
 	   return mts;
   }
   

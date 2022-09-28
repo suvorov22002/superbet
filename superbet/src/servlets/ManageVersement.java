@@ -8,9 +8,12 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import com.google.gson.Gson;
+
 import business.ManageVersForm;
 import modele.Caissier;
 import modele.Versement;
+import modele.Vform;
 import superbetDAO.AirtimeDAO;
 import superbetDAO.DAOFactory;
 import superbetDAO.EffChoicekDAO;
@@ -41,6 +44,9 @@ public class ManageVersement extends HttpServlet {
 	public static final String ATT_FORM = "v_form";
 	public static final String VUE_CAISSIER = "/WEB-INF/caishier.jsp";
 	public static final String URL_REDIRECTION = "./login.jsp";
+	
+	private static final String FIELD_CODE = "barcode";
+	private static final String FIELD_VERS = "versement";
 	
 	private KenoDAO kenoDao;
 	private SpinDAO spinDao;
@@ -84,8 +90,43 @@ public class ManageVersement extends HttpServlet {
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doGet(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
-		// TODO Auto-generated method stub
-		this.getServletContext().getRequestDispatcher(VUE_CAISSIER).forward(req, res);
+		
+		Caissier caissier = null;
+		Vform vf = new Vform();
+		
+		/* Récupération de la session depuis la requête */
+	    HttpSession session = req.getSession();
+	    caissier = (Caissier)session.getAttribute("caissier");
+	    
+	    if(caissier != null) {
+	    	
+	    	ManageVersForm v_form = new ManageVersForm(kenoDao,spinDao,misetDao,utilDao,effchoicekDao,misekDao,effchoicepDao,misepDao,
+	    			verstDao, partnerDao, misektpDao, airtimeDao);
+	    		
+	    		Versement vers = v_form.traiterTicket(req, caissier);
+	    		vf.setDrawData(v_form.getDrawData());
+	    		vf.setEvenements(v_form.getEvenements());
+	    		vf.setMultiplicite(v_form.getMultiplicite());
+	    		vf.setResultat(v_form.getResultat());
+	    		
+	    		//System.out.println("MULTI: "+v_form.getEvenements());
+	    		//req.setAttribute("state", 4);
+	    		
+	    		
+	    }
+	    else {
+	    	session.invalidate();
+			res.sendRedirect(URL_REDIRECTION);
+	    }
+	    
+	    
+		res.setContentType("application/json; charset=UTF-8");
+		res.setHeader("Cache-Control", "no-cache");
+	    
+		String json = new Gson().toJson(vf);
+		res.getWriter().write(json);
+		
+		//this.getServletContext().getRequestDispatcher(VUE_CAISSIER).forward(req, res);
 	}
 
 	/**
@@ -115,9 +156,6 @@ public class ManageVersement extends HttpServlet {
 			res.sendRedirect(URL_REDIRECTION);
 	    }
 
-		
-		
-		
 	}
 
 }

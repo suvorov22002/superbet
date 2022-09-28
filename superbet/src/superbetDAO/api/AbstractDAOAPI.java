@@ -350,17 +350,23 @@ public abstract class AbstractDAOAPI<T> {
 	                
 	                //Verification du code reponse
 	                resp_code = json.getString("entity");
-	                //System.out.println("resp_code "+resp_code);
+	                System.out.println("resp_code "+resp_code);
 	                
 	                JSONObject j = new JSONObject(resp_code);
 	                
 	                String code = j.getString("code");
-	                //System.out.println("CODE: "+code);
-//	                if(!code.equalsIgnoreCase("200")) {
-//	                	betk.setMessage(j.getString("message"));
-//	                	return betk;
-//	                }
+	               
+	                System.out.println("CODE: "+code);
+//	                if("503".equalsIgnoreCase(code) || "030".equalsIgnoreCase(code)  
+//	                		|| "032".equalsIgnoreCase(code) || "035".equalsIgnoreCase(code)) {
+	                if("503".equalsIgnoreCase(code) || "031".equalsIgnoreCase(code)) {
+	                	betk.setMessage(j.getString("message") );
+	                	return betk;
+                    }
+	                
+	                
 	                JSONObject betkObject = j.getJSONObject("btick");
+	                System.out.println("RESULTAT: "+betkObject);
 	                betk = this.mapToBetTicket(betkObject);
 	                betk.setMessage(j.getString("message"));
 	           
@@ -1277,7 +1283,7 @@ public abstract class AbstractDAOAPI<T> {
 	                }
 	                
 	                String retSrc = j.getString("data");
-	                System.out.println(retSrc);
+	                //System.out.println(retSrc);
 	                JSONObject jsonObj = new JSONObject(retSrc.toString());
 	                
 	                if(jsonObj.has("miserk")) {
@@ -2349,6 +2355,67 @@ public abstract class AbstractDAOAPI<T> {
 		  }
 	}
     
+    public List<KenoRes> lDraw(String url, Long coderace) throws ClientProtocolException, IOException, JSONException, URISyntaxException, DAOAPIException {
+    	
+    	List<KenoRes> kenres = null;
+    	
+    	String resp_code;
+		HttpGet getRequest = new HttpGet(url+"/last-draw/"+coderace);
+		// add request parameter, form parameters
+		getRequest.setHeader("content-type", "application/json");
+		
+		try (CloseableHttpResponse response = this.getClosableHttpClient().execute(getRequest)) {
+        	
+        	HttpEntity entity = null;
+        	
+        	try{
+        		entity = response.getEntity();
+        		
+        		if (entity != null) {
+        			
+	        		String content = EntityUtils.toString(entity);
+	        	//	System.out.println("result "+content);
+	        		if(!isValidJson(content)) {
+	        			return null;
+	        		}
+	                JSONObject json = new JSONObject(content);
+	                
+	                //Verification du code reponse
+	                resp_code = json.getString("entity");
+	              
+	                JSONObject j = new JSONObject(resp_code);
+	                
+	                String code = j.getString("code");
+	                if(!code.equalsIgnoreCase("200")) {
+	                	return null;
+	                }
+	                
+	                String retSrc = j.getString("data");
+	                JSONObject jsonObj = new JSONObject(retSrc.toString());
+	                
+	                if(jsonObj.has("bonus")) {
+	                	String list_json = jsonObj.getString("bonus");
+	                	JSONArray jObj = new JSONArray(list_json.toString());
+	                	
+	        			int n = jObj.length();
+	        			kenres = new ArrayList<>(n);
+	        			
+	        			for(int i=0 ; i< n ; i++) {
+	        				JSONObject jo = jObj.getJSONObject(i);
+	        				//System.out.println("tickets "+jo);
+	        				kenres.add(this.mapToKenoRes(jo));
+	        			}
+	                	
+	                }   	           
+    			}
+        	}
+        	catch(Exception e) {
+        		e.printStackTrace();
+        	}
+			return kenres;
+		}
+	}
+    
     public List<KenoRes> bonus(String url, Long coderace) throws ClientProtocolException, IOException, JSONException, URISyntaxException, DAOAPIException {
     	
     	List<KenoRes> kenres = null;
@@ -2368,7 +2435,7 @@ public abstract class AbstractDAOAPI<T> {
         		if (entity != null) {
         			
 	        		String content = EntityUtils.toString(entity);
-	        		System.out.println("result "+content);
+	        	//	System.out.println("result "+content);
 	        		if(!isValidJson(content)) {
 	        			return null;
 	        		}

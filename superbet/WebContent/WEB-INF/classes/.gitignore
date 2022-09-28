@@ -1,5 +1,8 @@
+/Exception/
+/business/
+/config/
+/database/
+/modele/
 /servlets/
 /superbetDAO/
 /superbetDAOImpl/
-/business/
-/modele/
