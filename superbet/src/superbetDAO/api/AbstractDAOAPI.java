@@ -277,7 +277,7 @@ public abstract class AbstractDAOAPI<T> {
 	
 	public abstract String getUrl();
 
-	public BetTicketK sendPostSlip(String url, BetTicketK slip) throws ClientProtocolException, IOException, JSONException, URISyntaxException, DAOAPIException {
+	public BetTicketK sendPostSlip(String url, BetTicketK slip, String coderace) throws ClientProtocolException, IOException, JSONException, URISyntaxException, DAOAPIException {
 		
 		String playload = null;
 		String resp_code;
@@ -287,7 +287,7 @@ public abstract class AbstractDAOAPI<T> {
 			return null;
 		}
 		
-        HttpPost post = new HttpPost(url+"/placeslip-keno");
+        HttpPost post = new HttpPost(url+"/placeslip-keno/"+coderace);
 
         // add request parameter, form parameters
         post.setHeader("content-type", "application/json");
@@ -525,7 +525,7 @@ public abstract class AbstractDAOAPI<T> {
 		}
 	}
 	
-	public int archive(String url, GameCycleDto gmt) throws ClientProtocolException, IOException, JSONException, URISyntaxException, DAOAPIException {
+	public int archive(String url, GameCycleDto gmt, String coderace) throws ClientProtocolException, IOException, JSONException, URISyntaxException, DAOAPIException {
 		
 		    String playload = null;
 			String resp_code;
@@ -536,7 +536,7 @@ public abstract class AbstractDAOAPI<T> {
 				return 0;
 			}
 
-	       post = new HttpPost(url+"/ugamecycle");
+	       post = new HttpPost(url+"/ugamecycle/"+coderace);
 
 	      // add request parameter, form parameters
 	        post.setHeader("content-type", "application/json");
@@ -582,7 +582,7 @@ public abstract class AbstractDAOAPI<T> {
 	      }
 	}
 	
-	public boolean gamecycles(String url, GameCycleDto gmt) throws ClientProtocolException, IOException, JSONException, URISyntaxException, DAOAPIException {
+	public boolean gamecycles(String url, GameCycleDto gmt, String coderace) throws ClientProtocolException, IOException, JSONException, URISyntaxException, DAOAPIException {
 		String playload = null;
 		String resp_code;
 		HttpPost post;
@@ -593,7 +593,7 @@ public abstract class AbstractDAOAPI<T> {
 			return resp;
 		}
 
-       post = new HttpPost(url+"/gamecycle");
+       post = new HttpPost(url+"/gamecycle/"+coderace);
 
       // add request parameter, form parameters
         post.setHeader("content-type", "application/json");
@@ -730,7 +730,7 @@ public abstract class AbstractDAOAPI<T> {
         }
     }
 	
-	public Cagnotte creerCagnot(String url, Cagnotte cagnotte) throws ClientProtocolException, IOException, JSONException, URISyntaxException, DAOAPIException {
+	public Cagnotte creerCagnot(String url, Cagnotte cagnotte, String coderace) throws ClientProtocolException, IOException, JSONException, URISyntaxException, DAOAPIException {
 
 		Cagnotte p = null;
 		String playload = null;
@@ -741,7 +741,7 @@ public abstract class AbstractDAOAPI<T> {
 			return null;
 		}
 
-        post = new HttpPost(url+"/cagnotte");
+        post = new HttpPost(url+"/cagnotte/"+coderace);
 
       // add request parameter, form parameters
         post.setHeader("content-type", "application/json");
@@ -894,11 +894,11 @@ public abstract class AbstractDAOAPI<T> {
 		}
     }
 	
-	public Double pushAirtime(String url, CaissierDto cais, double credit) throws ClientProtocolException, IOException, 
+	public Double pushAirtime(String url, String coderace, String login, double credit) throws ClientProtocolException, IOException, 
 		JSONException, URISyntaxException, DAOAPIException {
 		
 		String resp_code;
-		HttpGet getRequest = new HttpGet(url+"/airtime/"+cais.getPartner()+"/"+cais.getLoginc()+"/"+credit);
+		HttpGet getRequest = new HttpGet(url+"/airtime/"+coderace+"/"+login+"/"+credit);
 		getRequest.setHeader("content-type", "application/json");
 		
 		try (CloseableHttpResponse response = this.getClosableHttpClient().execute(getRequest)) {
@@ -956,7 +956,7 @@ public abstract class AbstractDAOAPI<T> {
 	   }
 	}
 	
-	public List<Misek> statsMisek(String url, long t1, long t2, long coderace) throws ClientProtocolException, IOException, 
+	public List<Misek> statsMisek(String url, long t1, long t2, String coderace) throws ClientProtocolException, IOException, 
 	JSONException, URISyntaxException, DAOAPIException {
 		List<Misek> misek = null;
 		String resp_code;
@@ -1025,7 +1025,7 @@ public abstract class AbstractDAOAPI<T> {
 		}
 	}
 	
-	public List<Versement> versement(String url, long t1, long t2, Long coderace) throws ClientProtocolException, IOException, 
+	public List<Versement> versement(String url, long t1, long t2, String coderace) throws ClientProtocolException, IOException, 
 		JSONException, URISyntaxException, DAOAPIException {
 
 		List<Versement> lvers = null;
@@ -1093,7 +1093,7 @@ public abstract class AbstractDAOAPI<T> {
 		
 	}
 	
-	public List<Caissier> turnover(String url, long coderace) throws ClientProtocolException, IOException, 
+	public List<Caissier> turnover(String url, String coderace) throws ClientProtocolException, IOException, 
 	JSONException, URISyntaxException, DAOAPIException {
 		List<Caissier> lcais = null;
 		String resp_code;
@@ -1176,7 +1176,7 @@ public abstract class AbstractDAOAPI<T> {
 		}
 	}
 	
-	public List<GameCycle> gamecyle(String url, long coderace) throws ClientProtocolException, IOException, 
+	public List<GameCycle> gamecyle(String url, String coderace) throws ClientProtocolException, IOException, 
 				JSONException, URISyntaxException, DAOAPIException {
 		List<GameCycle> lgame = null;
 		String resp_code;
@@ -1251,7 +1251,7 @@ public abstract class AbstractDAOAPI<T> {
 		}
 	}
 	
-	public double miseRK(String url, Long dat1, Long dat2, Long coderace, String caissier) throws ClientProtocolException, IOException, 
+	public double miseRK(String url, Long dat1, Long dat2, String coderace, String caissier) throws ClientProtocolException, IOException, 
 		JSONException, URISyntaxException, DAOAPIException {
 		String resp_code;
 		HttpGet getRequest = new HttpGet(url+"/miserk/"+coderace+"/"+caissier+"/"+dat1+"/"+dat2);
@@ -1304,7 +1304,7 @@ public abstract class AbstractDAOAPI<T> {
 		
 	}
 	
-	public double versements(String url, Long dat1, Long dat2, Long coderace, String caissier) throws ClientProtocolException, IOException, 
+	public double versements(String url, Long dat1, Long dat2, String coderace, String caissier) throws ClientProtocolException, IOException, 
 	JSONException, URISyntaxException, DAOAPIException {
 	String resp_code;
 	HttpGet getRequest = new HttpGet(url+"/versemens/"+coderace+"/"+caissier+"/"+dat1+"/"+dat2);
@@ -1358,7 +1358,7 @@ public abstract class AbstractDAOAPI<T> {
 }
 
 	
-	public double cumulCredit(String url, String dat1, String dat2, Long coderace, String caissier) throws ClientProtocolException, IOException, 
+	public double cumulCredit(String url, String dat1, String dat2, String coderace, String caissier) throws ClientProtocolException, IOException, 
 			JSONException, URISyntaxException, DAOAPIException {
 
 		
@@ -1414,7 +1414,7 @@ public abstract class AbstractDAOAPI<T> {
 	}
 	
 	
-	public Long getMaxMisek(String url, long coderace) throws ClientProtocolException, IOException, 
+	public Long getMaxMisek(String url, String coderace) throws ClientProtocolException, IOException, 
 		JSONException, URISyntaxException, DAOAPIException {
 		String resp_code;
 		HttpGet getRequest = new HttpGet(url+"/findmaxMisek/"+coderace);
@@ -1470,7 +1470,7 @@ public abstract class AbstractDAOAPI<T> {
 		}
 	}
 	
-	public double miseKCycle(String url, long coderace, long mise, long l) throws ClientProtocolException, IOException, 
+	public double miseKCycle(String url, String coderace, long mise, long l) throws ClientProtocolException, IOException, 
 		JSONException, URISyntaxException, DAOAPIException {
 		String resp_code;
 		HttpGet getRequest = new HttpGet(url+"/totalMisek/"+coderace+"/"+mise+"/"+l);
@@ -1522,7 +1522,7 @@ public abstract class AbstractDAOAPI<T> {
 		}
 	}
 	
-	public double miseKCycleWin(String url, long coderace, long mise, long l) throws ClientProtocolException, IOException, 
+	public double miseKCycleWin(String url, String coderace, long mise, long l) throws ClientProtocolException, IOException, 
 		JSONException, URISyntaxException, DAOAPIException {
 		String resp_code;
 		HttpGet getRequest = new HttpGet(url+"/totalWin/"+coderace+"/"+mise+"/"+l);
@@ -1573,7 +1573,7 @@ public abstract class AbstractDAOAPI<T> {
 		}
 	}
 	
-	public double jackpot(String url, int k1, int k2, Long coderace) throws ClientProtocolException, IOException, 
+	public double jackpot(String url, int k1, int k2, String coderace) throws ClientProtocolException, IOException, 
 		JSONException, URISyntaxException, DAOAPIException {
 		String resp_code;
 		HttpGet getRequest = new HttpGet(url+"/jackpot/"+coderace+"/"+k1+"/"+k2);
@@ -2243,7 +2243,7 @@ public abstract class AbstractDAOAPI<T> {
     	  }
 	}
 	
-    public Caissier addUser(String url, Caissier cais) throws ClientProtocolException, IOException, JSONException, URISyntaxException, DAOAPIException {
+    public Caissier addUser(String url, Caissier cais, String coderace) throws ClientProtocolException, IOException, JSONException, URISyntaxException, DAOAPIException {
 	 
 	  String playload = null;
 		String resp_code;
@@ -2254,7 +2254,7 @@ public abstract class AbstractDAOAPI<T> {
 			return null;
 		}
 	 ////System.out.println("URL: "+url);
-       post = new HttpPost(url+"/save-user");
+       post = new HttpPost(url+"/save-user/"+coderace);
 
       // add request parameter, form parameters
         post.setHeader("content-type", "application/json");
@@ -2309,7 +2309,7 @@ public abstract class AbstractDAOAPI<T> {
       }
     }
     
-    public int setbonusk(String url, double k_rate, double mbonusk0, double mbonusk1, Long coderace) throws ClientProtocolException, IOException, JSONException, URISyntaxException, DAOAPIException {
+    public int setbonusk(String url, double k_rate, double mbonusk0, double mbonusk1, String coderace) throws ClientProtocolException, IOException, JSONException, URISyntaxException, DAOAPIException {
     	String resp_code;
 		HttpGet getRequest = new HttpGet(url+"/bonusk-cf/"+coderace+"/"+mbonusk0+"/"+mbonusk1+"/"+k_rate);
 		// add request parameter, form parameters
@@ -2355,7 +2355,7 @@ public abstract class AbstractDAOAPI<T> {
 		  }
 	}
     
-    public List<KenoRes> lDraw(String url, Long coderace) throws ClientProtocolException, IOException, JSONException, URISyntaxException, DAOAPIException {
+    public List<KenoRes> lDraw(String url, String coderace) throws ClientProtocolException, IOException, JSONException, URISyntaxException, DAOAPIException {
     	
     	List<KenoRes> kenres = null;
     	
@@ -2416,7 +2416,7 @@ public abstract class AbstractDAOAPI<T> {
 		}
 	}
     
-    public List<KenoRes> bonus(String url, Long coderace) throws ClientProtocolException, IOException, JSONException, URISyntaxException, DAOAPIException {
+    public List<KenoRes> bonus(String url, String coderace) throws ClientProtocolException, IOException, JSONException, URISyntaxException, DAOAPIException {
     	
     	List<KenoRes> kenres = null;
     	
@@ -2477,7 +2477,7 @@ public abstract class AbstractDAOAPI<T> {
 		}
 	}
     
-    public List<Airtime> airtimes(String url, String dat1, String dat2, Long coderace, String login) throws ClientProtocolException, IOException, JSONException, URISyntaxException, DAOAPIException {
+    public List<Airtime> airtimes(String url, String dat1, String dat2, String coderace, String login) throws ClientProtocolException, IOException, JSONException, URISyntaxException, DAOAPIException {
     	List<Airtime> miset = null;
 		String resp_code;
 		HttpGet getRequest = new HttpGet(url+"/credit/"+coderace+"/"+login+"/"+dat1+"/"+dat2);
@@ -2543,7 +2543,7 @@ public abstract class AbstractDAOAPI<T> {
 		}
 	}
     
-    public List<AdminTicketDto> misets(String url, long t1, long t2, Long coderace) throws ClientProtocolException, IOException, JSONException, URISyntaxException, DAOAPIException {
+    public List<AdminTicketDto> misets(String url, long t1, long t2, String coderace) throws ClientProtocolException, IOException, JSONException, URISyntaxException, DAOAPIException {
     	List<AdminTicketDto> miset = null;
 		String resp_code;
 		HttpGet getRequest = new HttpGet(url+"/miset/"+coderace+"/"+t1+"/"+t2);

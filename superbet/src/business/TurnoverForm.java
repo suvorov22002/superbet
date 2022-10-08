@@ -39,6 +39,7 @@ public class TurnoverForm {
 	private static final String FIELD_ICODERACE = "icoderace";
 	private static final String FIELD_CHOICE = "turnchoice";
 	private Long idPartner;
+	private String coderace;
 	private String IN = "('";
 	
 	private  ISuperGameDAOAPILocal  supergameAPI;
@@ -104,7 +105,7 @@ public class TurnoverForm {
 		//		System.out.println("RANG ADDTURNOVER: "+rang);
 				
 			    List<Caissier> list_cais;
-				list_cais = supergameAPI.getSuperGameDAO().getTurnover(Params.url, idPartner);
+				list_cais = supergameAPI.getSuperGameDAO().getTurnover(Params.url, coderace);
 			    String pos = "";
 				List<Integer> roundList = Params.getHitFrequency(Integer.parseInt(frequence.replaceAll("%", "")), Integer.parseInt(cycle.replaceAll("tours", "").trim()));
 				for(int nb : roundList) {
@@ -114,7 +115,7 @@ public class TurnoverForm {
 	//			System.out.print("\n"+pos);
 	//			System.out.print("\n"+IN);
 				
-				gmc  = supergameAPI.getSuperGameDAO().getGameCyle(Params.url, idPartner);
+				gmc  = supergameAPI.getSuperGameDAO().getGameCyle(Params.url, coderace);
 				if (gmc == null) return;
 				
 				taille = gmc.size();
@@ -124,15 +125,15 @@ public class TurnoverForm {
 				GameCycle gm = gmc.get(0); 
 				
 				//idmisek_max = misekDao.ifindId(IN);
-				idmisek_max = supergameAPI.getSuperGameDAO().maxMisek(Params.url, idPartner);
+				idmisek_max = supergameAPI.getSuperGameDAO().maxMisek(Params.url, coderace);
 				
 				long misef = (long)idmisek_max;
 				
 				//summise = misekDao.getMiseKCycle(gm.getMise(), idmisek_max+1, IN);
-				summise = supergameAPI.getSuperGameDAO().getMiseKCycle(Params.url, idPartner,gm.getMise(), 1+idmisek_max);
+				summise = supergameAPI.getSuperGameDAO().getMiseKCycle(Params.url, coderace,gm.getMise(), 1+idmisek_max);
 				
 				//sumWin = UtileKeno.bonusrate*summise + misekDao.getMiseKCycleWin(gm.getMise(),idmisek_max+1, IN);
-				sumWin = supergameAPI.getSuperGameDAO().getMiseKCycleWin(Params.url, idPartner,gm.getMise(), 1+idmisek_max);
+				sumWin = supergameAPI.getSuperGameDAO().getMiseKCycleWin(Params.url, coderace,gm.getMise(), 1+idmisek_max);
 				curr_percent = sumWin/summise;
 				curr_percent = (double)((int)(curr_percent*100))/100;
 				//jkpt = UtileKeno.bonusrate*summise;
@@ -147,7 +148,7 @@ public class TurnoverForm {
 					if(m1 != null && m2 != null) {
 						int k1 = Integer.parseInt(m1.getIdKeno());
 						int k2 = Integer.parseInt(m2.getIdKeno());
-						jkpt = supergameAPI.getSuperGameDAO().getJackpot(Params.url,k1, k2, partner.getIdpartner());
+						jkpt = supergameAPI.getSuperGameDAO().getJackpot(Params.url,k1, k2, partner.getCoderace());
 						jkpt = (double)((int)(jkpt*100))/100;
 						
 					}
@@ -167,7 +168,7 @@ public class TurnoverForm {
 					gmt.setPayout(sumWin);
 					gmt.setJkpt(jkpt);
 					
-					int nbre = supergameAPI.getSuperGameDAO().upArchive(Params.url, gmt);
+					int nbre = supergameAPI.getSuperGameDAO().upArchive(Params.url, gmt, partner.getCoderace());
 					//gmcDao.updateArchive(curr_percent,DateFormatUtils.format(new Date(), "dd-MM-yyyy,HH:mm"), 1, idPartner, jeu.substring(0, 1), misef, summise, sumWin, jkpt);
 
 					//					summise = misekDao.getMiseKCycle(gmt.getMise(), IN);
@@ -194,7 +195,7 @@ public class TurnoverForm {
 				  gamecycle.setMisef(misef);
 				  gamecycle.setDate_fin(DateFormatUtils.format(new Date(), "dd-MM-yyyy,HH:mm"));
 
-				  supergameAPI.getSuperGameDAO().setGameCyle(Params.url, gamecycle);
+				  supergameAPI.getSuperGameDAO().setGameCyle(Params.url, gamecycle, partner.getCoderace());
 				  //gmcDao.create(gamecycle);
 						  
 			} catch (IOException | JSONException | URISyntaxException | DAOAPIException e) {
@@ -213,7 +214,7 @@ public class TurnoverForm {
 				idPartner = partner.getIdpartner();
 				
 		    try {
-		    	gmc  = supergameAPI.getSuperGameDAO().getGameCyle(Params.url, idPartner);
+		    	gmc  = supergameAPI.getSuperGameDAO().getGameCyle(Params.url, coderace);
 				//gmc = gmcDao.find(idPartner);
 				if (gmc == null) return;
 				taille = gmc.size();
@@ -224,7 +225,7 @@ public class TurnoverForm {
 				
 			   int count = 0;
 			   long idmax = 0;
-			   idmax = supergameAPI.getSuperGameDAO().maxMisek(Params.url, idPartner);
+			   idmax = supergameAPI.getSuperGameDAO().maxMisek(Params.url, coderace);
 			  // System.out.println("idmax: "+idmax);
 			   //idmax = misekDao.ifindId(IN);
 			   //long misek_max = gmc.get(0).getMise();
@@ -238,11 +239,11 @@ public class TurnoverForm {
 			    		case "Keno":
 			    			//gm.setJeu("Keno");
 			    			
-			    			summise = supergameAPI.getSuperGameDAO().getMiseKCycle(Params.url, idPartner,gm.getMise(), 1+idmax);
+			    			summise = supergameAPI.getSuperGameDAO().getMiseKCycle(Params.url, coderace,gm.getMise(), 1+idmax);
 			    			//summise = misekDao.getMiseKCycle(gm.getMise(),1+idmax, IN);
 			    	//		System.out.println("[TURNOVER - MISE TOTALE]: "+summise);
 			    			
-			    			sumWin = supergameAPI.getSuperGameDAO().getMiseKCycleWin(Params.url, idPartner,gm.getMise(), 1+idmax);
+			    			sumWin = supergameAPI.getSuperGameDAO().getMiseKCycleWin(Params.url, coderace,gm.getMise(), 1+idmax);
 			    	//		System.out.println("[TURNOVER - VERSEMENT TOTAL]: "+sumWin);
 			    			//sumWin = misekDao.getMiseKCycleWin(gm.getMise(), 1+idmax, IN);
 			    			//System.out.println("summise "+summise+" SumWin "+sumWin);
@@ -266,7 +267,7 @@ public class TurnoverForm {
 			    				int k1 = Integer.parseInt(m1.getIdKeno());
 			    				int k2 = Integer.parseInt(m2.getIdKeno());
 			    				
-			    				jkpt = supergameAPI.getSuperGameDAO().getJackpot(Params.url,k1, k2, idPartner);
+			    				jkpt = supergameAPI.getSuperGameDAO().getJackpot(Params.url,k1, k2, partner.getCoderace());
 			    				//jkpt  = kenoDao.findTotalBonusAmount(k1, k2, partneraire);
 			    				jkpt = (double)((int)(jkpt*100))/100;
 			    				//System.out.println(" jkpt___ "+jkpt);

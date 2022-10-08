@@ -2,7 +2,6 @@ package business;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -14,8 +13,10 @@ import config.Params;
 import modele.Airtime;
 import modele.Caissier;
 import modele.CaissierDto;
+import modele.Partner;
 import superbetDAO.AirtimeDAO;
 import superbetDAO.CaissierDAO;
+import superbetDAO.PartnerDAO;
 import superbetDAO.api.exeception.DAOAPIException;
 import superbetDAO.api.implementations.SuperGameDAOAPI;
 import superbetDAO.api.interfaces.ISuperGameDAOAPILocal;
@@ -32,11 +33,13 @@ public class AirtimeForm {
 	private int taille = 0;
 	private AirtimeDAO airtimeDao;
 	private CaissierDAO caissierDao;
+	private PartnerDAO partnerDao;
 	private  ISuperGameDAOAPILocal  supergameAPI;
 	
-	public AirtimeForm(AirtimeDAO airtimeDao,CaissierDAO caissierDao){
+	public AirtimeForm(AirtimeDAO airtimeDao,CaissierDAO caissierDao, PartnerDAO partnerDao){
 		this.airtimeDao = airtimeDao;
 		this.caissierDao = caissierDao;
+		this.partnerDao = partnerDao;
 		supergameAPI = new SuperGameDAOAPI();
 	}
 	
@@ -61,12 +64,22 @@ public class AirtimeForm {
 		
 		if(credit == 0) return;
 			cais = caissierDao.findByLogin(user);
-			if(cais.getIdCaissier() == 1) return;
-			if(cais != null){
+			
+			
+			
+			if (cais == null) {
+				erreurs.put("error", "caisse absente");
+				resultat = "Erreur lors de l'ajout";
+			}
+			else if(cais.getIdCaissier() == 1) {
+				return;
+			}
+			else {
 				try {
 				    CaissierDto user = new CaissierDto();
 				    user.setLoginc(cais.getLoginc());
 				    user.setPartner(cais.getPartner());
+				    Partner p = partnerDao.findById(user.getPartner());
 //					Airtime airtme = airtimeDao.find(cais);
 //					if(airtme !=null)
 //						balance = airtme.getBalance();
@@ -84,18 +97,22 @@ public class AirtimeForm {
 //					airtimeDao.updateMvt(cais.getIdCaissier(), mvt+credit);
 				
 				
-					double solde = supergameAPI.getSuperGameDAO().airtime(Params.url, user, credit);
-					resultat = "Caisse creditée de: "+credit;
+					double solde = supergameAPI.getSuperGameDAO().airtime(Params.url, p.getCoderace(), user.getLoginc(), credit);
+					if (solde == 0) {
+						erreurs.put("error", "caisse absente");
+						resultat = "Erreur lors du credit";
+					}
+					else {
+						resultat = "Caisse creditée de: "+solde;
+					}
+					
 					
 			} catch (IOException | JSONException | URISyntaxException | DAOAPIException e) {
 				e.printStackTrace();
 			}
 			
 		}
-		else{
-			erreurs.put("error", "caisse absente");
-			resultat = "Erreur lors de l'ajout";
-		}
+		
 		return;
 	}
 	

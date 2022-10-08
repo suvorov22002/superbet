@@ -57,7 +57,7 @@ public class RetrieveSumOdd extends HttpServlet {
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		String coderace = request.getParameter("partner");
 		System.out.println("Retrieve Odd: "+coderace);
-		ArrayList<Keno> keno = kenoDao.getAllLastKdraw(coderace);
+		List<Keno> keno = kenoDao.getAllLastKdraw(coderace);
 		System.out.println("keno size: "+keno.size());
 		countAllNumOdds(keno);
 		System.out.println("Sood size: "+UtileKeno.sOdd.size());
@@ -69,19 +69,22 @@ public class RetrieveSumOdd extends HttpServlet {
 	//	j.putAll(UtileKeno.sOdd);
 	//	 System.out.println("Sood: "+j);
 	    String json = new Gson().toJson(UtileKeno.sOdd);
-	//    System.out.println("Sood: "+json);
+	    System.out.println("Sood: "+json);
+	//    response.getWriter().write(json);
+	//    
 	//	response.getWriter().write(j.toString());
 		
+	    
+	    
 		
-		JsonArrayBuilder arrayBuilder = Json.createArrayBuilder();		
-		// On construit le tableau
-    
-//		// On construit l'objet JSON pour l'expediteur
+		
+		
+		   JsonArrayBuilder arrayBuilder = Json.createArrayBuilder();		
+//		
            JsonObjectBuilder objectBuilder = Json.createObjectBuilder();
-//     //      if(rang != -1){
-        	   objectBuilder.add("sodd", json);
-        	   arrayBuilder.add(objectBuilder);
-        	   response.getWriter().write(arrayBuilder.build().toString());
+           objectBuilder.add("sodd", json);
+           arrayBuilder.add(objectBuilder);
+           response.getWriter().write(arrayBuilder.build().toString());
 		
 		
 		//response.getWriter().append("Served at: ").append(request.getContextPath());
@@ -95,7 +98,7 @@ public class RetrieveSumOdd extends HttpServlet {
 		doGet(request, response);
 	}
 	
-	private void countAllNumOdds(ArrayList<Keno> allDraws) {
+	private void countAllNumOdds(List<Keno> allDraws) {
 //		
 		List<String> allDraw = new ArrayList<String>();
 		Map<String, String> allDrawNumOdds = new HashMap<String, String>();
@@ -112,7 +115,7 @@ public class RetrieveSumOdd extends HttpServlet {
 			allDrawNumOdds.put(""+(i+1), ""+0);
 		}
 		
-		if(allDraw.size() > 0) {
+//		if(allDraw.size() > 0) {
 			String[] passDraw;
 			for(String ss : allDraw) {
 				passDraw  = ss.split("-");
@@ -132,7 +135,7 @@ public class RetrieveSumOdd extends HttpServlet {
 			}
 			
 		Map<String, Integer> m = triAvecValeur( allDrawNumOdds );
-	//	System.out.println("Apres: "+m);
+		System.out.println("Apres: "+m);
 		UtileKeno.sOdd.clear();
 		UtileKeno.sOdd = m;
 //		  Iterator it = m.entrySet().iterator();
@@ -142,7 +145,7 @@ public class RetrieveSumOdd extends HttpServlet {
 //	        //   System.out.println(entry.getKey() + ": "+entry.getValue());
 //	      }
 			
-		}
+//		}
 		
 		
 		
@@ -151,7 +154,7 @@ public class RetrieveSumOdd extends HttpServlet {
   private HashMap<String, Integer> triAvecValeur( Map<String, String> m ){
 		
 		HashMap<String, Integer> map = new HashMap<String, Integer>();
-		System.out.println("Avant: "+m);
+		
 	      Iterator it = m.entrySet().iterator();
 	      while(it.hasNext()) {
 	           Map.Entry entry = (Map.Entry)it.next();

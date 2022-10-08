@@ -100,11 +100,11 @@ public class ReportingForm {
 					
 					if(cais.getProfil()!=1) {
 						report = new ReportingDto();
-						tot_credit = supergameAPI.getSuperGameDAO().findCumulCredit(Params.url, p.getIdpartner(),cais.getLoginc(), dat1, dat2);
+						tot_credit = supergameAPI.getSuperGameDAO().findCumulCredit(Params.url, p.getCoderace(),cais.getLoginc(), dat1, dat2);
 					//	tot_credit = airtimeDao.findCumulCredit(""+cais.getIdCaissier(), dat1+" 00:00:00", dat2+" 23:59:00");
-						summise = supergameAPI.getSuperGameDAO().getMiseRK(Params.url, p.getIdpartner(),cais.getLoginc(), t1, t2);
+						summise = supergameAPI.getSuperGameDAO().getMiseRK(Params.url, p.getCoderace(),cais.getLoginc(), t1, t2);
 						//summise = misekDao.getMiseRK(""+cais.getIdCaissier(), ""+t1, ""+t2);
-						sumwin = supergameAPI.getSuperGameDAO().getVersements(Params.url, p.getIdpartner(),cais.getLoginc(), t1, t2);
+						sumwin = supergameAPI.getSuperGameDAO().getVersements(Params.url, p.getCoderace(),cais.getLoginc(), t1, t2);
 					    //double sumwin = verstDao.getVersementD(""+t1, ""+cais.getIdCaissier(), ""+t2);
 						
 						
@@ -141,11 +141,11 @@ public class ReportingForm {
 //						}
 						
 						report = new ReportingDto();
-						tot_credit = supergameAPI.getSuperGameDAO().findCumulCredit(Params.url, p.getIdpartner(),cais.getLoginc(), dat1, dat2);
+						tot_credit = supergameAPI.getSuperGameDAO().findCumulCredit(Params.url, p.getCoderace(),cais.getLoginc(), dat1, dat2);
 					//	tot_credit = airtimeDao.findCumulCredit(""+cais.getIdCaissier(), dat1+" 00:00:00", dat2+" 23:59:00");
-						summise = supergameAPI.getSuperGameDAO().getMiseRK(Params.url, p.getIdpartner(),cais.getLoginc(), t1, t2);
+						summise = supergameAPI.getSuperGameDAO().getMiseRK(Params.url, p.getCoderace(),cais.getLoginc(), t1, t2);
 						//summise = misekDao.getMiseRK(""+cais.getIdCaissier(), ""+t1, ""+t2);
-						sumwin = supergameAPI.getSuperGameDAO().getVersements(Params.url, p.getIdpartner(),cais.getLoginc(), t1, t2);
+						sumwin = supergameAPI.getSuperGameDAO().getVersements(Params.url, p.getCoderace(),cais.getLoginc(), t1, t2);
 					    //double sumwin = verstDao.getVersementD(""+t1, ""+cais.getIdCaissier(), ""+t2);
 						
 						

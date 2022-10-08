@@ -183,7 +183,7 @@ public final class AdminForm {
 				erreurs.put("partenaire", "Partenaire absent");
 				return;
 			}
-			misek = supergameAPI.getSuperGameDAO().statMisek(Params.url, t1, t2, p.getIdpartner());
+			misek = supergameAPI.getSuperGameDAO().statMisek(Params.url, t1, t2, p.getCoderace());
 			//misek = misekDao.getMisek(""+t2, ""+t1, coderace);
 			if (misek == null) {
 				resultat = "Recherche echouée";
@@ -193,7 +193,7 @@ public final class AdminForm {
 			taille = misek.size();
 			//System.out.println("taille= "+taille+" | "+misek.get(0).getIdmisek()+" _idmisek_ "+misek.get(taille-1).getIdmisek());
 			
-			versk = supergameAPI.getSuperGameDAO().getVersementk(Params.url, t1, t2, p.getIdpartner());
+			versk = supergameAPI.getSuperGameDAO().getVersementk(Params.url, t1, t2, p.getCoderace());
 		//	versk = verstDao.getVersementk(""+t1, ""+t2, "K");
 			if (versk == null) {
 				resultat = "Recherche echec";

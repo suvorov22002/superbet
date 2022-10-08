@@ -42,7 +42,7 @@ public class UpdateTirageP extends HttpServlet{
 				String tirage, resultat, new_draw, previous_new_draw;
 			    String id = request.getParameter("coderace");
 			    int timeSpin;
-			    Partner partner = partnerDao.findById(Integer.parseInt(id));
+			    Partner partner = partnerDao.findById(Long.valueOf(id));
 			    
 				Spin spin = spinDao.find_Max_draw(partner.getCoderace());
 				Spin _spin = spinDao.searchResultP(spin.getDrawNumP());

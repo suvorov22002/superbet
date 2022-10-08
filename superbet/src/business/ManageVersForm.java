@@ -144,7 +144,7 @@ public final class ManageVersForm {
 		
 		barcode = barcode.length() > 12 ? barcode.substring(0, 12) : barcode;
 		try {
-			part = partnerDao.findById(Integer.parseInt(""+caissier.getPartner()));
+			part = partnerDao.findById(caissier.getPartner());
 		}
 		catch(NumberFormatException e) {
 			e.printStackTrace();

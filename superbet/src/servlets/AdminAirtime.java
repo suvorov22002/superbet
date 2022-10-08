@@ -31,11 +31,13 @@ public class AdminAirtime extends HttpServlet{
 	public static final String CONF_DAO_FACTORY = "daofactory";
 	private AirtimeDAO airtimeDao;
 	private CaissierDAO caissierDao;
+	private PartnerDAO partnerDao;
 	
 	public void init() throws ServletException {
 		/* Récupération d'une instance de notre DAO caissier */
 		this.airtimeDao = ((DAOFactory)getServletContext().getAttribute(CONF_DAO_FACTORY)).getAirtimeDao();		
-		this.caissierDao = ((DAOFactory)getServletContext().getAttribute(CONF_DAO_FACTORY)).getCaissierDao();		
+		this.caissierDao = ((DAOFactory)getServletContext().getAttribute(CONF_DAO_FACTORY)).getCaissierDao();
+		this.partnerDao = ((DAOFactory)getServletContext().getAttribute(CONF_DAO_FACTORY)).getPartnerDao();
 	}
 	
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -45,7 +47,7 @@ public class AdminAirtime extends HttpServlet{
 	
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// TODO Auto-generated method stub
-		AirtimeForm airtime_form = new AirtimeForm(airtimeDao, caissierDao);
+		AirtimeForm airtime_form = new AirtimeForm(airtimeDao, caissierDao, partnerDao);
 		
 		airtime_form.manage_admin(request);
 		

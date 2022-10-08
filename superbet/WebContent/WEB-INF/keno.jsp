@@ -358,23 +358,17 @@ var odds = [];
 			 'partner':coderace
 		  },
           success:function(result){
-          	
+          	//console.log(' result: '+JSON.stringify(result));
             $.each(result, function(key, value){
-            	console.log(' : '+value.sodd);
+            	//console.log(' : '+value.sodd);
             	var res = (value.sodd).substring(1,value.sodd.length-1);
-
-            //	console.log(key+' : '+value);
 				odds = res.split(',');
-              // odds = value.sodd;
-            //	console.log('chaine: '+odds);
-            	
-            	
-            //	console.log('CLE: '+key+' - '+value);
-            //    console.log('RESULT: '+result[key]);
+              
             });
           } 
         });
-   	for(let j=0;j<9;j++){
+		
+		for(let j=0;j<9;j++){
    		var str = [];
    		var s;
    		s = odds[j];
@@ -394,8 +388,6 @@ var odds = [];
    		var s;
    		s = odds[i];
    		str = s.split(':');
-	//	console.log('RESULT: '+str[0].substring(1));
-	//	console.log(str[0].length);
 		var st = {
 					temp : str[0].substring(1, str[0].length - 1)+'X',
 					numero : str[1]
@@ -403,7 +395,6 @@ var odds = [];
     	arrayNumeroLesMoinsTirees.push(st);
     	
 	}
-    
    }
    retrieveSumOdd();
 

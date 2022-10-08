@@ -93,7 +93,7 @@ public final class ManageSpinForm {
 		EDraw = "";
 		
 		Partner partner;
-		partner = partnerDao.findById(Integer.parseInt(""+caissier.getPartner()));
+		partner = partnerDao.findById(caissier.getPartner());
 		if(partner == null){
 			return null;
 	    }

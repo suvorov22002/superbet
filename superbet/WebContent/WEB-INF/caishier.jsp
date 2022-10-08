@@ -225,7 +225,8 @@
                         </div>
                         <div class="modal-body" style="text-align:center;width:inherit;margin:0px;">
                         	<table class="ticket_keno" id="coupon_keno" style="width:280px;margin:3px;padding-left:5px;border-top:1px solid black;border-bottom:1px solid black;">
-				               <!-- 
+				               <tbody id="ticket_keno_body">
+							   <!-- 
 								<tr>
 				                    <td style="text-align:left;" colspan="2">
 				                     <c:choose>
@@ -297,6 +298,7 @@
 				                </tr>
 								
 								-->
+								</tbody>
 				            </table>
               
                         </div>

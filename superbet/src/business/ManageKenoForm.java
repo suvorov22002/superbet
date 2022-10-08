@@ -340,9 +340,9 @@ public final class ManageKenoForm {
 							
 				//		  } 
 					    BetTicketK b = null;
-			//		    System.out.println("betk*** "+betk);
+				//	    System.out.println("betk*** "+betk);
 						try {
-							b =  supergameAPI.getSuperGameDAO().placeSlip(Params.url, betk);
+							b =  supergameAPI.getSuperGameDAO().placeSlip(Params.url, betk, partner.getCoderace());
 						} catch (IOException | JSONException | URISyntaxException | DAOAPIException e) {
 							e.printStackTrace();
 							return null;

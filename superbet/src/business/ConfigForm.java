@@ -393,7 +393,7 @@ public final class ConfigForm {
 						caisDto.setProfil(idprofil);
 						caisDto.setGrpe(1);
 						//System.out.println(caisDto);
-						cais = supergameAPI.getSuperGameDAO().saveUser(Params.url, caisDto);
+						cais = supergameAPI.getSuperGameDAO().saveUser(Params.url, caisDto, partner);
 						//System.out.println("USER: "+caisDto);
 					}
 					
@@ -478,7 +478,7 @@ public final class ConfigForm {
 				
 				try {
 					//ajout = configDao.updateBonusK(k_rate, mbonusk0, mbonusk1, coderace );
-					ajout = supergameAPI.getSuperGameDAO().updateBonusK(Params.url, k_rate, mbonusk0, mbonusk1, idpartner);
+					ajout = supergameAPI.getSuperGameDAO().updateBonusK(Params.url, k_rate, mbonusk0, mbonusk1, coderace);
 					if(ajout != 0){
 						erreurs.clear();
 						resultat_b = "Mise à jour du bonus effectué avec succès";
@@ -553,7 +553,7 @@ public final class ConfigForm {
 			
 			try {
 				//cagnotteDao.create(cagnotte);
-				cagnotte = supergameAPI.getSuperGameDAO().saveJackpot(Params.url, cagnotte);
+				cagnotte = supergameAPI.getSuperGameDAO().saveJackpot(Params.url, cagnotte, coderace);
 			} catch (IOException | JSONException | URISyntaxException | DAOAPIException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();

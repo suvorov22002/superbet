@@ -141,7 +141,7 @@ public class PartnerDAOImpl implements PartnerDAO {
 	}
 	
 	@Override
-	public Partner findById(int id) throws DAOException {
+	public Partner findById(Long id) throws DAOException {
 		// TODO Auto-generated method stub
 		Connection connexion = null;
 		PreparedStatement preparedStatement = null;

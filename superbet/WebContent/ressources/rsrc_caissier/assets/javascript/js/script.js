@@ -1150,6 +1150,8 @@ function manage_keno(evt) {
 					var idpath0 = result.path;
 					var coupon = result.coupon;
 					
+					$('.ticket_keno').find('tbody').empty();
+					
 					setCouponValue(coupon, multi, _fecha);
 					
 					$("#idpath").text(idpath0);
@@ -1207,6 +1209,10 @@ function setCouponValue(coupon, multi, _fecha) {
 	var tr6;
 	var tr7;
 	var tr8, tr9, tr10, tr11, tr12, tr13, tr14;
+	
+//	$('#coupon_keno').html("");
+//	$("#coupon_keno").find("tr:gt(0)").remove();
+	
 	
 	$("#idbc").text(coupon.barcode);
 	$("#idpartner0").text(coupon.room);

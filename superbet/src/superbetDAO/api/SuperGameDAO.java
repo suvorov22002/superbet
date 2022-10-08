@@ -39,8 +39,8 @@ public class SuperGameDAO extends AbstractDAOAPI<SuperGameDAO>{
 		return null;
 	}
 	
-	public BetTicketK placeSlip(String url, BetTicketK slip) throws ClientProtocolException, IOException, JSONException, URISyntaxException, DAOAPIException{
-		return this.sendPostSlip(url, slip);
+	public BetTicketK placeSlip(String url, BetTicketK slip, String coderace) throws ClientProtocolException, IOException, JSONException, URISyntaxException, DAOAPIException{
+		return this.sendPostSlip(url, slip, coderace);
 	}
 	
 	public Long getBarcodes(String url, int jeu) throws ClientProtocolException, IOException, JSONException, URISyntaxException, DAOAPIException{
@@ -99,8 +99,8 @@ public class SuperGameDAO extends AbstractDAOAPI<SuperGameDAO>{
 		return this.sumOddKeno(url, coderace);
 	}
 	 
-	public Caissier  saveUser(String url, Caissier cais) throws ClientProtocolException, IOException, JSONException, URISyntaxException, DAOAPIException{
-		return this.addUser(url, cais);
+	public Caissier  saveUser(String url, Caissier cais, String coderace) throws ClientProtocolException, IOException, JSONException, URISyntaxException, DAOAPIException{
+		return this.addUser(url, cais, coderace);
 	}
 	
 	public Cagnotte getCagnot(String url, String coderace) throws ClientProtocolException, IOException, JSONException, URISyntaxException, DAOAPIException{
@@ -111,31 +111,31 @@ public class SuperGameDAO extends AbstractDAOAPI<SuperGameDAO>{
 		return this.getcagnot(url, coderace);
 	}
 	
-	public Double airtime(String url, CaissierDto cais, double credit) throws ClientProtocolException, IOException, JSONException, URISyntaxException, DAOAPIException{
-		return this.pushAirtime(url, cais, credit);
+	public Double airtime(String url, String coderace, String login, double credit) throws ClientProtocolException, IOException, JSONException, URISyntaxException, DAOAPIException{
+		return this.pushAirtime(url, coderace, login, credit);
 	}
 	
-	public List<Misek> statMisek(String url, long t1, long t2, long coderace) throws ClientProtocolException, IOException, JSONException, URISyntaxException, DAOAPIException{
+	public List<Misek> statMisek(String url, long t1, long t2, String coderace) throws ClientProtocolException, IOException, JSONException, URISyntaxException, DAOAPIException{
 		return this.statsMisek(url, t1, t2, coderace);
 	}
 	
-	public List<Caissier> getTurnover(String url, long coderace) throws ClientProtocolException, IOException, JSONException, URISyntaxException, DAOAPIException{
+	public List<Caissier> getTurnover(String url, String coderace) throws ClientProtocolException, IOException, JSONException, URISyntaxException, DAOAPIException{
 		return this.turnover(url, coderace);
 	}
 	
-	public List<GameCycle> getGameCyle(String url, long coderace) throws ClientProtocolException, IOException, JSONException, URISyntaxException, DAOAPIException{
+	public List<GameCycle> getGameCyle(String url, String coderace) throws ClientProtocolException, IOException, JSONException, URISyntaxException, DAOAPIException{
 		return this.gamecyle(url, coderace);
 	}
 
-	public long maxMisek(String url, long coderace) throws ClientProtocolException, IOException, JSONException, URISyntaxException, DAOAPIException{
+	public long maxMisek(String url, String coderace) throws ClientProtocolException, IOException, JSONException, URISyntaxException, DAOAPIException{
 		return this.getMaxMisek(url, coderace);
 	}
 
-	public double getMiseKCycle(String url, long coderace, long mise, long l) throws ClientProtocolException, IOException, JSONException, URISyntaxException, DAOAPIException{
+	public double getMiseKCycle(String url, String coderace, long mise, long l) throws ClientProtocolException, IOException, JSONException, URISyntaxException, DAOAPIException{
 		return this.miseKCycle(url, coderace, mise, l);
 	}
 	
-	public double getMiseKCycleWin(String url, long coderace, long mise, long l) throws ClientProtocolException, IOException, JSONException, URISyntaxException, DAOAPIException{
+	public double getMiseKCycleWin(String url, String coderace, long mise, long l) throws ClientProtocolException, IOException, JSONException, URISyntaxException, DAOAPIException{
 		return this.miseKCycleWin(url, coderace, mise, l);
 	}
 
@@ -143,39 +143,39 @@ public class SuperGameDAO extends AbstractDAOAPI<SuperGameDAO>{
 		return this.misek(url, idmax);
 	}
 
-	public double getJackpot(String url, int k1, int k2, Long coderace) throws ClientProtocolException, IOException, JSONException, URISyntaxException, DAOAPIException{
+	public double getJackpot(String url, int k1, int k2, String coderace) throws ClientProtocolException, IOException, JSONException, URISyntaxException, DAOAPIException{
 		return this.jackpot(url, k1, k2, coderace);
 	}
 
-	public int upArchive(String url, GameCycleDto gmt) throws ClientProtocolException, IOException, JSONException, URISyntaxException, DAOAPIException{
-		return this.archive(url, gmt);
+	public int upArchive(String url, GameCycleDto gmt, String coderace) throws ClientProtocolException, IOException, JSONException, URISyntaxException, DAOAPIException{
+		return this.archive(url, gmt, coderace);
 	}
 
-	public boolean setGameCyle(String url, GameCycleDto gmt) throws ClientProtocolException, IOException, JSONException, URISyntaxException, DAOAPIException{
-		return this.gamecycles(url, gmt);
+	public boolean setGameCyle(String url, GameCycleDto gmt, String coderace) throws ClientProtocolException, IOException, JSONException, URISyntaxException, DAOAPIException{
+		return this.gamecycles(url, gmt, coderace);
 	}
 
-	public List<AdminTicketDto> allMiset(String url, long t1, long t2, Long coderace) throws ClientProtocolException, IOException, JSONException, URISyntaxException, DAOAPIException{
+	public List<AdminTicketDto> allMiset(String url, long t1, long t2, String coderace) throws ClientProtocolException, IOException, JSONException, URISyntaxException, DAOAPIException{
 		return this.misets(url, t1, t2, coderace);
 	}
 
-	public List<Versement> getVersementk(String url, long t1, long t2, Long coderace)  throws ClientProtocolException, IOException, JSONException, URISyntaxException, DAOAPIException{
+	public List<Versement> getVersementk(String url, long t1, long t2, String coderace)  throws ClientProtocolException, IOException, JSONException, URISyntaxException, DAOAPIException{
 		return this.versement(url, t1, t2, coderace);
 	}
 
-	public double findCumulCredit(String url, Long coderace, String caissier, String dat1, String dat2) throws ClientProtocolException, IOException, JSONException, URISyntaxException, DAOAPIException{
+	public double findCumulCredit(String url, String coderace, String caissier, String dat1, String dat2) throws ClientProtocolException, IOException, JSONException, URISyntaxException, DAOAPIException{
 		return this.cumulCredit(url, dat1, dat2, coderace, caissier);
 	}
 
-	public double getMiseRK(String url, Long coderace, String caissier, Long dat1, Long dat2) throws ClientProtocolException, IOException, JSONException, URISyntaxException, DAOAPIException{
+	public double getMiseRK(String url, String coderace, String caissier, Long dat1, Long dat2) throws ClientProtocolException, IOException, JSONException, URISyntaxException, DAOAPIException{
 		return this.miseRK(url, dat1, dat2, coderace, caissier);
 	}
 	
-	public double getVersements(String url, Long coderace, String caissier, Long dat1, Long dat2) throws ClientProtocolException, IOException, JSONException, URISyntaxException, DAOAPIException{
+	public double getVersements(String url, String coderace, String caissier, Long dat1, Long dat2) throws ClientProtocolException, IOException, JSONException, URISyntaxException, DAOAPIException{
 		return this.versements(url, dat1, dat2, coderace, caissier);
 	}
 
-	public List<Airtime> findAllairtime(String url, Long coderace, String login, String dat1, String dat2) throws ClientProtocolException, IOException, JSONException, URISyntaxException, DAOAPIException{
+	public List<Airtime> findAllairtime(String url, String coderace, String login, String dat1, String dat2) throws ClientProtocolException, IOException, JSONException, URISyntaxException, DAOAPIException{
 		return this.airtimes(url, dat1, dat2, coderace, login);
 	}
 
@@ -183,19 +183,19 @@ public class SuperGameDAO extends AbstractDAOAPI<SuperGameDAO>{
 		return this.partner(url, part);
 	}
 
-	public Cagnotte saveJackpot(String url, Cagnotte cagnotte) throws ClientProtocolException, IOException, JSONException, URISyntaxException, DAOAPIException{
-		return this.creerCagnot(url, cagnotte);
+	public Cagnotte saveJackpot(String url, Cagnotte cagnotte, String coderace) throws ClientProtocolException, IOException, JSONException, URISyntaxException, DAOAPIException{
+		return this.creerCagnot(url, cagnotte, coderace);
 	}
 
-	public int updateBonusK(String url, double k_rate, double mbonusk0, double mbonusk1, Long coderace) throws ClientProtocolException, IOException, JSONException, URISyntaxException, DAOAPIException{
+	public int updateBonusK(String url, double k_rate, double mbonusk0, double mbonusk1, String coderace) throws ClientProtocolException, IOException, JSONException, URISyntaxException, DAOAPIException{
 		return this.setbonusk(url, k_rate, mbonusk0, mbonusk1, coderace);
 	}
 
-	public List<KenoRes> getbonus(String url, Long coderace) throws ClientProtocolException, IOException, JSONException, URISyntaxException, DAOAPIException{
+	public List<KenoRes> getbonus(String url, String coderace) throws ClientProtocolException, IOException, JSONException, URISyntaxException, DAOAPIException{
 		return this.bonus(url, coderace);
 	}
 
-	public List<KenoRes> getLdraw(String url, Long coderace) throws ClientProtocolException, IOException, JSONException, URISyntaxException, DAOAPIException{
+	public List<KenoRes> getLdraw(String url, String coderace) throws ClientProtocolException, IOException, JSONException, URISyntaxException, DAOAPIException{
 		return this.lDraw(url, coderace);
 	}
 

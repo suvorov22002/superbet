@@ -122,7 +122,7 @@ public class UpdateBonus extends HttpServlet {
 		String coderace = request.getParameter("partner");
 		Partner p = partnerDao.find(coderace);
 		//System.out.println("coderace updatebonus: "+coderace);
-		Keno keno = kenoDao.find_Max_draw(coderace);
+	//	Keno keno = kenoDao.find_Max_draw(coderace);
 		//System.out.println("UPDATE BONUS KENO: "+keno);
 		String[] maj_last = kenoDao.find_Max_draw_bis(coderace);
 		String[] last = kenoDao.getLastKdraw(coderace);
@@ -131,9 +131,9 @@ public class UpdateBonus extends HttpServlet {
 		List<KenoRes> last_bns = new ArrayList<>();
 		List<KenoRes> last_draw = new ArrayList<>();
 		try {
-			last_bns = this.supergameAPI.getSuperGameDAO().getbonus(Params.url, p.getIdpartner());
+			last_bns = this.supergameAPI.getSuperGameDAO().getbonus(Params.url, p.getCoderace());
 			
-			last_draw = this.supergameAPI.getSuperGameDAO().getLdraw(Params.url, p.getIdpartner());
+			last_draw = this.supergameAPI.getSuperGameDAO().getLdraw(Params.url, p.getCoderace());
 			
 			   _nbre = last_bns.size();
 			   lastB = new String[_nbre];
@@ -193,8 +193,9 @@ public class UpdateBonus extends HttpServlet {
 		}
 		//System.out.println("SV-TOKEN: "+this.token);
 		
-		String new_draw = keno.getDrawnumbK();
-		System.out.println("new_draw updatebonus: "+new_draw);
+		
+//		String new_draw = keno.getDrawnumbK();
+//		System.out.println("new_draw updatebonus: "+new_draw);
 //		if(!new_draw.equalsIgnoreCase("'1-2-3-4-5-6-7-8-9-10-11-12-13-14-15-16-17-18-19-20'") || !keno.getMultiplicateur().equalsIgnoreCase("0")){
 //			System.out.println("Ajout au lancement updateBonus: "+last.length);
 //			Keno kenos = new Keno();
@@ -230,7 +231,7 @@ public class UpdateBonus extends HttpServlet {
         // On construit l'objet JSON pour l'expediteur
             JsonObjectBuilder objectBuilder = Json.createObjectBuilder();
             
-            objectBuilder.add("drawnumk", keno.getDrawnumK());
+   //         objectBuilder.add("drawnumk", keno.getDrawnumK());
             switch(nbre){
             	case 1:
             		objectBuilder.add("draw1", lastsK[0]);

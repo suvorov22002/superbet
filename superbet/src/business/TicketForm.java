@@ -61,7 +61,7 @@ public class TicketForm {
 			
 			Partner p = partnerDao.find(coderace);
 			
-			misekt = supergameAPI.getSuperGameDAO().allMiset(Params.url, t1, t2, p.getIdpartner());
+			misekt = supergameAPI.getSuperGameDAO().allMiset(Params.url, t1, t2, p.getCoderace());
 			if (misekt == null) {
 				resultat = "Aucun ticket trouvé.";
 				return;
