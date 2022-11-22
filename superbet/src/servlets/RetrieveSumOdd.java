@@ -56,11 +56,11 @@ public class RetrieveSumOdd extends HttpServlet {
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		String coderace = request.getParameter("partner");
-		System.out.println("Retrieve Odd: "+coderace);
+		//System.out.println("Retrieve Odd: "+coderace);
 		List<Keno> keno = kenoDao.getAllLastKdraw(coderace);
-		System.out.println("keno size: "+keno.size());
+		//System.out.println("keno size: "+keno.size());
 		countAllNumOdds(keno);
-		System.out.println("Sood size: "+UtileKeno.sOdd.size());
+		//System.out.println("Sood size: "+UtileKeno.sOdd.size());
 		response.setContentType("application/json; charset=UTF-8");
 		response.setHeader("Cache-Control", "no-cache");
 	//	System.out.println("Soods: "+UtileKeno.sOdd);
@@ -69,7 +69,7 @@ public class RetrieveSumOdd extends HttpServlet {
 	//	j.putAll(UtileKeno.sOdd);
 	//	 System.out.println("Sood: "+j);
 	    String json = new Gson().toJson(UtileKeno.sOdd);
-	    System.out.println("Sood: "+json);
+	   // System.out.println("Sood: "+json);
 	//    response.getWriter().write(json);
 	//    
 	//	response.getWriter().write(j.toString());
@@ -135,7 +135,7 @@ public class RetrieveSumOdd extends HttpServlet {
 			}
 			
 		Map<String, Integer> m = triAvecValeur( allDrawNumOdds );
-		System.out.println("Apres: "+m);
+		//System.out.println("Apres: "+m);
 		UtileKeno.sOdd.clear();
 		UtileKeno.sOdd = m;
 //		  Iterator it = m.entrySet().iterator();

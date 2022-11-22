@@ -19,13 +19,13 @@ public class CaissierDAOImpl implements CaissierDAO {
 	
 	private static final String SQL_F_LOGIN_PASS = "SELECT * FROM caissier WHERE loginC=? "; 
 	private static final String SQL_F_LOGIN = "SELECT * FROM caissier WHERE loginC=? "; 
-	private static final String SQL_C_CAISSIER = "INSERT INTO caissier (idprofil, nomC, loginC, mdpC, idpartner, idCaissier) VALUES"
+	private static final String SQL_C_CAISSIER = "INSERT INTO caissier (idprofil, nomC, loginC, mdpC, coderace, idCaissier) VALUES"
 			+ "(?,?,?,?,?,?)";
-	//private static final String SQL_C_CAISSIER = "INSERT INTO caissier (idprofil, nomC, loginC, mdpC, idpartner, idgroupe) VALUES"
+	//private static final String SQL_C_CAISSIER = "INSERT INTO caissier (idprofil, nomC, loginC, mdpC, coderace, idgroupe) VALUES"
 	//		+ "(?,?,?,?,?,?)";
     private static final String SQL_U_CAISSIER_STATE = "UPDATE caissier set statut=? WHERE loginC=? ";  
-    private static final String SQL_F_LOGIN_PARTNER = "SELECT * FROM caissier WHERE idPartner IN ( Select idPartner from partner where coderace = ? ) "; 
-	private static final String SQL_F_LOGIN_CODERACE = "Select * from caissier where loginC=? and idPartner = ?";
+    private static final String SQL_F_LOGIN_PARTNER = "SELECT * FROM caissier WHERE coderace  = ?  "; 
+	private static final String SQL_F_LOGIN_CODERACE = "Select * from caissier where loginC=? and coderace = ?";
 	private static final String SQL_F_ID = "Select * from caissier where idCaissier = ? ";
 	
 	public CaissierDAOImpl(DAOFactory daoFactory){
@@ -264,7 +264,7 @@ public class CaissierDAOImpl implements CaissierDAO {
 		caissier.setNomc(resultSet.getString("nomc"));
 		caissier.setLoginc(resultSet.getString("loginC"));
 		caissier.setMdpc(resultSet.getString( "mdpc" ));
-		caissier.setPartner(resultSet.getLong("idPartner"));
+		caissier.setPartner(resultSet.getString("coderace"));
 		caissier.setStatut(resultSet.getString( "statut" ));
 		caissier.setGrpe(resultSet.getInt("idgroupe"));
 		

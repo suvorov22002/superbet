@@ -41,7 +41,7 @@ public class TicketForm {
 	public TicketForm(MisekDAO misekDao, PartnerDAO partnerDao){
 		this.misekDao = misekDao;
 		this.partnerDao = partnerDao;
-		supergameAPI = new SuperGameDAOAPI();
+		supergameAPI = SuperGameDAOAPI.getInstance();
 	}
 	
 	public void manage_admin(HttpServletRequest request){
@@ -59,7 +59,12 @@ public class TicketForm {
 				return;
 			}
 			
+			
 			Partner p = partnerDao.find(coderace);
+			if (p == null) {
+				resultat = "Veuillez choisir un partenaire";
+				return;
+			}
 			
 			misekt = supergameAPI.getSuperGameDAO().allMiset(Params.url, t1, t2, p.getCoderace());
 			if (misekt == null) {

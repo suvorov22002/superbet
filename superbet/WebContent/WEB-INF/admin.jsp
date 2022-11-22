@@ -1,5 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
     
 <!DOCTYPE html>
 <html lang="fr">
@@ -186,7 +187,7 @@
                   <table class="table table-fixed" id="tble_turn">
                       <thead>
                         <tr>
-                          <th class="col-xs-2">Date</th>
+                          <th class="col-xs-1">Date</th>
                           <th class="col-xs-1">Cycle</th>
                           <th class="col-xs-1">Percent</th>
                           <th class="col-xs-1">Jeu</th>
@@ -197,12 +198,13 @@
                           <th class="col-xs-1">Payé</th>
                           <th class="col-xs-1">Jackpot</th>
                           <th class="col-xs-1">Curr %</th>
+						  <th class="col-xs-1">Real %</th>
                         </tr>
                     </thead>
                       <tbody>
                       <c:forEach var="i" begin="1" end="${turn_form.taille}">
                           <tr class="table-fixed-turn"> 
-                            <td class="col-xs-2">${turn_form.gmc[i-1].date_fin}</td>
+                            <td class="col-xs-1">${turn_form.gmc[i-1].date_fin}</td>
                             <td class="col-xs-1">${turn_form.gmc[i-1].tour}</td>
                             <td class="col-xs-1">${turn_form.gmc[i-1].percent}%</td>
                             <td class="col-xs-1">${turn_form.gmc[i-1].jeu}</td>
@@ -213,6 +215,7 @@
                             <td class="col-xs-1">${turn_form.gmc[i-1].payout}</td>
                             <td class="col-xs-1">${turn_form.gmc[i-1].jkpt}</td>
                             <td class="col-xs-1">${turn_form.gmc[i-1].curr_percent}%</td>
+							<td class="col-xs-1">${turn_form.gmc[i-1].real_percent}%</td>
                           </tr>
                         </c:forEach>
                       </tbody>
@@ -560,8 +563,8 @@
           <div class="col-sm-12" >
           <input type="button" id="cob" class="btn btn-danger" onclick="doCob()" value="Mise à jour des caisses">
           <input type="button" class="btn btn-success" onclick="openRoom()" value="Ouverture des caisses">
-          <!--<input type="button" class="btn btn-warning" value="Editer bonus">
-          <input type="button" class="btn btn-danger" value="Suspendre bonus">-->
+          <span id="cob_error" style="color:green;font-weight:bold"></span>
+          <!-- <input type="button" class="btn btn-danger" value="Suspendre bonus">-->
           </div>
 
             

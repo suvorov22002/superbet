@@ -4,6 +4,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Locale;
 import java.util.TimerTask;
 
@@ -136,7 +137,7 @@ public class CobWorker {
 	public static void process(){
 		//recherche de tous les partners
 		System.out.println("recherche de tous les partners");
-		ArrayList<Partner> listPartners = partnerDao.getAllPartners();
+		List<Partner> listPartners = partnerDao.getAllPartners();
 		String txtDate=new SimpleDateFormat("dd/MM/yyyy,H:m:s", Locale.FRANCE).format(new Date());
 		String fecha = txtDate.toString().substring(0,10);
 		long t1;

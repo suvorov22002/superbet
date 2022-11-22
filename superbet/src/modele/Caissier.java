@@ -14,7 +14,7 @@ public class Caissier implements Serializable{
 	private String nomc;
 	private String loginc;
 	private String mdpc;
-	private Long partner;
+	private String partner;
 	private String statut;
 	private int grpe;
 	private double airtime;
@@ -80,11 +80,11 @@ public class Caissier implements Serializable{
 		this.profil = profil;
 	}
 
-	public Long getPartner() {
+	public String getPartner() {
 		return partner;
 	}
 
-	public void setPartner(Long partner) {
+	public void setPartner(String partner) {
 		this.partner = partner;
 	}
 

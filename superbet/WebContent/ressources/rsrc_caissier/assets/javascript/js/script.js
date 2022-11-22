@@ -1150,6 +1150,11 @@ function manage_keno(evt) {
 					var idpath0 = result.path;
 					var coupon = result.coupon;
 					
+					
+					if (coupon === undefined) {
+						document.getElementById('amount_error').innerHTML = result.resultat;
+						return false;
+					}
 					$('.ticket_keno').find('tbody').empty();
 					
 					setCouponValue(coupon, multi, _fecha);
@@ -1173,19 +1178,25 @@ function manage_keno(evt) {
 					document.getElementById("icode").innerHTML = "";
 					$('#alea_nbre').val('');
 					$("#print").prop("disabled",true);
+					$("#montant").val('');
 				
 				//----------------------------------------------------------
           
-					
+					//$("input[name='multi1']:checked").val('Non');
+					// $radios.filter('[value=Non]').prop('checked', true);
+					 $('input:radio[name=multi1][value=Non]').click();
 					
 					var modale = document.getElementById('imprimer');
+					
+					
 				    if(modale != null) {
 				    	
 				    	   let idbarcode = $('#idbc').text();
 				    	   $('#imprimer').modal('show');
 				    	   
 				    	   $("#bcTarget").barcode(idbarcode,"ean13",{barWidth:2, barHeight:40, output:"css",posX:100});
-				    	   document.getElementById('btnprint').focus();
+				    	   $('#btnprint').focus();
+				    	   
 				    	   console.log('code barre: '+idbarcode);
 				    	   
 				    }
@@ -1216,6 +1227,7 @@ function setCouponValue(coupon, multi, _fecha) {
 	
 	$("#idbc").text(coupon.barcode);
 	$("#idpartner0").text(coupon.room);
+	$("#btnprint").focus();
 	var login = $("#login_pari").text();
 	
 	//TR = document.createElement("tr");
@@ -1310,7 +1322,7 @@ function verif_coupon(evt) {
         
     	if (evt.keyCode === 13) {
 			evt.preventDefault();
-			console.log("le code: "+code+" versement: "+vers);
+			//console.log("le code: "+code+" versement: "+vers);
 			callCheckSlip(code, vers);
 
 		}
@@ -1333,7 +1345,7 @@ function callCheckSlip(code, vers) {
 			
 			document.getElementById('coupon_error').innerHTML = "";
 			console.log("code: "+code+" Versement: "+vers);
-			if(code ===''){
+			if(code.trim().length === 0 && vers.trim().length === 0){
 				console.log('error');
 				document.getElementById('coupon_error').innerHTML = "code ticket incorrect";
 				return;
@@ -1446,7 +1458,7 @@ function simple(){
 	alea_choice = 0;
 	document.getElementById('alea_nbre').value = '';
 	document.getElementById('alea_nbre').focus();
-	if(typeof(Storage) !== "undefined"){
+	if(typeof(Storage) !== undefined){
 		localStorage.setItem("aleaChoix", alea_choice);
 	}
 }
@@ -1455,7 +1467,7 @@ function sortant(){
 	alea_choice = 1;
 	document.getElementById('alea_nbre').value = '';
 	document.getElementById('alea_nbre').focus();
-	if(typeof(Storage) !== "undefined"){
+	if(typeof(Storage) !== undefined){
 		localStorage.setItem("aleaChoix", alea_choice);
 	}
 }
@@ -1464,7 +1476,7 @@ function dedans(){
 	alea_choice = 2;
 	document.getElementById('alea_nbre').value = '';
 	document.getElementById('alea_nbre').focus();
-	if(typeof(Storage) !== "undefined"){
+	if(typeof(Storage) !== undefined){
 		localStorage.setItem("aleaChoix", alea_choice);
 	}
 }
@@ -1722,7 +1734,9 @@ function addlinesTableVers(value){
   
   res = drawData['gain_total'] !== undefined ? drawData['gain_total'] : " ";
   document.getElementById('versement').value = res;
-	console.log('MULTI: '+multi);
+  //document.getElementById('barcode').value = "";
+  document.getElementById('barcode').focus
+	//console.log('MULTI: '+multi);
 	
   for(let i=0;i<multi;i++){
 
@@ -1830,9 +1844,10 @@ function clear(){
 function openRoom(){
 	let login = $('#login_pari').text();
 	var idcoderace = $('#idpartner2').text();
+	var resulat;
   //  console.log("login: "+idcoderace);
-    confirm('OPEN ROOM \nOuvertures de toutes les caisses');
-	$.ajax({
+	if (confirm('OPEN ROOM \nOuvertures de toutes les caisses') == true) {
+		$.ajax({
 		url:"executeCob",
 		type:"POST",
 		 data:{
@@ -1841,19 +1856,26 @@ function openRoom(){
                 
             },
 		success:function(result){
+			//console.log(JSON.stringify(result));
 			$.each(result, function(index, value){
-				
+				//console.log(index + ':' + value.resultat);
+				document.getElementById('cob_error').innerHTML = value.resultat;
 			});
 	    }
       });
+    } else {
+		return;
+    }
+	
 }
 
 function doCob(){
 	let login = $('#login_pari').text();
 	var idcoderace = $('#idpartner2').text();
     //console.log("login cob: "+login);
-    confirm('CLOSE ROOM \nMettre à jour toutes les caisses');
-	$.ajax({
+    //confirm('CLOSE ROOM \nMettre à jour toutes les caisses');
+	if (confirm('CLOSE ROOM \nMettre à jour toutes les caisses') == true) {
+		$.ajax({
 		url:"executeCob",
 		type:"POST",
 		 data:{
@@ -1862,10 +1884,16 @@ function doCob(){
             },
 		success:function(result){
 			$.each(result, function(index, value){
-				
+				//console.log(index + ':' + value.resultat);
+				//document.getElementById('cob_error').innerHTML = value.resultat;
+				$('#cob_error').prepend(value.resultat);
 			});
 	    }
       });
+    } else {
+		return;
+    }
+	
        
 }
 function connected(){

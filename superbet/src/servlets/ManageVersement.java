@@ -90,7 +90,8 @@ public class ManageVersement extends HttpServlet {
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doGet(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
-		
+		String ver = req.getParameter( "versement" );
+		//System.out.println("MANAGE VERSEMENT: "+ver);
 		Caissier caissier = null;
 		Vform vf = new Vform();
 		

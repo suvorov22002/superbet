@@ -13,14 +13,19 @@ import superbetDAO.api.interfaces.ISuperGameDAOAPILocal;
 public class SuperGameDAOAPI implements ISuperGameDAOAPILocal {
 	
 	private SuperGameDAO superGameDAO;
+	public static final SuperGameDAOAPI instance = new SuperGameDAOAPI();
 	
-	public SuperGameDAOAPI() {
+	private SuperGameDAOAPI() {
 		init();
 	}
 	
 	@PostConstruct
 	public void init() {
 		this.superGameDAO = new SuperGameDAO();
+	}
+	
+	public static SuperGameDAOAPI getInstance() {
+		return instance;
 	}
 	
 	@Override

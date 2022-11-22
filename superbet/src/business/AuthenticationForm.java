@@ -2,8 +2,8 @@ package business;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
-import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
@@ -12,7 +12,6 @@ import org.codehaus.jettison.json.JSONException;
 import org.jasypt.util.password.ConfigurablePasswordEncryptor;
 
 import config.Params;
-import modele.Airtime;
 import modele.Caissier;
 import modele.Partner;
 import superbetDAO.AirtimeDAO;
@@ -45,7 +44,7 @@ public final class AuthenticationForm {
 		this.airtimeDao = airtimeDao;
 		this.airtime = 0;
 		this.partnerDao = partnerDao;
-		supergameAPI = new SuperGameDAOAPI();
+		supergameAPI = SuperGameDAOAPI.getInstance();
 	}
 	
 	public String getResultat() {
@@ -119,7 +118,7 @@ public final class AuthenticationForm {
 						caissier.setProfil(2L);
 					}
 					
-					ArrayList<Partner> partners = partnerDao.getAllPartners();
+					List<Partner> partners = partnerDao.getAllPartners();
 					if(partners.size() > 0) {
 						Params.PARTNER = partners.get(0).getCoderace();
 					}
@@ -128,6 +127,7 @@ public final class AuthenticationForm {
 					}
 					System.out.println("Params.PARTNER: "+Params.PARTNER);
 					try {
+						System.out.println("supergameAPI: "+supergameAPI);
 						user =  supergameAPI.getSuperGameDAO().getCaissier(Params.url, caissier, Params.PARTNER);
 						System.out.println("USER: "+user);
 					} catch (IOException | JSONException | URISyntaxException | DAOAPIException e) {

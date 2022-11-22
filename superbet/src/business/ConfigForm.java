@@ -3,6 +3,7 @@ package business;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
@@ -18,7 +19,7 @@ import modele.Config;
 import modele.Keno;
 import modele.Partner;
 import modele.PartnerDto;
-import modele.Spin;
+import modele.ResPartner;
 import superbetDAO.AirtimeDAO;
 import superbetDAO.CagnotteDAO;
 import superbetDAO.CaissierDAO;
@@ -77,6 +78,7 @@ public final class ConfigForm {
    
 	
 	private  Map<String, String> user;
+	private List<Partner> lpartner;
 	
 	private KenoDAO kenoDao;
 	private MisetDAO misetDao;
@@ -207,7 +209,7 @@ public final class ConfigForm {
 		this.airtimeDao = airtimeDao;
 		this.game_cycleDao = game_cycleDao;
 		this.cagnotteDao = cagnotteDao;
-		supergameAPI = new SuperGameDAOAPI();
+		supergameAPI = SuperGameDAOAPI.getInstance();
 	}
 	
 	public void manage_config(HttpServletRequest request){
@@ -221,6 +223,9 @@ public final class ConfigForm {
 			coderace = getName( request, FIELD_CODERACE );
 			zone = getName( request, FIELD_ZONE );
 			
+			// recupere tous les partenaires
+		    lpartner = partnerDao.getAllPartners();
+			
 			if(coderace == null){
 				return;
 			}
@@ -230,104 +235,43 @@ public final class ConfigForm {
 	  		  return;
 			}
 		 try {
-			Partner partner = partnerDao.find(coderace);
+			//Partner partner = partnerDao.find(coderace);
 			
-			if(partner == null){
-				
-				Long n = 0L;
-				Partner part = new Partner();
-				part.setCoderace(coderace);
-				part.setZone(zone);
-				part.setGroupe(1);
-				
-				n = partnerDao.create(part);
-				if(n > 0){	
-					PartnerDto pdto = new PartnerDto();
-					pdto.setCoderace(part.getCoderace());
-					pdto.setIdpartner(part.getIdpartner());
-					pdto.setZone(zone);
-					Partner p = supergameAPI.getSuperGameDAO().submitPartner(Params.url, pdto);
-					
-					if (p == null) {
-						partnerDao.delete(part);
-						setErreurs(FIELD_CODERACE, "Erreur creation partenaire");
-				  		resultat = "Erreur creation partenaire";
-				  		return;
-					}
-					
-					//ajout d'une de configuration
-					Config conf = new Config();
-					conf.setCoderace(coderace);
-					configDao.create(conf);
-					
-					//ajout d'un tirage par defaut
-					Keno ken = new Keno();
-					ken.setDrawnumK("1");
-					ken.setMultiplicateur("0");
-					ken.setDrawnumbK("'1-2-3-4-5-6-7-8-9-10-11-12-13-14-15-16-17-18-19-20'");
-					ken.setCoderace(coderace);
-					ken.setHeureTirage("01/01/2020-00:00:00");
-					int nb_race = kenoDao.create(ken);
-					
-					//ajout d'une ligne spin
-//					Spin spin = new Spin();
-//					spin.setCoderace(coderace);
-//					spin.setDrawNumP("0");
-//					int nbspin = spinDao.create(spin);
-				    
-					//ajout freeslip
-					misetDao.createFree(n);
-					
-					//ajout d'un cycle par defaut
-//					Partner partne = partnerDao.find(coderace);
-//					GameCycle gm = new GameCycle();
-//					gm.setPercent(95d);
-//					gm.setArchive(0);
-//					gm.setArrangement("1-2-3-4-5-6-7-8-9-10-11-12-13-14-15-16-17-18-19-20");
-//					gm.setTour(10);
-//					gm.setJeu("K");
-//					gm.setCurr_percent(0);
-//					gm.setPosition(1);
-//					gm.setHitfrequence(10);
-//					gm.setJkpt(0);
-//					gm.setMise(0);
-//					gm.setMisef(1);
-//					gm.setPartner(partne.getIdpartner());
-//					gm.setPayout(0);
-//					gm.setRefundp(0);
-//					gm.setStake(0d);
-//					gm.setDate_fin("16-01-2021,00:17");
-//				
-//					game_cycleDao.create(gm);
-					
-					
-					if(nb_race > 0){
-						resultat = "Partenaire enregistré avec succes";
-						return;
-					}
-					else{
-						setErreurs(FIELD_CODERACE, "Echec de creation");
-						resultat = "Echec de creation";
-						return;
-					}
-					
-				}
-				else{
-					setErreurs(FIELD_CODERACE, "Echec de creation");
-					resultat = "Echec de creation";
-					return;
-				}
-				
-			}
-			else{
-				setErreurs(FIELD_CODERACE, "present");
-				resultat = "Deja présent, veuillez entrer un autre nom";
-			}
-			
-		   } catch (IOException | JSONException | URISyntaxException | DAOAPIException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-		   }
+			 PartnerDto pdto = new PartnerDto();
+			 pdto.setCoderace(coderace);
+			 pdto.setZone(zone);
+			 ResPartner resp = supergameAPI.getSuperGameDAO().submitPartner(Params.url, pdto);
+			 Partner p = resp.getPartner();
+			 String respMess = resp.getMessage();
+
+			 Partner part = new Partner();
+			 part.setCoderace(coderace);
+			 part.setZone(zone);
+			 part.setGroupe(1);
+			 part.setActif(1);
+			 part.setCob("opened");
+
+			 if ("EXISTS".equalsIgnoreCase(respMess)) {
+
+				 Partner partner = partnerDao.find(coderace);
+
+				 if (partner == null) {
+					 addNewPartenaire(part);
+				 }
+				 else {
+					 setErreurs(FIELD_CODERACE, "present");
+					 resultat = "Partenaire/Salle deja présent.";
+				 }
+
+			 }
+			 else if("NEW".equalsIgnoreCase(respMess)) {
+				 addNewPartenaire(part);
+			 }
+
+		 } catch (IOException | JSONException | URISyntaxException | DAOAPIException e) {
+			 // TODO Auto-generated catch block
+			 e.printStackTrace();
+		 }
 		}
 		else if(action.equalsIgnoreCase("addcaissier")){
 			user = new HashMap<String, String>();
@@ -378,7 +322,7 @@ public final class ConfigForm {
 				cais.setNomc(nom_user);
 				cais.setLoginc(login);
 				cais.setMdpc(passChiffre);
-				cais.setPartner(idpartner);
+				cais.setPartner(partner);
 				cais.setProfil(idprofil);
 				cais.setGrpe(1);
 				//System.out.println(cais);
@@ -389,7 +333,7 @@ public final class ConfigForm {
 						caisDto.setNomc(nom_user);
 						caisDto.setLoginc(login);
 						caisDto.setMdpc(passChiffre);
-						caisDto.setPartner(idpartner);
+						caisDto.setPartner(partner);
 						caisDto.setProfil(idprofil);
 						caisDto.setGrpe(1);
 						//System.out.println(caisDto);
@@ -472,7 +416,7 @@ public final class ConfigForm {
 				}
 				if(bonusk_rate == null || bonusk_rate.equalsIgnoreCase("")){
 					bonusk_rate = "2";
-					return;
+					//return;
 				}
 				double k_rate = Double.parseDouble(bonusk_rate)/100;
 				
@@ -553,7 +497,8 @@ public final class ConfigForm {
 			
 			try {
 				//cagnotteDao.create(cagnotte);
-				cagnotte = supergameAPI.getSuperGameDAO().saveJackpot(Params.url, cagnotte, coderace);
+				
+				cagnotte = supergameAPI.getSuperGameDAO().saveJackpot(Params.url, cagnotte, partner);
 			} catch (IOException | JSONException | URISyntaxException | DAOAPIException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -594,4 +539,49 @@ public final class ConfigForm {
 		String valeur = request.getParameter(nomChamp);
 		return valeur;
 	}
+	
+	private void addNewPartenaire(Partner part) {
+		
+		Long n = 0L;
+		n = partnerDao.create(part);
+		
+		if(n > 0){	
+			
+			//ajout d'une de configuration
+			Config conf = new Config();
+			conf.setCoderace(coderace);
+			configDao.create(conf);
+			
+			//ajout d'un tirage par defaut
+			Keno ken = new Keno();
+			ken.setDrawnumK("1");
+			ken.setMultiplicateur("0");
+			ken.setDrawnumbK("'1-2-3-4-5-6-7-8-9-10-11-12-13-14-15-16-17-18-19-20'");
+			ken.setCoderace(coderace);
+			ken.setHeureTirage("01/01/2020-00:00:00");
+			int nb_race = kenoDao.create(ken);
+			
+			//misetDao.createFree(n);
+			
+			if(nb_race > 0){
+				resultat = "Partenaire enregistré avec succes";
+			}
+			else{
+				setErreurs(FIELD_CODERACE, "Echec de creation");
+				resultat = "Echec de creation";
+				return;
+			}
+			
+			for (Partner pp : lpartner) {
+				pp.setActif(0);
+				pp.setCob("closed");
+				partnerDao.update(pp);
+			}
+		}
+		else {
+			setErreurs(FIELD_CODERACE, "Echec de creation");
+			resultat = "Echec de creation";
+			return;
+		}
+	}		
 }

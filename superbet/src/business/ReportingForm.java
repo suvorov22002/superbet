@@ -60,7 +60,7 @@ public class ReportingForm {
 		
 		this.partnerDao = partnerDao;
 		this.caissierDao = caissierDao;
-		supergameAPI = new SuperGameDAOAPI();
+		supergameAPI = SuperGameDAOAPI.getInstance();
 	}
 	
 	public void manage_reporting(HttpServletRequest request){

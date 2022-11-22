@@ -12,7 +12,12 @@ import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 
+import org.apache.commons.lang3.StringUtils;
 import org.codehaus.jettison.json.JSONException;
 
 import config.Params;
@@ -23,6 +28,7 @@ import modele.Keno;
 import modele.KenoRes;
 import modele.Misek;
 import modele.Miset;
+import modele.Partner;
 import superbetDAO.CaissierDAO;
 import superbetDAO.ConfigDAO;
 import superbetDAO.DAOConfigurationException;
@@ -64,7 +70,7 @@ public class Refresh implements Runnable {
 	private PartnerDAO partnerDao;
 	private GameCycleDAO gmcDao;
 	private Misek_tempDAO misektpDao;
-	private ArrayList<Misek> list_barcode;
+	List<Partner> partners;
 	private double miseTotale;
 	private double miseTotale_s; //cycle suivant
 	private String arrangement_pos;
@@ -83,6 +89,8 @@ public class Refresh implements Runnable {
 	private Date datecreation;
 	private boolean alive;
 	private int drawCount = 130;
+	private ExecutorService executor;
+	private Future<String> future;
 	
 	KenoRes b;
 	private  ISuperGameDAOAPILocal  supergameAPI;
@@ -92,15 +100,8 @@ public class Refresh implements Runnable {
 		this.datecreation = new Date();
 		thread = new Thread(this);
 		this.alive = true;
-//		this.misekDao = DAOFactory.getInstance().getMisekDao();
-//		this.misetDao = DAOFactory.getInstance().getMisetDao();
-//		this.caissierDao = DAOFactory.getInstance().getCaissierDao();
-//		this.gmcDao = DAOFactory.getInstance().getGameCycleDao();
-//		this.configDao = DAOFactory.getInstance().getConfigDao();
-//		this.misektpDao = DAOFactory.getInstance().getMisektpDao();
 		this.kenoDao = DAOFactory.getInstance().getKenoDao();
-//		this.partnerDao = DAOFactory.getInstance().getPartnerDao();
-		supergameAPI = new SuperGameDAOAPI();
+		supergameAPI = SuperGameDAOAPI.getInstance();
 	}
 	
 	
@@ -131,7 +132,7 @@ public class Refresh implements Runnable {
 		b = new KenoRes();
 		Keno k;
 		//UtileKeno.timeKeno = 
-	  
+		executor = Executors.newSingleThreadExecutor();
 		
 		while(alive){
 			//System.out.println("gamestate - "+UtileKeno.gamestate);
@@ -156,21 +157,38 @@ public class Refresh implements Runnable {
 			
 				
 				if(UtileKeno.timeKeno == 11 && UtileKeno.gamestate == 1) {
-					 System.out.println("REFRESHTIME KENO: "+UtileKeno.timeKeno);
 					UtileKeno.canbet = false;
 					UtileKeno.messagek = "pari fermé";
-					UtileKeno.drawKeno = this.supergameAPI.getSuperGameDAO().retrieveCombinaison(Params.url, UtileKeno.drawnumk, coderace);
+					//UtileKeno.drawKeno = this.supergameAPI.getSuperGameDAO().retrieveCombinaison(Params.url, UtileKeno.drawnumk, coderace);
+					future = calculateDraw();
+					System.out.println("REFRESHTIME KENO: "+UtileKeno.timeKeno+" *** "+UtileKeno.drawKeno);
 				}
 				else if(UtileKeno.gamestate == 1 && UtileKeno.timeKeno > 11) {
 					UtileKeno.canbet = true;
 				}
 				
 				if(UtileKeno.timeKeno < 1 ) {
-					isDraw = true;
-					UtileKeno.timeKeno = 185;
 					countDown = false;
+					if (future != null) {
+						UtileKeno.drawKeno = future.get();
+						isDraw = true;
+						UtileKeno.timeKeno = 185;
+					}
+					else {
+						future = calculateDraw();
+					}
+					
+					System.out.println(" FUTURE*** "+UtileKeno.drawKeno);
 				}
 				
+				if (StringUtils.isBlank(coderace)) {
+					partners = partnerDao.getAllPartners();
+					for(Partner ps : partners) {
+						if (ps.getActif() == 1) {
+							this.setName(coderace);
+						}
+					}
+				}
 				//recuperation de lobjet keno
 				b =  supergameAPI.getSuperGameDAO().retrieveCombi(Params.url, coderace);	
 			//	System.out.println("KRES : "+UtileKeno.drawKeno);
@@ -282,7 +300,7 @@ public class Refresh implements Runnable {
 			*/
 			  //  System.out.println("UtileKeno.timeKeno: "+UtileKeno._timeKeno+" "+controltime+"  "+this.getDatecreation());
 				Thread.sleep(1000);
-			} catch (IOException | JSONException | URISyntaxException | DAOAPIException | InterruptedException e) {
+			} catch (IOException | JSONException | URISyntaxException | DAOAPIException | InterruptedException | ExecutionException e) {
 				e.printStackTrace();
 				search_draw = false;
 				UtileKeno.drawKeno = "";
@@ -341,5 +359,14 @@ public class Refresh implements Runnable {
 	     map_apres.put( entry.getKey(), entry.getValue() );
 	   return map_apres;
 	}
+    
+    private Future<String> calculateDraw() {
+    	
+    	return executor.submit(() -> {
+    		String resultat =  this.supergameAPI.getSuperGameDAO().retrieveCombinaison(Params.url, UtileKeno.drawnumk, coderace);
+    		System.out.println("Resultat: "+resultat);
+    		return resultat;
+    	});
+    }
 	
 }

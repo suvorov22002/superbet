@@ -93,7 +93,7 @@ public final class ManageKenoForm {
 		this.airtimeDao = airtimeDao;
 		this.configDao = configDao;
 		
-		supergameAPI = new SuperGameDAOAPI();
+		supergameAPI = SuperGameDAOAPI.getInstance();
 	}
 	
 	

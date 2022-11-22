@@ -51,7 +51,7 @@ public final class ShiftForm {
 		this.verstDao = verstDao;
 		this.caissierDao = caissierDao;
 		this.airtimeDao = airtimeDao;
-		supergameAPI = new SuperGameDAOAPI();
+		supergameAPI = SuperGameDAOAPI.getInstance();
 	}
 
 	public Map<String, String> getShift() {

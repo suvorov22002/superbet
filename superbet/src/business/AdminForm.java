@@ -10,12 +10,14 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Logger;
 
 import javax.servlet.http.HttpServletRequest;
 
 import org.codehaus.jettison.json.JSONException;
 
 import config.Params;
+import lombok.extern.slf4j.Slf4j;
 import modele.Misek;
 import modele.Partner;
 import modele.Versement;
@@ -31,8 +33,10 @@ import superbetDAO.api.exeception.DAOAPIException;
 import superbetDAO.api.implementations.SuperGameDAOAPI;
 import superbetDAO.api.interfaces.ISuperGameDAOAPILocal;
 
+
 public final class AdminForm {
 	
+	private static final Logger LOGGER = Logger.getLogger(AdminForm.class.getName());
 	private static final String FIELD_DATE1 = "ddebut";
 	private static final String FIELD_DATE2 = "dfin";
 	private static final String FIELD_CODERACE = "ficoderace";
@@ -157,7 +161,7 @@ public final class AdminForm {
 		this.partnerDao = partnerDao;
 		this.misektpDao = misektpDao;
 		this.utilDao = utilDao;
-		supergameAPI = new SuperGameDAOAPI();
+		supergameAPI = SuperGameDAOAPI.getInstance();
 	}
 	
 	public void manage_admin(HttpServletRequest request){
@@ -165,13 +169,13 @@ public final class AdminForm {
 		dat1 = getDate(request, FIELD_DATE1);
 		dat2 = getDate(request, FIELD_DATE2);
 		coderace = getPartner(request, FIELD_CODERACE);
-		//System.out.println(partner);
+		//log.info(partner);
 		try {
-//			System.out.println("periode1: "+dat1+",00:00:00");
-//			System.out.println("periode2: "+dat2+",23:59:00");
+//			log.info("periode1: "+dat1+",00:00:00");
+//			log.info("periode2: "+dat2+",23:59:00");
 			t1 = givetimestamp(dat1+",00:00:00");
 			t2 = givetimestamp(dat2+",23:59:00");
-			//System.out.println(t1+" : "+t2);
+			//log.info(t1+" : "+t2);
 			if(t1 > t2){
 				resultat = "Periode pas correcte";
 				erreurs.put("date", "Periode pas correcte");
@@ -191,7 +195,7 @@ public final class AdminForm {
 				return;
 			}
 			taille = misek.size();
-			//System.out.println("taille= "+taille+" | "+misek.get(0).getIdmisek()+" _idmisek_ "+misek.get(taille-1).getIdmisek());
+			//log.info("taille= "+taille+" | "+misek.get(0).getIdmisek()+" _idmisek_ "+misek.get(taille-1).getIdmisek());
 			
 			versk = supergameAPI.getSuperGameDAO().getVersementk(Params.url, t1, t2, p.getCoderace());
 		//	versk = verstDao.getVersementk(""+t1, ""+t2, "K");
@@ -201,16 +205,20 @@ public final class AdminForm {
 				return;
 			}
 			sizek = versk.size(); 
-			System.out.println("taille vers= "+sizek);
-			//System.out.println("taille= "+sizek+" | "+versk.get(0).getIdvers()+" _idvers_ "+versk.get(sizek-1).getIdvers());
+			LOGGER.info("taille vers= "+sizek);
+			//log.info("taille= "+sizek+" | "+versk.get(0).getIdvers()+" _idvers_ "+versk.get(sizek-1).getIdvers());
 			// calcul de la somme totale des mises de keno de la période
 			for(int n=0;n<misek.size();n++){
-				//System.out.println("summise= "+misek.get(n).getSumMise());
+				//log.info("summise= "+misek.get(n).getSumMise());
 				sum_keno += Double.parseDouble(misek.get(n).getSumMise());
 			}
+			LOGGER.info("sum_keno= "+sum_keno);
+			
 			for(int n=0;n<versk.size();n++){
 				sum_v_keno += versk.get(n).getMontant();
 			}
+			LOGGER.info("sum_v_keno= "+sum_v_keno);
+			
 			nbre_keno = ""+misek.size();
 			nbre_v_keno = ""+versk.size();
 			
@@ -221,6 +229,9 @@ public final class AdminForm {
 				percent_keno = 100*(sum_v_keno/sum_keno);
 				percent_keno = (double)((int)(percent_keno*100))/100;
 			}
+			
+			LOGGER.info("percent_keno= "+percent_keno);
+			
 			balance = sum_keno - sum_v_keno;
 			sum_keno = (double)((int)(sum_keno*100))/100;
 			sum_v_keno = (double)((int)(sum_v_keno*100))/100;
@@ -235,7 +246,7 @@ public final class AdminForm {
 	
 	private String getDate( HttpServletRequest request,String nomChamp ) {
         String valeur = request.getParameter( nomChamp );
-       // System.out.println(valeur);
+       // log.info(valeur);
         if(valeur == null)
         	return valeur;
         else

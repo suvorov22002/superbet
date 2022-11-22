@@ -2,12 +2,11 @@ package config;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import business.Refresh;
 import modele.ControlDisplayKeno;
-import modele.Misek;
-import modele.Miset;
 import modele.Partner;
 import superbetDAO.AirtimeDAO;
 import superbetDAO.CaissierDAO;
@@ -62,13 +61,13 @@ public class InitialKeno {
 //		}
 		System.out.println("Params.url: "+Params.url);
 		//Recherche de tous les partners actifs
-		System.out.println("Recherche de tous les partners actifs");
-		ArrayList<Partner> partners = partnerDao.getAllPartners();
+		
+		List<Partner> partners = partnerDao.getAllPartners();
 		System.out.println("Partenaires actifs: "+partners.size());
 		
 		for (Partner partner : partners) {
 			coderace = partner.getCoderace();
-			System.out.println("Partenaires actifs coderace: "+coderace);
+			//.System.out.println("Partenaires actifs coderace: "+coderace);
 //			//Verification des configurations de bases
 //			//** Entrée dans la table Keno **
 //			String coderace = partner.getCoderace();

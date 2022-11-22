@@ -9,6 +9,7 @@ let draw_boules = [];
 let pg1 = false;
 let pg2 = false;
 let imagePage1;
+
  
 async function buildPage4() {
   //  console.log('ICI PAGE2');
@@ -149,15 +150,17 @@ async function buildPage2() {
   // console.log("draw_boules: "+draw_boules.length);
     let buscarInterval = setInterval(async function(){
         if(draw_boules.length < 20){
-              console.log("draw_boules: "+draw_boules.length);
+            console.log("draw_boules: "+draw_boules.length);
             buscarDraw();
-           
         }
         else{
-              console.log("draw_boules2: "+draw_boules.length);
+            console.log("draw_boules2: "+draw_boules.length);
             startDraw(2);
             clearInterval(buscarInterval);
-             setarrayNumroSortant();
+			setTimeout(
+				() => {
+					setarrayNumroSortant();
+				}, 2000 );
             animationCircle();
         }
        
@@ -290,11 +293,14 @@ function init(times) {
     clearIntervalId();
     startDraw(1);
     seekCagnot();
+	
+	console.log('CODERACE '+coderace);
+	
     recordDisplay(); // recuperation du temps, combinaison, gamestate
 
-    console.log('GAME STATE: '+gamestate);
-    console.log('COMBI: '+str_combi);
-    console.log('recordDisplay '+timekeno);
+    //console.log('GAME STATE: '+gamestate);
+    //console.log('COMBI: '+str_combi);
+    //console.log('recordDisplay '+timekeno);
 
     let retour = $("#errors").text();
 
@@ -426,7 +432,7 @@ function buscarDraw(){
     $.ajax({
             url:"generatedraw",
             type:"GET",
-            async: false,
+            async: true,
             data:{
                 'coderace':coderace
             },
@@ -441,8 +447,8 @@ function buscarDraw(){
 
                    draw_boules = draw.split("-");
                   // arrayNumroSortant = draw_boules;
-              
-                     trouve_draw = true;
+              if(draw_boules.length == 20) {
+				  trouve_draw = true;
                   for(let j=0;j<20;j++){
                      //arrayNumroSortant.pop();
                      arrayNumroSortant.push(draw_boules[j]);
@@ -450,6 +456,8 @@ function buscarDraw(){
                    outputNumber = arrayNumroSortant;
                  
                    multiplicateur = value.multi;
+			  }
+                     
                 
 
             //    numero_tirage =  value.drawnumk;

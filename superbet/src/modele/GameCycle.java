@@ -26,6 +26,7 @@ public class GameCycle implements Serializable{
 	private double stake;
 	private double payout;
 	private double jkpt;
+	private double real_percent;
 	
 	public GameCycle() {
 		super();
@@ -158,6 +159,14 @@ public class GameCycle implements Serializable{
 
 	public void setJkpt(double jkpt) {
 		this.jkpt = jkpt;
+	}
+
+	public double getReal_percent() {
+		return real_percent;
+	}
+
+	public void setReal_percent(double real_percent) {
+		this.real_percent = real_percent;
 	}
 	
 	

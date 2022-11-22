@@ -33,8 +33,9 @@ public class PartnerDAOImpl implements PartnerDAO {
 			+ " WHERE coderace = ? ";
 	private static final String SQL_U_BONUSP_RESET_AMOUNT_PARTNER = "UPDATE partner SET bonuspamount = ? WHERE coderace = ? ";
 	private static final String SQL_F_ALL_PARTNER = "select * from partner where actif=1 ";
-	private static final String SQL_C_PARTNER = "Insert Into partner Set coderace=? , zone=? , groupe = ? "; 
+	private static final String SQL_C_PARTNER = "Insert Into partner Set coderace=? , zone=? , groupe = ? , actif = ? , cob = ? "; 
 	private static final String SQL_U_COB_PARTNER = "UPDATE partner SET COB = ? WHERE coderace = ? ";
+	private static final String SQL_U_INIT_PARTNER = "UPDATE partner SET actif = ? , cob = ? WHERE coderace = ? ";
 	
 	
 	public PartnerDAOImpl(DAOFactory daoFactory){
@@ -52,7 +53,7 @@ public class PartnerDAOImpl implements PartnerDAO {
 		try {
 			/* Récupération d'une connexion depuis la Factory */
 			connexion = daofactory.getConnection();
-			preparedStatement = initialisationRequetePreparee( connexion,SQL_C_PARTNER, true, partner.getCoderace(), partner.getZone(), partner.getGroupe());
+			preparedStatement = initialisationRequetePreparee( connexion,SQL_C_PARTNER, true, partner.getCoderace(), partner.getZone(), partner.getGroupe(), partner.getActif(), partner.getCob());
 			
 			statut = preparedStatement.executeUpdate();
 			
@@ -169,8 +170,29 @@ public class PartnerDAOImpl implements PartnerDAO {
 
 	@Override
 	public Partner update(Partner partner) throws DAOException {
-		// TODO Auto-generated method stub
-		return null;
+		Connection connexion = null;
+		PreparedStatement preparedStatement = null;
+		ResultSet valeursAutoGenerees = null;
+		
+		int statut;
+		
+		try {
+			/* Récupération d'une connexion depuis la Factory */
+			connexion = daofactory.getConnection();
+			preparedStatement = initialisationRequetePreparee( connexion,SQL_U_INIT_PARTNER, false, partner.getActif(), partner.getCob(), partner.getCoderace());
+			statut = preparedStatement.executeUpdate();
+			/* Analyse du statut retourné par la requête d'insertion */
+			if ( statut == 0 ) {
+				return null;
+			}
+			
+		} catch ( SQLException e ) {
+			throw new DAOException( e );
+		} finally {
+			fermeturesSilencieuses( valeursAutoGenerees, preparedStatement, connexion );
+		}
+		
+		return partner;
 	}
 
 	@Override

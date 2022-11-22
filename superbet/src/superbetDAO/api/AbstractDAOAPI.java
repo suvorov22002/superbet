@@ -54,6 +54,7 @@ import modele.Misek;
 import modele.MisekDto;
 import modele.Partner;
 import modele.PartnerDto;
+import modele.ResPartner;
 import modele.ShiftDay;
 import modele.Versement;
 import modele.VersementDto;
@@ -94,7 +95,7 @@ public abstract class AbstractDAOAPI<T> {
 		
 		builder.build();
 		
-		////System.out.println("request url " +builder.build());
+		//////System.out.println("request url " +builder.build());
 
 		HttpGet getRequest = new HttpGet(builder.build());
 		getRequest.setHeader("Content-type", "application/json");
@@ -113,7 +114,7 @@ public abstract class AbstractDAOAPI<T> {
 				//retSrc = new JSONArray().toString();
 				JSONObject jsonObject = new JSONObject(retSrc);
 				
-				////System.out.println("resultString: "+retSrc);
+				//////System.out.println("resultString: "+retSrc);
 				results = jsonObject.getString("response");
 		}
 		
@@ -145,7 +146,7 @@ public abstract class AbstractDAOAPI<T> {
 		
 		builder.build();
 		
-		////System.out.println("request url " +builder.build());
+		//////System.out.println("request url " +builder.build());
 
 		HttpGet getRequest = new HttpGet(builder.build());
 		getRequest.setHeader("Content-type", "application/json");
@@ -163,7 +164,7 @@ public abstract class AbstractDAOAPI<T> {
 			if(retSrc.length() == 0) {
 				retSrc = new JSONArray().toString();
 			}
-			////System.out.println("resultString: "+retSrc);
+			//////System.out.println("resultString: "+retSrc);
 			if(retSrc.substring(0, 1).equalsIgnoreCase("{")){
 				retSrc = "["+retSrc+"]";
 			}
@@ -186,7 +187,7 @@ public abstract class AbstractDAOAPI<T> {
 				.setConnectionRequestTimeout(TIMEOUT*1000)
 				.setSocketTimeout(TIMEOUT*1000)
 				.build();
-		////System.out.println("Connection Timeout , " + requestConfig.getConnectionRequestTimeout());
+		//////System.out.println("Connection Timeout , " + requestConfig.getConnectionRequestTimeout());
 		HttpClient client = HttpClientBuilder.create().setDefaultRequestConfig(requestConfig).build();
 		return client;
 	}
@@ -210,14 +211,14 @@ public abstract class AbstractDAOAPI<T> {
 	public T mapToObject(JSONObject obj) throws JsonParseException, JsonMappingException, IOException, JSONException {
 		StringReader reader = new StringReader(obj.toString());
 		T o = this.mapper.readValue(reader, this.typeParameterClass);
-		////System.out.println("returned object " +  o);
+		//////System.out.println("returned object " +  o);
 		return o;
 	}
 	
 	public CaissierDto mapToCaissierDto_(JSONObject obj) throws JsonParseException, JsonMappingException, IOException, JSONException {
 		StringReader reader = new StringReader(obj.toString());
 		CaissierDto o = this.mapper.readValue(reader, CaissierDto.class);
-		////System.out.println("returned object " +  o);
+		//////System.out.println("returned object " +  o);
 		return o;
 	}
 	
@@ -236,7 +237,7 @@ public abstract class AbstractDAOAPI<T> {
 	public MisekDto mapToMisekDto_(JSONObject obj) throws JsonParseException, JsonMappingException, IOException, JSONException {
 		StringReader reader = new StringReader(obj.toString());
 		MisekDto o = this.mapper.readValue(reader, MisekDto.class);
-		////System.out.println("returned object " +  o);
+		//////System.out.println("returned object " +  o);
 		return o;
 	}
 	
@@ -255,7 +256,7 @@ public abstract class AbstractDAOAPI<T> {
 	public String mapToJsonStrings(T obj) throws JsonGenerationException, JsonMappingException, IOException, JSONException {
 		String map = this.mapper.writeValueAsString(obj);
 		String encoded = this.encodeJson(map);
-		////System.out.println("encoded "+ encoded);
+		//////System.out.println("encoded "+ encoded);
 		return map;
 	}
 	
@@ -301,12 +302,12 @@ public abstract class AbstractDAOAPI<T> {
         		if (entity != null) {
         			
 	        		String content = EntityUtils.toString(entity);
-	        	//	//System.out.println("content: "+content);
+	        	//	////System.out.println("content: "+content);
 	                JSONObject json = new JSONObject(content);
 	                
 	                //Verification du code reponse
 	                resp_code = json.getString("entity");
-	         //       //System.out.println("resp_code "+resp_code);
+	         //       ////System.out.println("resp_code "+resp_code);
 	                
 	                JSONObject j = new JSONObject(resp_code);
 	                
@@ -345,18 +346,18 @@ public abstract class AbstractDAOAPI<T> {
         		if (entity != null) {
         			
 	        		String content = EntityUtils.toString(entity);
-//	        	    //System.out.println("user-content: "+content);
+//	        	    ////System.out.println("user-content: "+content);
 	                JSONObject json = new JSONObject(content);
 	                
 	                //Verification du code reponse
 	                resp_code = json.getString("entity");
-	                System.out.println("resp_code "+resp_code);
+	                //System.out.println("resp_code "+resp_code);
 	                
 	                JSONObject j = new JSONObject(resp_code);
 	                
 	                String code = j.getString("code");
 	               
-	                System.out.println("CODE: "+code);
+	                //System.out.println("CODE: "+code);
 //	                if("503".equalsIgnoreCase(code) || "030".equalsIgnoreCase(code)  
 //	                		|| "032".equalsIgnoreCase(code) || "035".equalsIgnoreCase(code)) {
 	                if("503".equalsIgnoreCase(code) || "031".equalsIgnoreCase(code)) {
@@ -366,7 +367,7 @@ public abstract class AbstractDAOAPI<T> {
 	                
 	                
 	                JSONObject betkObject = j.getJSONObject("btick");
-	                System.out.println("RESULTAT: "+betkObject);
+	                //System.out.println("RESULTAT: "+betkObject);
 	                betk = this.mapToBetTicket(betkObject);
 	                betk.setMessage(j.getString("message"));
 	           
@@ -400,17 +401,17 @@ public abstract class AbstractDAOAPI<T> {
         		if (entity != null) {
         			
 	        		String content = EntityUtils.toString(entity);
-	        //	    //System.out.println("user-content: "+content);
+	        	//    System.out.println("user-content: "+content);
 	                JSONObject json = new JSONObject(content);
 	                
 	                //Verification du code reponse
 	                resp_code = json.getString("entity");
-	           //     //System.out.println("resp_code "+resp_code);
+	           //     ////System.out.println("resp_code "+resp_code);
 	                
 	                JSONObject j = new JSONObject(resp_code);
 	                
 	                String code = j.getString("code");
-	           //     //System.out.println("CODE: "+code);
+	           //     ////System.out.println("CODE: "+code);
 	                if(!code.equalsIgnoreCase("200")) {
 	                	return null;
 	                }
@@ -433,6 +434,7 @@ public abstract class AbstractDAOAPI<T> {
 	
 	public KenoRes retrieveDrawCombi(String url, String coderace) throws ClientProtocolException, IOException, JSONException, URISyntaxException, DAOAPIException{
 		String resp_code;
+		//System.out.println("url: "+url+"/drawcombi/"+coderace);
 		HttpGet getRequest = new HttpGet(url+"/drawcombi/"+coderace);
 				
 		// add request parameter, form parameters
@@ -448,22 +450,25 @@ public abstract class AbstractDAOAPI<T> {
         		if (entity != null) {
         			
 	        		String content = EntityUtils.toString(entity);
-	        //	    //System.out.println("user-content: "+content);
+	        	   // //System.out.println("user-content: "+content);
 	                JSONObject json = new JSONObject(content);
 	                
+	                if (!json.has("entity")) {
+	                	return null;
+	                }
 	                //Verification du code reponse
 	                resp_code = json.getString("entity");
-	             //   //System.out.println("resp_code "+resp_code);
+	             //   ////System.out.println("resp_code "+resp_code);
 	                
 	                JSONObject j = new JSONObject(resp_code);
 	                
 	                String code = j.getString("code");
-	         //       //System.out.println("CODE: "+code);
+	         //       ////System.out.println("CODE: "+code);
 	                if(!code.equalsIgnoreCase("200")) {
 	                	return kers;
 	                }
 	                JSONObject betkObject = j.getJSONObject("kres");
-	           //     //System.out.println("betkObject "+betkObject);
+	           //     ////System.out.println("betkObject "+betkObject);
 	                kers = this.mapToKenoRes(betkObject);
 	               // vers.setMessage(j.getString("message"));
 	           
@@ -495,17 +500,17 @@ public abstract class AbstractDAOAPI<T> {
         		if (entity != null) {
         			
 	        		String content = EntityUtils.toString(entity);
-	        //	    //System.out.println("user-content: "+content);
+	        //	    ////System.out.println("user-content: "+content);
 	                JSONObject json = new JSONObject(content);
 	                
 	                //Verification du code reponse
 	                resp_code = json.getString("entity");
-	                //System.out.println("resp_code "+resp_code);
+	                ////System.out.println("resp_code "+resp_code);
 	                
 	                JSONObject j = new JSONObject(resp_code);
 	                
 	                String code = j.getString("code");
-	           //     //System.out.println("CODE: "+code);
+	           //     ////System.out.println("CODE: "+code);
 	                if(!code.equalsIgnoreCase("200")) {
 	                	return null;
 	                }
@@ -550,10 +555,10 @@ public abstract class AbstractDAOAPI<T> {
 	      		if (entity != null) {
 	      			
 		        		String content = EntityUtils.toString(entity);
-		        		//System.out.println("content: "+content);
+		        		////System.out.println("content: "+content);
 		                JSONObject json = new JSONObject(content);
 		                resp_code = json.getString("entity");
-		           //     //System.out.println("resp_code "+resp_code);
+		           //     ////System.out.println("resp_code "+resp_code);
 		                JSONObject j = new JSONObject(resp_code);
 		                
 		                String code = j.getString("code");
@@ -592,7 +597,7 @@ public abstract class AbstractDAOAPI<T> {
 		if(!isJSONValid(playload)) {
 			return resp;
 		}
-
+		
        post = new HttpPost(url+"/gamecycle/"+coderace);
 
       // add request parameter, form parameters
@@ -607,10 +612,10 @@ public abstract class AbstractDAOAPI<T> {
       		if (entity != null) {
       			
 	        		String content = EntityUtils.toString(entity);
-	        		//System.out.println("content: "+content);
+	        		////System.out.println("content post cycle: "+content);
 	                JSONObject json = new JSONObject(content);
 	                resp_code = json.getString("entity");
-	           //     //System.out.println("resp_code "+resp_code);
+	           //     ////System.out.println("resp_code "+resp_code);
 	                JSONObject j = new JSONObject(resp_code);
 	                
 	                String code = j.getString("code");
@@ -645,7 +650,7 @@ public abstract class AbstractDAOAPI<T> {
 		String _json = new Gson().toJson(bkeve);
 		
 		String playload = mapToJsonString(bkeve);
-	//	//System.out.println("\n"+_json);
+	//	////System.out.println("\n"+_json);
 		if(!isValidJson(playload)) {
 			return false;
 		}
@@ -663,11 +668,11 @@ public abstract class AbstractDAOAPI<T> {
         		if (entity != null) {
         			
 	        		String content = EntityUtils.toString(entity);
-	        	//	System.out.println(content); 
+	        	//	//System.out.println(content); 
 	        			
 	                JSONObject json = new JSONObject(content);
 	                playload = json.getString("code");
-	    	    	////System.out.println("CODE REPONSE: "+playload);
+	    	    	//////System.out.println("CODE REPONSE: "+playload);
     			}
         	}
         	catch(Exception e) {
@@ -681,12 +686,12 @@ public abstract class AbstractDAOAPI<T> {
 	public BetTicketK _sendPostReverseEvent(String url, String bkeve) throws ClientProtocolException, IOException, JSONException, URISyntaxException, DAOAPIException {
 		
 		String resp_code;
-		////System.out.println("EXECUTE REVERSE: "+url+"/reverseevent/"+bkeve);
+		//////System.out.println("EXECUTE REVERSE: "+url+"/reverseevent/"+bkeve);
         HttpPost post = new HttpPost(url+"/reverseevent/"+bkeve);
       
         post.setHeader("content-type", "application/json");
 
-//		//System.out.println("URI: "+post.getURI());
+//		////System.out.println("URI: "+post.getURI());
 			 try (CloseableHttpResponse response = this.getClosableHttpClient().execute(post)) {
 				 BetTicketK eve = new BetTicketK();
 		        	try{
@@ -695,12 +700,12 @@ public abstract class AbstractDAOAPI<T> {
 		        		if (entity != null) {
 		        			
 			        		String content = EntityUtils.toString(entity);
-			        //		System.out.println(content); 
+			        //		//System.out.println(content); 
 			                JSONObject json = new JSONObject(content);
 			                
 			                //Verification du code reponse
 			                resp_code = json.getString("code");
-			         //       System.out.println(resp_code); 
+			         //       //System.out.println(resp_code); 
 			                if(!resp_code.equalsIgnoreCase("200")) {
 			                	return null;
 			                }
@@ -718,7 +723,7 @@ public abstract class AbstractDAOAPI<T> {
 		    					eve = this.mapToBetTicket(jo);
 		    				}
 		    				
-		    		//		//System.out.println("EVE LIST: "+eve);
+		    		//		////System.out.println("EVE LIST: "+eve);
 		    			}
 		        	}
 		        	catch(Exception e) {
@@ -740,7 +745,7 @@ public abstract class AbstractDAOAPI<T> {
 		if(!isJSONValid(playload)) {
 			return null;
 		}
-
+		
         post = new HttpPost(url+"/cagnotte/"+coderace);
 
       // add request parameter, form parameters
@@ -755,7 +760,7 @@ public abstract class AbstractDAOAPI<T> {
       		if (entity != null) {
       			
 	        		String content = EntityUtils.toString(entity);
-	        		//System.out.println("content: "+content);
+	        		////System.out.println("cagnotte: "+content);
 	                JSONObject json = new JSONObject(content);
 	                resp_code = json.getString("entity");
 	         
@@ -765,12 +770,12 @@ public abstract class AbstractDAOAPI<T> {
 	                if(!code.equalsIgnoreCase("200")) {
 	                	return null;
 	                }
-	                String retSrc = j.getString("data");
+	                String retSrc = j.getString("cagnot");
 		        	   
 	                JSONObject jsonObj = new JSONObject(retSrc.toString());
-	                Cagnotte pdto = new Cagnotte();
+	                
 	                if (jsonObj.has("cagnot")) {
-	                	pdto = this.mapToCagnotte(jsonObj.getJSONObject("cagnot"));
+	                    this.mapToCagnotte(jsonObj.getJSONObject("cagnot"));
 	                }
 	                else {
 	                	return null;
@@ -787,8 +792,10 @@ public abstract class AbstractDAOAPI<T> {
       }
 	}
 	
-	public Partner partner(String url, PartnerDto part) throws ClientProtocolException, IOException, JSONException, URISyntaxException, DAOAPIException {
-		 Partner pdto = null;
+	public ResPartner partner(String url, PartnerDto part) throws ClientProtocolException, IOException, JSONException, URISyntaxException, DAOAPIException {
+		
+		ResPartner resp = null;
+		Partner pdto = null;
 		String playload = null;
 		String resp_code;
 		HttpPost post;
@@ -822,10 +829,19 @@ public abstract class AbstractDAOAPI<T> {
 	                	return null;
 	                }
 	                
+	                resp = new ResPartner();
+	                String err = j.getString("error");
+	                if("EXISTS".equalsIgnoreCase(err)) {
+	                	resp.setMessage("EXISTS");
+	                }
+	                else {
+	                	resp.setMessage("NEW");
+	                }
 	                
 	                if (j.has("part")) {
-	                	//System.out.println("j: "+j.getJSONObject("part"));
+	                	////System.out.println("j: "+j.getJSONObject("part"));
 	                	pdto = this.mapToPartner(j.getJSONObject("part"));
+	                	resp.setPartner(pdto);
 	                }
 	                else {
 	                	return null;
@@ -839,8 +855,8 @@ public abstract class AbstractDAOAPI<T> {
       		e.printStackTrace();
       		return null;
       	}
-          
-          return pdto;
+    	  
+          return resp;
       }
 	}
 	public Caissier getUser(Caissier caissier, String url, String partner) throws ClientProtocolException, IOException, JSONException, URISyntaxException, DAOAPIException {
@@ -860,22 +876,22 @@ public abstract class AbstractDAOAPI<T> {
         		if (entity != null) {
         			
 	        		String content = EntityUtils.toString(entity);
-//	        	    //System.out.println("user-content: "+content);
+//	        	    ////System.out.println("user-content: "+content);
 	                JSONObject json = new JSONObject(content);
 	                
 	                //Verification du code reponse
 	                resp_code = json.getString("entity");
-	            //    //System.out.println("resp_code "+resp_code);
+	            //    ////System.out.println("resp_code "+resp_code);
 	                
 	                JSONObject j = new JSONObject(resp_code);
 	                
 	                String code = j.getString("code");
-//	                //System.out.println("CODE: "+code);
+//	                ////System.out.println("CODE: "+code);
 	                if(!code.equalsIgnoreCase("200")) {
 	                	return null;
 	                }
 	                JSONObject caisObject = j.getJSONObject("cais");
-//	                //System.out.println("CAISSIER: "+caisObject);
+//	                ////System.out.println("CAISSIER: "+caisObject);
 	                cais = this.mapToCaissier(caisObject);
 	             
 
@@ -911,7 +927,7 @@ public abstract class AbstractDAOAPI<T> {
         		if (entity != null) {
         			
 	        		String content = EntityUtils.toString(entity);
-	        		//System.out.println(content);
+	        		////System.out.println(content);
 	        		if(!isValidJson(content)) {
 	        			return null;
 	        		}
@@ -919,7 +935,7 @@ public abstract class AbstractDAOAPI<T> {
 	                
 	                //Verification du code reponse
 	                resp_code = json.getString("entity");
-	      //          //System.out.println("resp_code "+resp_code);
+	                //System.out.println("resp_code "+resp_code);
 	                
 	                JSONObject j = new JSONObject(resp_code);
 	                
@@ -930,7 +946,7 @@ public abstract class AbstractDAOAPI<T> {
 	                
 	                
 	                String retSrc = j.getString("data");
-	               // //System.out.println("Push Airtime: "+retSrc);
+	               // ////System.out.println("Push Airtime: "+retSrc);
 	                JSONObject jsonObj = new JSONObject(retSrc.toString());
 	                
 	                if(jsonObj.has("credit")) {
@@ -940,7 +956,7 @@ public abstract class AbstractDAOAPI<T> {
 	                	solde = 0d;
 	                }
 	               
-	         //       //System.out.println("Solde: "+solde);
+	         //       ////System.out.println("Solde: "+solde);
 	                	           
     			}
         	}
@@ -974,7 +990,7 @@ public abstract class AbstractDAOAPI<T> {
         		if (entity != null) {
         			
 	        		String content = EntityUtils.toString(entity);
-	        		////System.out.println("result "+content);
+	        		//////System.out.println("result "+content);
 	        		if(!isValidJson(content)) {
 	        			return null;
 	        		}
@@ -982,7 +998,7 @@ public abstract class AbstractDAOAPI<T> {
 	                
 	                //Verification du code reponse
 	                resp_code = json.getString("entity");
-	               // //System.out.println("resp_code "+resp_code);
+	               // ////System.out.println("resp_code "+resp_code);
 	                
 	                JSONObject j = new JSONObject(resp_code);
 	                
@@ -996,14 +1012,14 @@ public abstract class AbstractDAOAPI<T> {
 	                
 	                if(jsonObj.has("statK")) {
 	                	String list_json = jsonObj.getString("statK");
-	                	////System.out.println("statK "+list_json);
+	                	//////System.out.println("statK "+list_json);
 	                	JSONArray jObj = new JSONArray(list_json.toString());
 	                	List<Misek> object = new ArrayList<>();
 	                	
 	        			int n = jObj.length();
 	        			for(int i=0 ; i< n ; i++) {
 	        				JSONObject jo = jObj.getJSONObject(i);
-	        				////System.out.println("MISEK "+jo);
+	        				//////System.out.println("MISEK "+jo);
 	        				object.add(this.mapToMisekDto_(jo));
 	        			}
 	                	
@@ -1044,7 +1060,7 @@ public abstract class AbstractDAOAPI<T> {
         		if (entity != null) {
         			
 	        		String content = EntityUtils.toString(entity);
-	        	//	//System.out.println("result "+content);
+	        	//	////System.out.println("result "+content);
 	        		if(!isValidJson(content)) {
 	        			return null;
 	        		}
@@ -1052,7 +1068,7 @@ public abstract class AbstractDAOAPI<T> {
 	                
 	                //Verification du code reponse
 	                resp_code = json.getString("entity");
-	      //          //System.out.println("resp_code "+resp_code);
+	      //          ////System.out.println("resp_code "+resp_code);
 	                
 	                JSONObject j = new JSONObject(resp_code);
 	                
@@ -1066,7 +1082,7 @@ public abstract class AbstractDAOAPI<T> {
 	                
 	                if(jsonObj.has("vers")) {
 	                	String list_json = jsonObj.getString("vers");
-	                	//System.out.println("vers "+list_json);
+	                	////System.out.println("vers "+list_json);
 	                	JSONArray jObj = new JSONArray(list_json.toString());
 	                	List<VersementDto> object = new ArrayList<>();
 	                	
@@ -1111,7 +1127,7 @@ public abstract class AbstractDAOAPI<T> {
         		if (entity != null) {
         			
 	        		String content = EntityUtils.toString(entity);
-	        	//	//System.out.println("result "+content);
+	        	//	////System.out.println("result "+content);
 	        		if(!isValidJson(content)) {
 	        			return null;
 	        		}
@@ -1119,7 +1135,7 @@ public abstract class AbstractDAOAPI<T> {
 	                
 	                //Verification du code reponse
 	                resp_code = json.getString("entity");
-	      //          //System.out.println("resp_code "+resp_code);
+	      //          ////System.out.println("resp_code "+resp_code);
 	                
 	                JSONObject j = new JSONObject(resp_code);
 	                
@@ -1133,7 +1149,7 @@ public abstract class AbstractDAOAPI<T> {
 	                
 	                if(jsonObj.has("turnover")) {
 	                	String list_json = jsonObj.getString("turnover");
-	                	//System.out.println("turnover "+list_json);
+	                	////System.out.println("turnover "+list_json);
 	                	JSONArray jObj = new JSONArray(list_json.toString());
 	                	List<CaissierDto> object = new ArrayList<>();
 	                	
@@ -1180,6 +1196,7 @@ public abstract class AbstractDAOAPI<T> {
 				JSONException, URISyntaxException, DAOAPIException {
 		List<GameCycle> lgame = null;
 		String resp_code;
+		//System.out.println("result gamecycle "+url+"/gamecycle/"+coderace);
 		HttpGet getRequest = new HttpGet(url+"/gamecycle/"+coderace);
 		// add request parameter, form parameters
 		getRequest.setHeader("content-type", "application/json");
@@ -1194,7 +1211,7 @@ public abstract class AbstractDAOAPI<T> {
         		if (entity != null) {
         			
 	        		String content = EntityUtils.toString(entity);
-	        	//	//System.out.println("result "+content);
+	        	  //System.out.println("result gamecycle "+content);
 	        		if(!isValidJson(content)) {
 	        			return null;
 	        		}
@@ -1202,7 +1219,7 @@ public abstract class AbstractDAOAPI<T> {
 	                
 	                //Verification du code reponse
 	                resp_code = json.getString("entity");
-	      //          //System.out.println("resp_code "+resp_code);
+	      //          ////System.out.println("resp_code "+resp_code);
 	                
 	                JSONObject j = new JSONObject(resp_code);
 	                
@@ -1216,7 +1233,7 @@ public abstract class AbstractDAOAPI<T> {
 	                
 	                if(jsonObj.has("cycle")) {
 	                	String list_json = jsonObj.getString("cycle");
-	                	//System.out.println("cycle "+list_json);
+	                	////System.out.println("cycle "+list_json);
 	                	JSONArray jObj = new JSONArray(list_json.toString());
 	                	List<GameCycle> object = new ArrayList<>();
 	                	
@@ -1268,7 +1285,7 @@ public abstract class AbstractDAOAPI<T> {
         		if (entity != null) {
         			
 	        		String content = EntityUtils.toString(entity);
-	        	//	System.out.println(content);
+	        	//	//System.out.println(content);
 	        		if(!isValidJson(content)) {
 	        			return 0;
 	        		}
@@ -1283,7 +1300,7 @@ public abstract class AbstractDAOAPI<T> {
 	                }
 	                
 	                String retSrc = j.getString("data");
-	                //System.out.println(retSrc);
+	                ////System.out.println(retSrc);
 	                JSONObject jsonObj = new JSONObject(retSrc.toString());
 	                
 	                if(jsonObj.has("miserk")) {
@@ -1321,7 +1338,7 @@ public abstract class AbstractDAOAPI<T> {
     		if (entity != null) {
     			
         		String content = EntityUtils.toString(entity);
-        	//	System.out.println(content);
+        	//	//System.out.println(content);
         		if(!isValidJson(content)) {
         			return 0;
         		}
@@ -1336,7 +1353,7 @@ public abstract class AbstractDAOAPI<T> {
                 }
                 
                 String retSrc = j.getString("data");
-                //System.out.println(retSrc);
+                ////System.out.println(retSrc);
                 JSONObject jsonObj = new JSONObject(retSrc.toString());
                 
                 if(jsonObj.has("vers")) {
@@ -1377,7 +1394,7 @@ public abstract class AbstractDAOAPI<T> {
         		if (entity != null) {
         			
 	        		String content = EntityUtils.toString(entity);
-	        		//System.out.println(content);
+	        		////System.out.println(content);
 	        		if(!isValidJson(content)) {
 	        			return 0;
 	        		}
@@ -1392,7 +1409,7 @@ public abstract class AbstractDAOAPI<T> {
 	                }
 	                
 	                String retSrc = j.getString("data");
-	                System.out.println(retSrc);
+	                //System.out.println(retSrc);
 	                JSONObject jsonObj = new JSONObject(retSrc.toString());
 	                
 	                if(jsonObj.has("cumul")) {
@@ -1431,7 +1448,7 @@ public abstract class AbstractDAOAPI<T> {
         		if (entity != null) {
         			
 	        		String content = EntityUtils.toString(entity);
-	        	//	System.out.println(content);
+	        	//	//System.out.println(content);
 	        		if(!isValidJson(content)) {
 	        			return null;
 	        		}
@@ -1439,7 +1456,7 @@ public abstract class AbstractDAOAPI<T> {
 	                
 	                //Verification du code reponse
 	                resp_code = json.getString("entity");
-	      //          //System.out.println("resp_code "+resp_code);
+	      //          ////System.out.println("resp_code "+resp_code);
 	                
 	                JSONObject j = new JSONObject(resp_code);
 	                
@@ -1449,7 +1466,7 @@ public abstract class AbstractDAOAPI<T> {
 	                }
 	                
 	                String retSrc = j.getString("data");
-	    //            System.out.println(retSrc);
+	    //            //System.out.println(retSrc);
 	                JSONObject jsonObj = new JSONObject(retSrc.toString());
 	                
 	                if(jsonObj.has("max")) {
@@ -1487,7 +1504,7 @@ public abstract class AbstractDAOAPI<T> {
         		if (entity != null) {
         			
 	        		String content = EntityUtils.toString(entity);
-	        	//	System.out.println(content);
+	        	//	//System.out.println(content);
 	        		if(!isValidJson(content)) {
 	        			return 0;
 	        		}
@@ -1502,7 +1519,7 @@ public abstract class AbstractDAOAPI<T> {
 	                }
 	                
 	                String retSrc = j.getString("data");
-	    //            System.out.println(retSrc);
+	    //            //System.out.println(retSrc);
 	                JSONObject jsonObj = new JSONObject(retSrc.toString());
 	                
 	                if(jsonObj.has("sumMise")) {
@@ -1539,7 +1556,7 @@ public abstract class AbstractDAOAPI<T> {
         		if (entity != null) {
         			
 	        		String content = EntityUtils.toString(entity);
-	        	//	System.out.println(content);
+	        	//	//System.out.println(content);
 	        		if(!isValidJson(content)) {
 	        			return 0;
 	        		}
@@ -1553,7 +1570,7 @@ public abstract class AbstractDAOAPI<T> {
 	                }
 	                
 	                String retSrc = j.getString("data");
-	    //            System.out.println(retSrc);
+	    //            //System.out.println(retSrc);
 	                JSONObject jsonObj = new JSONObject(retSrc.toString());
 	                
 	                if(jsonObj.has("sumWin")) {
@@ -1590,7 +1607,7 @@ public abstract class AbstractDAOAPI<T> {
     		if (entity != null) {
     			
         		String content = EntityUtils.toString(entity);
-        	//	System.out.println(content);
+        	//	//System.out.println(content);
         		if(!isValidJson(content)) {
         			return 0;
         		}
@@ -1604,7 +1621,7 @@ public abstract class AbstractDAOAPI<T> {
                 }
                 
                 String retSrc = j.getString("data");
-    //            System.out.println(retSrc);
+    //            //System.out.println(retSrc);
                 JSONObject jsonObj = new JSONObject(retSrc.toString());
                 
                 if(jsonObj.has("jackpot")) {
@@ -1642,7 +1659,7 @@ public abstract class AbstractDAOAPI<T> {
         		if (entity != null) {
         			
 	        		String content = EntityUtils.toString(entity);
-	        	//	System.out.println(content);
+	        	//	//System.out.println(content);
 	        		if(!isValidJson(content)) {
 	        			return null;
 	        		}
@@ -1650,7 +1667,7 @@ public abstract class AbstractDAOAPI<T> {
 	                
 	                //Verification du code reponse
 	                resp_code = json.getString("entity");
-	      //          //System.out.println("resp_code "+resp_code);
+	      //          ////System.out.println("resp_code "+resp_code);
 	                
 	                JSONObject j = new JSONObject(resp_code);
 	                
@@ -1660,7 +1677,7 @@ public abstract class AbstractDAOAPI<T> {
 	                }
 	                
 	                String retSrc = j.getString("data");
-	    //            System.out.println(retSrc);
+	    //            //System.out.println(retSrc);
 	                JSONObject jsonObj = new JSONObject(retSrc.toString());
 	                
 	                if(jsonObj.has("balance")) {
@@ -1670,7 +1687,7 @@ public abstract class AbstractDAOAPI<T> {
 	                	solde = 0d;
 	                }
 	               
-	         //       //System.out.println("Solde: "+solde);
+	         //       ////System.out.println("Solde: "+solde);
 	                	           
     			}
         	}
@@ -1705,7 +1722,7 @@ public abstract class AbstractDAOAPI<T> {
 	    			
 	        		String content = EntityUtils.toString(entity);
 	        		String contents = content;
-	        	//	System.out.println(content);
+	        	//	//System.out.println(content);
 	        		if(!isValidJson(content)) {
 	        			return null;
 	        		}
@@ -1716,23 +1733,23 @@ public abstract class AbstractDAOAPI<T> {
 	                
 	                
 	                ObjectMapper mapper = new ObjectMapper();
-	            //    System.out.println(content);
+	            //    //System.out.println(content);
 	                
 //	                JSONArray ja = new JSONArray(content.toString());
-//	                System.out.println(ja);
+//	                //System.out.println(ja);
 	             
 	                sOdd = mapper.readValue(contents.toString(), Map.class);
 	                
-	         //       //System.out.println("ODDS------- "+sOdd);
+	         //       ////System.out.println("ODDS------- "+sOdd);
 	                
-//	                //System.out.println("ODDS value------- "+sOdd.get("44"));
+//	                ////System.out.println("ODDS value------- "+sOdd.get("44"));
 //	                String code = j.getString("code");
 //	                if(!code.equalsIgnoreCase("200")) {
 //	                	return 0d;
 //	                }
 //	                
 //	                String retSrc = j.getString("data");
-//	    //            System.out.println(retSrc);
+//	    //            //System.out.println(retSrc);
 //	                JSONObject jsonObj = new JSONObject(retSrc.toString());
 //	                
 //	                if(jsonObj.has("balance")) {
@@ -1742,7 +1759,7 @@ public abstract class AbstractDAOAPI<T> {
 //	                	solde = 0d;
 //	                }
 //	               
-	         //       //System.out.println("Solde: "+solde);
+	         //       ////System.out.println("Solde: "+solde);
 	                	           
 				}
 	    	}
@@ -1775,7 +1792,7 @@ public abstract class AbstractDAOAPI<T> {
 	    		if (entity != null) {
 	    			
 	        		String content = EntityUtils.toString(entity);
-	 //       		System.out.println(content);
+	 //       		//System.out.println(content);
 	        		if(!isValidJson(content)) {
 	        			return null;
 	        		}
@@ -1783,7 +1800,7 @@ public abstract class AbstractDAOAPI<T> {
 	                
 	                //Verification du code reponse
 	                resp_code = json.getString("entity");
-	       //         //System.out.println("resp_code "+resp_code);
+	       //         ////System.out.println("resp_code "+resp_code);
 	                
 	                JSONObject j = new JSONObject(resp_code);
 	                
@@ -1824,7 +1841,7 @@ public abstract class AbstractDAOAPI<T> {
 	    		if (entity != null) {
 	    			
 	        		String content = EntityUtils.toString(entity);
-	        //		System.out.println(content);
+	        //		//System.out.println(content);
 	        		if(!isValidJson(content)) {
 	        			return null;
 	        		}
@@ -1832,7 +1849,7 @@ public abstract class AbstractDAOAPI<T> {
 	                
 	                //Verification du code reponse
 	                resp_code = json.getString("entity");
-	                //System.out.println("resp_code "+resp_code);
+	                ////System.out.println("resp_code "+resp_code);
 	                
 	                JSONObject j = new JSONObject(resp_code);
 	                
@@ -1873,7 +1890,7 @@ public abstract class AbstractDAOAPI<T> {
 	    		if (entity != null) {
 	    			
 	        		String content = EntityUtils.toString(entity);
-	        //		System.out.println(content);
+	        //		//System.out.println(content);
 	        		if(!isValidJson(content)) {
 	        			return null;
 	        		}
@@ -1881,7 +1898,7 @@ public abstract class AbstractDAOAPI<T> {
 	                
 	                //Verification du code reponse
 	                resp_code = json.getString("entity");
-	         //       //System.out.println("resp_code "+resp_code);
+	         //       ////System.out.println("resp_code "+resp_code);
 	                
 	                JSONObject j = new JSONObject(resp_code);
 	                
@@ -1919,7 +1936,7 @@ public abstract class AbstractDAOAPI<T> {
 	    		
 	    		if (entity != null) {
 	        		String content = EntityUtils.toString(entity);
-	  //      		//System.out.println("barcode: "+content);  
+	  //      		////System.out.println("barcode: "+content);  
 	        		JSONObject jsonObj = new JSONObject(content);
 	        		barcode = jsonObj.getLong(content);
 	        		//barcode = Long.parseLong(content);
@@ -1949,7 +1966,7 @@ public abstract class AbstractDAOAPI<T> {
 				
 				if (entity != null) {
 		    		String content = EntityUtils.toString(entity);
-		      		//System.out.println("state: "+content); 
+		      		////System.out.println("state: "+content); 
 		      		JSONObject json = new JSONObject(content);
 		      	    resp_code = json.getString("entity");
 		 	     
@@ -1960,7 +1977,7 @@ public abstract class AbstractDAOAPI<T> {
  	                	return 0;
  	                }
  	               String retSrc = j.getString("data");
-  	          //      System.out.println(retSrc);
+  	          //      //System.out.println(retSrc);
   	                JSONObject jsonObj = new JSONObject(retSrc.toString());
   	                
   	                if(jsonObj.has("state")) {
@@ -1997,22 +2014,22 @@ public abstract class AbstractDAOAPI<T> {
 			if (entity != null) {
     			
         		String content = EntityUtils.toString(entity);
-        //	    //System.out.println("user-content: "+content);
+        //	    ////System.out.println("user-content: "+content);
                 JSONObject json = new JSONObject(content);
                 
                 //Verification du code reponse
                 resp_code = json.getString("entity");
-           //     //System.out.println("resp_code "+resp_code);
+           //     ////System.out.println("resp_code "+resp_code);
                 
                 JSONObject j = new JSONObject(resp_code);
                 
                 String code = j.getString("code");
-           //     //System.out.println("CODE: "+code);
+           //     ////System.out.println("CODE: "+code);
                 if(!code.equalsIgnoreCase("200")) {
                 	return null;
                 }
                 JSONObject betkObject = j.getJSONObject("cagnot");
-             //   //System.out.println("betkObject: "+betkObject);
+             //   ////System.out.println("betkObject: "+betkObject);
                 cgt = this.mapToCagnotte(betkObject);
                // vers.setMessage(j.getString("message"));
            
@@ -2043,7 +2060,7 @@ public abstract class AbstractDAOAPI<T> {
 			
 			if (entity != null) {
 	    		String content = EntityUtils.toString(entity);
-	    //  		//System.out.println("combinaison: "+content); 
+	      		//System.out.println("combinaison: "+content); 
 	      		JSONObject json = new JSONObject(content);
 	      	    resp_code = json.getString("entity");
 	 	     
@@ -2053,11 +2070,11 @@ public abstract class AbstractDAOAPI<T> {
 	             if(!code.equalsIgnoreCase("200")) {
 	             	return "";
 	             }
-	            String retSrc = j.getString("data");
-	        //      System.out.println(retSrc);
+	               String retSrc = j.getString("data");
+	        //      //System.out.println(retSrc);
 	              JSONObject jsonObj = new JSONObject(retSrc.toString());
 	              
-	              if(jsonObj.has("state")) {
+	              if(jsonObj.has("combinaison")) {
 	            	  combinaison = jsonObj.getString("combinaison");
 	              }
 	             
@@ -2066,7 +2083,7 @@ public abstract class AbstractDAOAPI<T> {
 		catch(Exception e) {
 			e.printStackTrace();
 		}
-		
+		//System.out.println("retSrc combinaison "+combinaison);
 		return combinaison;
 	  }
 	}
@@ -2087,7 +2104,7 @@ public abstract class AbstractDAOAPI<T> {
 				
 				if (entity != null) {
 		    		String content = EntityUtils.toString(entity);
-		      	//	//System.out.println("time: "+content); 
+		      	//	////System.out.println("time: "+content); 
 		      		JSONObject json = new JSONObject(content);
 		      	    resp_code = json.getString("entity");
 		 	     
@@ -2098,7 +2115,7 @@ public abstract class AbstractDAOAPI<T> {
  	                	return 0;
  	                }
  	               String retSrc = j.getString("data");
-  	          //      System.out.println(retSrc);
+  	          //      //System.out.println(retSrc);
   	                JSONObject jsonObj = new JSONObject(retSrc.toString());
   	                
   	                if(jsonObj.has("time")) {
@@ -2140,12 +2157,12 @@ public abstract class AbstractDAOAPI<T> {
         		if (entity != null) {
         			
 	        		String content = EntityUtils.toString(entity);
-	        		//System.out.println("content: "+content);
+	        		////System.out.println("content: "+content);
 //	                JSONObject json = new JSONObject(content);
 //	                
 //	                //Verification du code reponse
 //	                resp_code = json.getString("entity");
-//	                //System.out.println("resp_code "+resp_code);
+//	                ////System.out.println("resp_code "+resp_code);
 //	                
 //	                JSONObject j = new JSONObject(resp_code);
 //	                
@@ -2184,7 +2201,7 @@ public abstract class AbstractDAOAPI<T> {
     			if (entity != null) {
         			
     				String content = EntityUtils.toString(entity);
-	        		////System.out.println("result "+content);
+	        		//////System.out.println("result "+content);
 	        		if(!isValidJson(content)) {
 	        			return null;
 	        		}
@@ -2192,7 +2209,7 @@ public abstract class AbstractDAOAPI<T> {
 	                
 	                //Verification du code reponse
 	                resp_code = json.getString("entity");
-	               // //System.out.println("resp_code "+resp_code);
+	               // ////System.out.println("resp_code "+resp_code);
 	                
 	                JSONObject j = new JSONObject(resp_code);
 	                
@@ -2205,7 +2222,7 @@ public abstract class AbstractDAOAPI<T> {
 	                JSONObject jsonObj = new JSONObject(retSrc.toString());
 	                if(jsonObj.has("misek")) {
 	                	String list_json = jsonObj.getString("misek");
-	                	////System.out.println("statK "+list_json);
+	                	//////System.out.println("statK "+list_json);
 	                	JSONArray jObj = new JSONArray(list_json.toString());
 	                	List<Misek> object = new ArrayList<>();
 	                	
@@ -2214,7 +2231,7 @@ public abstract class AbstractDAOAPI<T> {
 	        			int n = jObj.length();
 	        			for(int i=0 ; i< n ; i++) {
 	        				JSONObject jo = jObj.getJSONObject(i);
-	        				////System.out.println("misek "+jo);
+	        				//////System.out.println("misek "+jo);
 	        				object.add(this.mapToMisekDto_(jo));
 	        			}
 	                	
@@ -2253,13 +2270,13 @@ public abstract class AbstractDAOAPI<T> {
 		if(!isJSONValid(playload)) {
 			return null;
 		}
-	 ////System.out.println("URL: "+url);
+	 //////System.out.println("URL: "+url);
        post = new HttpPost(url+"/save-user/"+coderace);
 
       // add request parameter, form parameters
         post.setHeader("content-type", "application/json");
 		post.setEntity(new StringEntity(playload));
-	//	//System.out.println("URL: "+post.getURI());
+	//	////System.out.println("URL: "+post.getURI());
 		
 		
 		
@@ -2270,7 +2287,7 @@ public abstract class AbstractDAOAPI<T> {
 //		post.setHeader("Accept", "application/json;charset=utf-8");
 //		post.setHeader("Content-type", "application/json; charset=utf-8");
 //
-//		//System.out.println("send the request("+" -- "+post.getURI()+") ===" + playload + "Content type : "+post.getHeaders("Content-type"));
+//		////System.out.println("send the request("+" -- "+post.getURI()+") ===" + playload + "Content type : "+post.getHeaders("Content-type"));
 //
 //		Header[] headers = post.getAllHeaders();
 
@@ -2283,12 +2300,12 @@ public abstract class AbstractDAOAPI<T> {
       		if (entity != null) {
       			
 	        		String content = EntityUtils.toString(entity);
-	        	//	//System.out.println("content: "+content);
+	        	//	////System.out.println("content: "+content);
 	                JSONObject json = new JSONObject(content);
 	                
 	                //Verification du code reponse
 	                  resp_code = json.getString("entity");
-	           //     //System.out.println("resp_code "+resp_code);
+	           //     ////System.out.println("resp_code "+resp_code);
 	                
 	                JSONObject j = new JSONObject(resp_code);
 	                
@@ -2324,7 +2341,7 @@ public abstract class AbstractDAOAPI<T> {
 				
 				if (entity != null) {
 		    		String content = EntityUtils.toString(entity);
-		      	//	//System.out.println("time: "+content); 
+		      	 //   System.out.println("time: "+content); 
 		      		JSONObject json = new JSONObject(content);
 		      	    resp_code = json.getString("entity");
 		 	     
@@ -2335,7 +2352,7 @@ public abstract class AbstractDAOAPI<T> {
  	                	return 0;
  	                }
  	               String retSrc = j.getString("data");
-  	          //      System.out.println(retSrc);
+  	          //      //System.out.println(retSrc);
   	                JSONObject jsonObj = new JSONObject(retSrc.toString());
   	                
   	                if(jsonObj.has("cfgBonus")) {
@@ -2374,7 +2391,7 @@ public abstract class AbstractDAOAPI<T> {
         		if (entity != null) {
         			
 	        		String content = EntityUtils.toString(entity);
-	        	//	System.out.println("result "+content);
+	        	//	//System.out.println("result "+content);
 	        		if(!isValidJson(content)) {
 	        			return null;
 	        		}
@@ -2402,7 +2419,7 @@ public abstract class AbstractDAOAPI<T> {
 	        			
 	        			for(int i=0 ; i< n ; i++) {
 	        				JSONObject jo = jObj.getJSONObject(i);
-	        				//System.out.println("tickets "+jo);
+	        				////System.out.println("tickets "+jo);
 	        				kenres.add(this.mapToKenoRes(jo));
 	        			}
 	                	
@@ -2435,7 +2452,7 @@ public abstract class AbstractDAOAPI<T> {
         		if (entity != null) {
         			
 	        		String content = EntityUtils.toString(entity);
-	        	//	System.out.println("result "+content);
+	        	//	//System.out.println("result "+content);
 	        		if(!isValidJson(content)) {
 	        			return null;
 	        		}
@@ -2463,7 +2480,7 @@ public abstract class AbstractDAOAPI<T> {
 	        			
 	        			for(int i=0 ; i< n ; i++) {
 	        				JSONObject jo = jObj.getJSONObject(i);
-	        				//System.out.println("tickets "+jo);
+	        				////System.out.println("tickets "+jo);
 	        				kenres.add(this.mapToKenoRes(jo));
 	        			}
 	                	
@@ -2494,7 +2511,7 @@ public abstract class AbstractDAOAPI<T> {
         		if (entity != null) {
         			
 	        		String content = EntityUtils.toString(entity);
-	        		//System.out.println("result "+content);
+	        		////System.out.println("result "+content);
 	        		if(!isValidJson(content)) {
 	        			return null;
 	        		}
@@ -2502,7 +2519,7 @@ public abstract class AbstractDAOAPI<T> {
 	                
 	                //Verification du code reponse
 	                resp_code = json.getString("entity");
-	               // //System.out.println("resp_code "+resp_code);
+	               // ////System.out.println("resp_code "+resp_code);
 	                
 	                JSONObject j = new JSONObject(resp_code);
 	                
@@ -2523,7 +2540,7 @@ public abstract class AbstractDAOAPI<T> {
 	        			
 	        			for(int i=0 ; i< n ; i++) {
 	        				JSONObject jo = jObj.getJSONObject(i);
-	        				//System.out.println("tickets "+jo);
+	        				////System.out.println("tickets "+jo);
 	        				miset.add(this.mapToAdminAirtime(jo));
 	        			}
 	                	
@@ -2560,7 +2577,7 @@ public abstract class AbstractDAOAPI<T> {
         		if (entity != null) {
         			
 	        		String content = EntityUtils.toString(entity);
-	        		////System.out.println("result "+content);
+	        		//////System.out.println("result "+content);
 	        		if(!isValidJson(content)) {
 	        			return null;
 	        		}
@@ -2568,7 +2585,7 @@ public abstract class AbstractDAOAPI<T> {
 	                
 	                //Verification du code reponse
 	                resp_code = json.getString("entity");
-	               // //System.out.println("resp_code "+resp_code);
+	               // ////System.out.println("resp_code "+resp_code);
 	                
 	                JSONObject j = new JSONObject(resp_code);
 	                
@@ -2589,7 +2606,7 @@ public abstract class AbstractDAOAPI<T> {
 	        			
 	        			for(int i=0 ; i< n ; i++) {
 	        				JSONObject jo = jObj.getJSONObject(i);
-	        				//System.out.println("tickets "+jo);
+	        				////System.out.println("tickets "+jo);
 	        				miset.add(this.mapToAdminTicketDto(jo));
 	        			}
 	                	

@@ -18,6 +18,7 @@ import org.codehaus.jettison.json.JSONException;
 
 import config.Params;
 import config.UtileKeno;
+import lombok.extern.slf4j.Slf4j;
 import modele.Keno;
 import modele.KenoRes;
 import modele.Partner;
@@ -31,6 +32,7 @@ import superbetDAO.api.interfaces.ISuperGameDAOAPILocal;
 /**
  * Servlet implementation class UpdateBonus
  */
+@Slf4j
 public class UpdateBonus extends HttpServlet {
 	private static final long serialVersionUID = 1L;
     
@@ -52,7 +54,7 @@ public class UpdateBonus extends HttpServlet {
 		this.kenoDao = ( (DAOFactory)getServletContext().getAttribute( CONF_DAO_FACTORY )).getKenoDao();
 		this.partnerDao = ((DAOFactory)getServletContext().getAttribute(CONF_DAO_FACTORY)).getPartnerDao();
 		this.token = (Long)getServletContext().getAttribute("token");
-		supergameAPI = new SuperGameDAOAPI();
+		supergameAPI = SuperGameDAOAPI.getInstance();
 	}
 
 	/**

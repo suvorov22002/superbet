@@ -2,7 +2,6 @@ package superbetDAO.api;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -15,14 +14,13 @@ import modele.BetTicketK;
 import modele.BonusSet;
 import modele.Cagnotte;
 import modele.Caissier;
-import modele.CaissierDto;
 import modele.GameCycle;
 import modele.GameCycleDto;
 import modele.Keno;
 import modele.KenoRes;
 import modele.Misek;
-import modele.Partner;
 import modele.PartnerDto;
+import modele.ResPartner;
 import modele.ShiftDay;
 import modele.Versement;
 import superbetDAO.api.exeception.DAOAPIException;
@@ -179,7 +177,7 @@ public class SuperGameDAO extends AbstractDAOAPI<SuperGameDAO>{
 		return this.airtimes(url, dat1, dat2, coderace, login);
 	}
 
-	public Partner submitPartner(String url, PartnerDto part) throws ClientProtocolException, IOException, JSONException, URISyntaxException, DAOAPIException{
+	public ResPartner submitPartner(String url, PartnerDto part) throws ClientProtocolException, IOException, JSONException, URISyntaxException, DAOAPIException{
 		return this.partner(url, part);
 	}
 

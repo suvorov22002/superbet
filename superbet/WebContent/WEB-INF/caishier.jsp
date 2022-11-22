@@ -305,8 +305,8 @@
                         <div style="text-align:center;align-content:center;width:250;margin:5px 15px 2px;" id="bcTarget"></div>
                        </div>
                         <div class="modal-footer">
-                          <button type="button" class="btn btn-default btnclose"  data-dismiss="modal">Close</button>
-                          <button type="button" id="btnprint" class="btn btn-primary hidden-print">Imprimer</button>
+                          <button type="button" autofocus class="btn btn-default btnclose"  data-dismiss="modal">Close</button>
+                          <button type="button"  id="btnprint" class="btn btn-primary">Imprimer</button>
                         </div>
                      <!-- </div>-->
                       

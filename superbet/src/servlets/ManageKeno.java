@@ -59,9 +59,11 @@ public class ManageKeno extends HttpServlet {
 	public void doGet(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException{
 		
 		SlipForm slip = new SlipForm();
-		
 		HttpSession session = req.getSession();
 	    Caissier caissier = (Caissier)session.getAttribute("caissier");
+	    
+	    //System.out.println(req.getContextPath()+VUE);
+    	
 	    if(caissier != null){
 	    	ManageKenoForm k_form = new ManageKenoForm(kenoDao,misetDao,utilDao,effchoicekDao,misekDao,misektpDao,partnerDao,airtimeDao,configDao);
 			Coupon coupon = k_form.print(req, caissier);

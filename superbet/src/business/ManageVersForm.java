@@ -122,7 +122,7 @@ public final class ManageVersForm {
 		this.misektpDao = misektpDao;
 		this.utilDao = utilDao;
 		this.airtimeDao = airtimeDao;
-		supergameAPI = new SuperGameDAOAPI();
+		supergameAPI = SuperGameDAOAPI.getInstance();
 	}
 	
 	@SuppressWarnings("unused")
@@ -135,29 +135,32 @@ public final class ManageVersForm {
 		
 		String versement = getVersement( request, FIELD_VERS);
 		String barcode = getBarcode( request,FIELD_CODE ) ;
-		System.out.println("BARCODE h: "+barcode);
-		if(barcode==null || barcode.length() < 12) {
+		//System.out.println("BARCODE h: "+barcode);
+	//	System.out.println("caissier h: "+caissier.getPartner());
+		if((barcode==null || barcode.length() < 12) && versement.isEmpty()) {
 			resultat = "Code du ticket incorrect<br/>";
 			setErreurs(FIELD_CODE, resultat);
 			return null;
 		}
 		
 		barcode = barcode.length() > 12 ? barcode.substring(0, 12) : barcode;
-		try {
-			part = partnerDao.findById(caissier.getPartner());
-		}
-		catch(NumberFormatException e) {
-			e.printStackTrace();
-			return null;
-		}
+//		try {
+//			//part = partnerDao.findById(caissier.getPartner());
+//			part = partnerDao.find(caissier.getPartner());
+//			System.out.println("part: "+part);
+//		}
+//		catch(NumberFormatException e) {
+//			e.printStackTrace();
+//			return null;
+//		}
 		
 		
-		String coderace = part.getCoderace();
+		String coderace = caissier.getPartner();
 		 
 	//	System.out.println("BARCODE h: "+barcode);
 		 if ( versement == null || versement.trim().length() == 0 || versement.equalsIgnoreCase("")
 				 ) {
-			 System.out.println("traiter ticket: "+versement);
+			 //System.out.println("traiter ticket: "+versement);
 			 
 	        verst = new Versement();
 	       
@@ -297,7 +300,7 @@ public final class ManageVersForm {
 		}
 		 else if ( versement != null || versement.trim().length() != 0 || !versement.equalsIgnoreCase("0.0")
 				 || versement.equalsIgnoreCase("0")){
-				System.out.println("Traiter versement: "+versement+" barcode: "+barcode);
+				System.out.println("Traiter versement: "+versement+" barcode: "+barcode+" caissier.getIdCaissier(): "+caissier.getIdCaissier());
 				
 				verst = new Versement();
 				try {

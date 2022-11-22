@@ -28,7 +28,7 @@ public class ManageAirtime extends HttpServlet{
 	private  ISuperGameDAOAPILocal  supergameAPI;
 	
 	public void init() throws ServletException {
-		supergameAPI = new SuperGameDAOAPI();
+		supergameAPI = SuperGameDAOAPI.getInstance();
 		
 	}
 

@@ -1,6 +1,6 @@
 package superbetDAO;
 
-import java.util.ArrayList;
+import java.util.List;
 
 import modele.Partner;
 import modele.PartnerDto;
@@ -16,8 +16,8 @@ public interface PartnerDAO {
 	int update_reset_bonusk(double dbl, String coderace) throws DAOException;
 	int update_reset_bonusp(double dbl, String coderace) throws DAOException;
 	Partner findById(Long id) throws DAOException;
-	ArrayList<Partner> getAllPartners() throws DAOException;
+	List<Partner> getAllPartners() throws DAOException;
 	int update_cob(String cob,String coderace) throws DAOException;
-	ArrayList<Partner> getAllPartnersByGroup(String idgrp) throws DAOException;
+	List<Partner> getAllPartnersByGroup(String idgrp) throws DAOException;
 	PartnerDto find2(String coderace) throws DAOException;
 }

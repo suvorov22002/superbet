@@ -15,6 +15,7 @@ import org.codehaus.jettison.json.JSONException;
 
 import config.Params;
 import config.UtileKeno;
+import modele.BonusSet;
 import modele.Caissier;
 import modele.GameCycle;
 import modele.GameCycleDto;
@@ -57,6 +58,7 @@ public class TurnoverForm {
 	double summise;
 	double sumWin;
 	double curr_percent;
+	double real_percent;
 	private double jkpt;
 	
 	
@@ -66,9 +68,19 @@ public class TurnoverForm {
 		this.misekDao = misekDao;
 		this.caissierDao = caissierDao;
 		this.kenoDao = kenoDao;
-		supergameAPI = new SuperGameDAOAPI();
+		supergameAPI = SuperGameDAOAPI.getInstance();
 	}
 	
+	public double getReal_percent() {
+		return real_percent;
+	}
+
+	public void setReal_percent(double real_percent) {
+		this.real_percent = real_percent;
+	}
+
+
+
 	public void manage_admin(HttpServletRequest request){
 		
 		String action = request.getParameter( FIELD_CHOICE );
@@ -105,7 +117,7 @@ public class TurnoverForm {
 		//		System.out.println("RANG ADDTURNOVER: "+rang);
 				
 			    List<Caissier> list_cais;
-				list_cais = supergameAPI.getSuperGameDAO().getTurnover(Params.url, coderace);
+				list_cais = supergameAPI.getSuperGameDAO().getTurnover(Params.url, ipartner);
 			    String pos = "";
 				List<Integer> roundList = Params.getHitFrequency(Integer.parseInt(frequence.replaceAll("%", "")), Integer.parseInt(cycle.replaceAll("tours", "").trim()));
 				for(int nb : roundList) {
@@ -115,7 +127,7 @@ public class TurnoverForm {
 	//			System.out.print("\n"+pos);
 	//			System.out.print("\n"+IN);
 				
-				gmc  = supergameAPI.getSuperGameDAO().getGameCyle(Params.url, coderace);
+				gmc  = supergameAPI.getSuperGameDAO().getGameCyle(Params.url, ipartner);
 				if (gmc == null) return;
 				
 				taille = gmc.size();
@@ -125,18 +137,20 @@ public class TurnoverForm {
 				GameCycle gm = gmc.get(0); 
 				
 				//idmisek_max = misekDao.ifindId(IN);
-				idmisek_max = supergameAPI.getSuperGameDAO().maxMisek(Params.url, coderace);
+				idmisek_max = supergameAPI.getSuperGameDAO().maxMisek(Params.url, ipartner);
 				
 				long misef = (long)idmisek_max;
 				
 				//summise = misekDao.getMiseKCycle(gm.getMise(), idmisek_max+1, IN);
-				summise = supergameAPI.getSuperGameDAO().getMiseKCycle(Params.url, coderace,gm.getMise(), 1+idmisek_max);
+				summise = supergameAPI.getSuperGameDAO().getMiseKCycle(Params.url, ipartner,gm.getMise(), 1+idmisek_max);
 				
 				//sumWin = UtileKeno.bonusrate*summise + misekDao.getMiseKCycleWin(gm.getMise(),idmisek_max+1, IN);
-				sumWin = supergameAPI.getSuperGameDAO().getMiseKCycleWin(Params.url, coderace,gm.getMise(), 1+idmisek_max);
+				sumWin = supergameAPI.getSuperGameDAO().getMiseKCycleWin(Params.url, ipartner,gm.getMise(), 1+idmisek_max);
 				curr_percent = sumWin/summise;
 				curr_percent = (double)((int)(curr_percent*100))/100;
 				//jkpt = UtileKeno.bonusrate*summise;
+				
+				real_percent = curr_percent;
 				
 				sumWin = (double)((int)(sumWin*100))/100;
 				summise = (double)((int)(summise*100))/100;
@@ -148,7 +162,7 @@ public class TurnoverForm {
 					if(m1 != null && m2 != null) {
 						int k1 = Integer.parseInt(m1.getIdKeno());
 						int k2 = Integer.parseInt(m2.getIdKeno());
-						jkpt = supergameAPI.getSuperGameDAO().getJackpot(Params.url,k1, k2, partner.getCoderace());
+						jkpt = supergameAPI.getSuperGameDAO().getJackpot(Params.url,k1, k2, ipartner);
 						jkpt = (double)((int)(jkpt*100))/100;
 						
 					}
@@ -168,7 +182,7 @@ public class TurnoverForm {
 					gmt.setPayout(sumWin);
 					gmt.setJkpt(jkpt);
 					
-					int nbre = supergameAPI.getSuperGameDAO().upArchive(Params.url, gmt, partner.getCoderace());
+					int nbre = supergameAPI.getSuperGameDAO().upArchive(Params.url, gmt, ipartner);
 					//gmcDao.updateArchive(curr_percent,DateFormatUtils.format(new Date(), "dd-MM-yyyy,HH:mm"), 1, idPartner, jeu.substring(0, 1), misef, summise, sumWin, jkpt);
 
 					//					summise = misekDao.getMiseKCycle(gmt.getMise(), IN);
@@ -195,8 +209,16 @@ public class TurnoverForm {
 				  gamecycle.setMisef(misef);
 				  gamecycle.setDate_fin(DateFormatUtils.format(new Date(), "dd-MM-yyyy,HH:mm"));
 
-				  supergameAPI.getSuperGameDAO().setGameCyle(Params.url, gamecycle, partner.getCoderace());
-				  //gmcDao.create(gamecycle);
+				  boolean ajuste = supergameAPI.getSuperGameDAO().setGameCyle(Params.url, gamecycle, ipartner);
+				  
+				  if (ajuste) {
+					  erreurs.clear();
+					  resultat = "Mise à jour du cycle avec succes";
+				  }
+				  else {
+					  erreurs.put("ERROR UPDATE CYCLE", "Erreur lors de la mise à jour du cycle.");
+					  resultat = "Echec de la mise à jour du cycle.";
+				  }
 						  
 			} catch (IOException | JSONException | URISyntaxException | DAOAPIException e) {
 				// TODO Auto-generated catch block
@@ -214,92 +236,106 @@ public class TurnoverForm {
 				idPartner = partner.getIdpartner();
 				
 		    try {
-		    	gmc  = supergameAPI.getSuperGameDAO().getGameCyle(Params.url, coderace);
-				//gmc = gmcDao.find(idPartner);
-				if (gmc == null) return;
+		    	gmc  = supergameAPI.getSuperGameDAO().getGameCyle(Params.url, partneraire);
+				if (gmc == null || gmc.isEmpty()) return;
 				taille = gmc.size();
 				System.out.println("[TURNOVER - GAMECYCLE SIZE]: "+taille);
-				if(taille < 1) {
-					return;
-				}
 				
 			   int count = 0;
 			   long idmax = 0;
-			   idmax = supergameAPI.getSuperGameDAO().maxMisek(Params.url, coderace);
-			  // System.out.println("idmax: "+idmax);
-			   //idmax = misekDao.ifindId(IN);
-			   //long misek_max = gmc.get(0).getMise();
+			   double bonusEncours, refund, winTotal;
+			   idmax = supergameAPI.getSuperGameDAO().maxMisek(Params.url, partneraire);
+			   
 			   for(GameCycle gm : gmc) {
-//				if(count > 2) break;
-				  // System.out.println("gm.getJeu(): "+gm.getJeu());
-				if(count > 0) idmax = gm.getMisef();
-				//GameCycle gm = gmc.get(0); 
-			    	
-			    	switch(gm.getJeu()) {
-			    		case "Keno":
-			    			//gm.setJeu("Keno");
-			    			
-			    			summise = supergameAPI.getSuperGameDAO().getMiseKCycle(Params.url, coderace,gm.getMise(), 1+idmax);
-			    			//summise = misekDao.getMiseKCycle(gm.getMise(),1+idmax, IN);
-			    	//		System.out.println("[TURNOVER - MISE TOTALE]: "+summise);
-			    			
-			    			sumWin = supergameAPI.getSuperGameDAO().getMiseKCycleWin(Params.url, coderace,gm.getMise(), 1+idmax);
-			    	//		System.out.println("[TURNOVER - VERSEMENT TOTAL]: "+sumWin);
-			    			//sumWin = misekDao.getMiseKCycleWin(gm.getMise(), 1+idmax, IN);
-			    			//System.out.println("summise "+summise+" SumWin "+sumWin);
-			    		    //System.out.println("UtileKeno.bonusrate*summise "+UtileKeno.bonusrate*summise);
-			    			curr_percent = sumWin/summise;
-			    			curr_percent = (double)((int)(curr_percent*100))/100;
-			    			//System.out.println("Percent: "+curr_percent+" WIn: "+sumWin+" Mise: "+summise+" Misemin: "+gm.getMise()+" Misemax: "+idmax);
-			    			//jkpt = UtileKeno.bonusrate*summise;
-			    			
-			    			sumWin = (double)((int)(sumWin*100))/100;
-			    			summise = (double)((int)(summise*100))/100;
-			    			
-			    			//recherche du jackpot
-			    			Misek m1 = supergameAPI.getSuperGameDAO().getMiseK(Params.url, gm.getMise());
-			    			Misek m2 = supergameAPI.getSuperGameDAO().getMiseK(Params.url,idmax);
-			    			//m1 = misekDao.searchMiseK(""+gm.getMise());
-			    			//m2 = misekDao.searchMiseK(""+(idmax));
-			    	//System.out.println(gm.getMise()+" ___ "+m1.getIdKeno());
-			    			
-			    			if(m1 != null && m2 != null) {
-			    				int k1 = Integer.parseInt(m1.getIdKeno());
-			    				int k2 = Integer.parseInt(m2.getIdKeno());
-			    				
-			    				jkpt = supergameAPI.getSuperGameDAO().getJackpot(Params.url,k1, k2, partner.getCoderace());
-			    				//jkpt  = kenoDao.findTotalBonusAmount(k1, k2, partneraire);
-			    				jkpt = (double)((int)(jkpt*100))/100;
-			    				//System.out.println(" jkpt___ "+jkpt);
-			    			}
-			    			else {
-			    				jkpt = 0;
-			    			}	
-			    			gm.setCurr_percent(curr_percent);
-			    			gm.setStake(summise);
-			    			gm.setPayout(sumWin);
-			    			gm.setJkpt(jkpt);
-			    			break;
-			    		case "D":
-			    			gm.setJeu("Dogs race");
-			    			break;
-			    		case "B":
-			    			gm.setJeu("Bingo");
-			    			break;
-			    		case "S":
-			    			gm.setJeu("Spin");
-			    			break;
-			    		case "L":
-			    			gm.setJeu("Lotto rapide");
-			    			break;
-			    		default:
-			    			break;
-			    	}
-			    	
-				//System.out.println("Percent: "+curr_percent+" WIn: "+sumWin+" Mise: "+summise+" Misemin: "+gm.getMise()+" Misemax: "+idmax);
-	     	    	count++;
-//			    	misek_max = gm.getMise();
-			    }
+				   
+				   //if(count > 0) idmax = gm.getMisef();
+				   //GameCycle gm = gmc.get(0); 
+				  
+				   switch(gm.getJeu()) {
+				   case "Keno":
+					   
+					   bonusEncours = 0;
+					   refund = gm.getRefundp();
+					   
+					   if(count == 0) {
+						   BonusSet bns = this.supergameAPI.getSuperGameDAO().getbonuskeno(Params.url, partneraire);
+						   bonusEncours = bns.getMontant();
+						   
+						   summise = supergameAPI.getSuperGameDAO().getMiseKCycle(Params.url, partneraire,gm.getMise(), 1+idmax);
+						   sumWin = supergameAPI.getSuperGameDAO().getMiseKCycleWin(Params.url, partneraire,gm.getMise(), 1+idmax);
+						   
+						   winTotal = sumWin + refund;
+						   
+						   sumWin = (double)((int)(sumWin*100))/100;
+						   summise = (double)((int)(summise*100))/100;
+					//	   System.out.println("SUM MISE: "+summise+" - SUM WIN: "+winTotal);
+						   
+						   if (summise > 0) {
+							   curr_percent = winTotal/summise;
+							   curr_percent = (double)((int)(curr_percent*100))/100;
+							   real_percent = sumWin/summise;
+							   real_percent = (double)((int)(real_percent*100))/100;
+						   }
+						   else {
+							   curr_percent = 0;
+							   real_percent = 0;
+						   }
+				//		   System.out.println("CURR PERCENT: "+curr_percent);
+						   
+						   
+						   //recherche du jackpot
+						   Misek m1 = supergameAPI.getSuperGameDAO().getMiseK(Params.url, gm.getMise());
+						   Misek m2 = supergameAPI.getSuperGameDAO().getMiseK(Params.url,idmax);
+						   
+						   if(m1 != null && m2 != null) {
+							   int k1 = Integer.parseInt(m1.getIdKeno());
+							   int k2 = Integer.parseInt(m2.getIdKeno());
+
+							   jkpt = supergameAPI.getSuperGameDAO().getJackpot(Params.url,k1, k2, partner.getCoderace());
+							   jkpt = (double)((int)(jkpt*100))/100;
+						   }
+						   else {
+							   jkpt = 0;
+							   
+						   }	
+						   
+						   gm.setCurr_percent(curr_percent);
+						   gm.setStake(summise);
+						   gm.setPayout(sumWin);
+						   gm.setJkpt(jkpt);
+						   gm.setReal_percent(real_percent);
+						   
+						   //System.out.println("mise: "+gm.getMise()+" | idmax: "+idmax);
+						   
+					   }
+					   else {
+						   summise = gm.getStake();
+						   sumWin = gm.getPayout();
+						   jkpt = gm.getJkpt();
+						   
+						  // System.out.println("mise: "+gm.getMise()+" | idmax: "+gm.getMisef());
+					   }
+					   
+					   break;
+				   case "D":
+					   gm.setJeu("Dogs race");
+					   break;
+				   case "B":
+					   gm.setJeu("Bingo");
+					   break;
+				   case "S":
+					   gm.setJeu("Spin");
+					   break;
+				   case "L":
+					   gm.setJeu("Lotto rapide");
+					   break;
+				   default:
+					   break;
+				   }
+
+				   //System.out.println("Percent: "+curr_percent+" WIn: "+sumWin+" Mise: "+summise+" Misemin: "+gm.getMise()+" Misemax: "+idmax);
+				   count++;
+			   }
 			} catch (IOException | JSONException | URISyntaxException | DAOAPIException e) {
 				e.printStackTrace();
 			}

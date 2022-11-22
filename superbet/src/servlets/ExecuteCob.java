@@ -5,14 +5,21 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Locale;
 
+import javax.json.Json;
+import javax.json.JsonArrayBuilder;
+import javax.json.JsonObjectBuilder;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.google.gson.Gson;
+
 import config.Timestamp;
+import config.UtileKeno;
 import modele.Airtime;
 import modele.Caissier;
 import modele.Partner;
@@ -34,6 +41,8 @@ public static final String CONF_DAO_FACTORY = "daofactory";
 	private AirtimeDAO airtimeDao;
 	private MisekDAO misekDao;
 	private VersementDAO versementDao;
+	private String resultat;
+	
 	public void init() throws ServletException {
 		
 			this.kenoDao = ( (DAOFactory)getServletContext().getAttribute( CONF_DAO_FACTORY )).getKenoDao();
@@ -54,7 +63,7 @@ public static final String CONF_DAO_FACTORY = "daofactory";
 		System.out.println("Partner BIZ"+action);
 		System.out.println("EXEC.COB "+idpartner);
 		
-		ArrayList<Partner> listPartners = partnerDao.getAllPartners();
+		List<Partner> listPartners = partnerDao.getAllPartners();
 		if(idpartner.equalsIgnoreCase("1")) {
 			listPartners = partnerDao.getAllPartners();
 		}
@@ -69,6 +78,18 @@ public static final String CONF_DAO_FACTORY = "daofactory";
 			System.out.println("Partner CLOSEBIZ");
 			process_close(listPartners);
 		}
+		
+		response.setContentType("application/json; charset=UTF-8");
+		response.setHeader("Cache-Control", "no-cache");
+		    
+//		String json = new Gson().toJson(resul);
+//		response.getWriter().write(json);
+		
+           JsonArrayBuilder arrayBuilder = Json.createArrayBuilder();
+           JsonObjectBuilder objectBuilder = Json.createObjectBuilder();
+           objectBuilder.add("resultat", resultat);   
+           arrayBuilder.add(objectBuilder);
+           response.getWriter().write(arrayBuilder.build().toString());
 	}
 	
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -76,31 +97,34 @@ public static final String CONF_DAO_FACTORY = "daofactory";
 		doGet(request, response);
 	}
 	
-	private void process_open(ArrayList<Partner> listPartners) {
+	private void process_open(List<Partner> listPartners) {
 		
 		try {
 			
 			for(Partner partn : listPartners) {
 				if("closed".equalsIgnoreCase(partn.getCob())) {
 				  partnerDao.update_cob("opened",partn.getCoderace());
-			 }
+			    }
 				  
 			}
 			
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+			resultat = "Problème lors de l'ouverture des caisses";
 		}
+		
+		resultat = "Ouverture des caisses reussie";
 	}
 	
-	private void process_close(ArrayList<Partner> listPartners) {
+	private void process_close(List<Partner> listPartners) {
 		//ArrayList<Partner> listPartners = partnerDao.getAllPartners();
 		String txtDate=new SimpleDateFormat("dd/MM/yyyy,H:m:s", Locale.FRANCE).format(new Date());
 		String fecha = txtDate.toString().substring(0,10);
 		long t1;
 		long t2;
 		double balance = 0;
-		System.out.println("Partner COB: "+listPartners.size());
+		//System.out.println("Partner COB: "+listPartners.size());
 		try {
 			t1 = Timestamp.givetimestamp(fecha+",00:00:00");
 			t2 = Timestamp.givetimestamp(fecha+",23:59:00");
@@ -109,8 +133,8 @@ public static final String CONF_DAO_FACTORY = "daofactory";
 				if("opened".equalsIgnoreCase(partn.getCob())) {
 				  partnerDao.update_cob("closed",partn.getCoderace());
 				//recherche des caissiers par partenaires
-				ArrayList<Caissier> list_cais = caissierDao.findByPartner(partn.getCoderace());
-				System.out.println("list_cais COB: "+list_cais.size());
+				List<Caissier> list_cais = caissierDao.findByPartner(partn.getCoderace());
+			//	System.out.println("list_cais COB: "+list_cais.size());
 				  for(Caissier cais : list_cais) {
 					  balance = 0;
 					  if(cais.getProfil() != 1) {
@@ -129,7 +153,7 @@ public static final String CONF_DAO_FACTORY = "daofactory";
 								     versementDao.updateVersementD(""+t1, ""+cais.getIdCaissier(), ""+t2);
 								balance = airtime.getBalance() - in + out;
 								balance = (double)((int)(balance*100))/100;
-								System.out.println("new balance "+balance+" in: "+in+" out: "+out);
+						//		System.out.println("new balance "+balance+" in: "+in+" out: "+out);
 								airtimeDao.updateMvt(cais.getIdCaissier(), balance);
 								Airtime airti = new Airtime();
 								airti.setCredit(out);
@@ -146,7 +170,7 @@ public static final String CONF_DAO_FACTORY = "daofactory";
 					  }
 						  
 				  }
-				  System.out.println("FIN DU COB");
+				 // System.out.println("FIN DU COB");
 			 }
 				  
 			}
@@ -154,7 +178,10 @@ public static final String CONF_DAO_FACTORY = "daofactory";
 		} catch (ParseException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+			resultat = "Problème lors de la fermeture des caisses";
 		}
+		
+		resultat = "Fermeture des caisses";
 	}
 
 }

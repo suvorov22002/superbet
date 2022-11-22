@@ -52,7 +52,7 @@ let page1content =
     "<tr><td colspan=2>2 numeros</td></tr>" +
     "<tr><td>w </td><td> cote</td></tr>" +
     "<tr><td>1 </td><td> 1</td></tr>" +
-    "<tr><td>2 </td><td> 10</td></tr>" +
+    "<tr><td>2 </td><td> 8</td></tr>" +
     "</table>" +
     // 9numero
     "<table id='bloc2-item2table'  class='itemtable'>" +
@@ -76,8 +76,8 @@ let page1content =
     "<tr><td colspan=2>3 numeros</td></tr>" +
     "<tr><td>w </td><td> cote</td></tr>" +
     "<tr><td>1 </td><td> 1</td></tr>" +
-    "<tr><td>2 </td><td> 3</td></tr>" +
-    "<tr><td>3 </td><td> 50</td></tr>" +
+    "<tr><td>2 </td><td> 2</td></tr>" +
+    "<tr><td>3 </td><td> 10</td></tr>" +
     "</table>" +
 
     //8numero
@@ -87,8 +87,8 @@ let page1content =
     "<tr><td>1 </td><td> -</td></tr>" +
     "<tr><td>2 </td><td> -</td></tr>" +
     "<tr><td>3 </td><td> 1</td></tr>" +
-    "<tr><td>4 </td><td> 4</td></tr>" +
-    "<tr><td>5 </td><td> 15</td></tr>" +
+    "<tr><td>4 </td><td> 2</td></tr>" +
+    "<tr><td>5 </td><td> 6</td></tr>" +
     "<tr><td>6 </td><td> 50</td></tr>" +
     "<tr><td>7 </td><td> 1200</td></tr>" +
     "<tr><td>8 </td><td> 8000</td></tr>" +
@@ -102,8 +102,8 @@ let page1content =
     "<tr><td>w </td><td> cote</td></tr>" +
     "<tr><td>1 </td><td> -</td></tr>" +
     "<tr><td>2 </td><td> 2</td></tr>" +
-    "<tr><td>3 </td><td> 10</td></tr>" +
-    "<tr><td>4 </td><td> 100</td></tr>" +
+    "<tr><td>3 </td><td> 4</td></tr>" +
+    "<tr><td>4 </td><td> 75</td></tr>" +
     "</table>" +
 
     //7 numero
@@ -127,8 +127,8 @@ let page1content =
     "<tr><td>w </td><td> cote</td></tr>" +
     "<tr><td>1 </td><td> -</td></tr>" +
     "<tr><td>2 </td><td> 1</td></tr>" +
-    "<tr><td>3 </td><td> 3</td></tr>" +
-    "<tr><td>4 </td><td> 30</td></tr>" +
+    "<tr><td>3 </td><td> 2</td></tr>" +
+    "<tr><td>4 </td><td> 8</td></tr>" +
     "<tr><td>5 </td><td> 500</td></tr>" +
     "</table>" +
 
@@ -139,8 +139,8 @@ let page1content =
     "<tr><td>1 </td><td> -</td></tr>" +
     "<tr><td>2 </td><td> 1</td></tr>" +
     "<tr><td>3 </td><td> 2</td></tr>" +
-    "<tr><td>4 </td><td> 10</td></tr>" +
-    "<tr><td>5 </td><td> 60</td></tr>" +
+    "<tr><td>4 </td><td> 3</td></tr>" +
+    "<tr><td>5 </td><td> 25</td></tr>" +
     "<tr><td>6 </td><td> 800</td></tr>" +
     "</table>" +
     "</div> " +
@@ -153,9 +153,9 @@ let page1content =
     "<table id='item9table' class='itemtable'>" +
     "<tr><td colspan=2>tout dedans</td></tr>" +
     "<tr><td>w </td><td> cote</td></tr>" +
-    "<tr><td>1 </td><td> 4.1</td></tr>" +
-    "<tr><td>2 </td><td>14.5</td></tr>" +
-    "<tr><td>3 </td><td> 60.5</td></tr>" +
+    "<tr><td>1 </td><td> 3.6</td></tr>" +
+    "<tr><td>2 </td><td> 14</td></tr>" +
+    "<tr><td>3 </td><td> 60</td></tr>" +
     "<tr><td>4 </td><td> 275</td></tr>" +
     "<tr><td>5 </td><td> 1400</td></tr>" +
     "<tr><td>6 </td><td> 6500</td></tr>" +
@@ -164,16 +164,16 @@ let page1content =
     "<table id='item10table' class='itemtable'>" +
     "<tr><td colspan=2>non sortant</td></tr>" +
     "<tr><td>w </td><td> cote</td></tr>" +
-    "<tr><td>1 </td><td> 1.7</td></tr>" +
-    "<tr><td>2 </td><td> 2.1</td></tr>" +
-    "<tr><td>3 </td><td> 2.5</td></tr>" +
-    "<tr><td>4 </td><td> 3.2</td></tr>" +
-    "<tr><td>5 </td><td> 4.2</td></tr>" +
-    "<tr><td>6 </td><td> 5.5</td></tr>" +
-    "<tr><td>7 </td><td> 7.5</td></tr>" +
-    "<tr><td>8 </td><td> 10</td></tr>" +
-    "<tr><td>9 </td><td> 13.5</td></tr>" +
-    "<tr><td>10 </td><td> 18.5</td></tr>" +
+    "<tr><td>1 </td><td> 1.2</td></tr>" +
+    "<tr><td>2 </td><td> 1.6</td></tr>" +
+    "<tr><td>3 </td><td> 2</td></tr>" +
+    "<tr><td>4 </td><td> 2.7</td></tr>" +
+    "<tr><td>5 </td><td> 3.7</td></tr>" +
+    "<tr><td>6 </td><td> 5</td></tr>" +
+    "<tr><td>7 </td><td> 7</td></tr>" +
+    "<tr><td>8 </td><td> 9.5</td></tr>" +
+    "<tr><td>9 </td><td> 13</td></tr>" +
+    "<tr><td>10 </td><td>18</td></tr>" +
     "</table>" +
     "</div>" +
     "</div>";

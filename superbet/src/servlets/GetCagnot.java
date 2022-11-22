@@ -13,11 +13,13 @@ import org.codehaus.jettison.json.JSONException;
 import com.google.gson.Gson;
 
 import config.Params;
+import lombok.extern.slf4j.Slf4j;
 import modele.Cagnotte;
 import superbetDAO.api.exeception.DAOAPIException;
 import superbetDAO.api.implementations.SuperGameDAOAPI;
 import superbetDAO.api.interfaces.ISuperGameDAOAPILocal;
 
+@Slf4j
 public class GetCagnot extends HttpServlet{
 
 	/**
@@ -32,7 +34,7 @@ public class GetCagnot extends HttpServlet{
 	}
 	
 	public void init() throws ServletException {
-		supergameAPI = new SuperGameDAOAPI();
+		supergameAPI = SuperGameDAOAPI.getInstance();
 	}
 	
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -43,7 +45,7 @@ public class GetCagnot extends HttpServlet{
 		 try {
 			 String json;	
 			 Cagnotte cgt = supergameAPI.getSuperGameDAO().getCagnot(Params.url, coderace);
-				System.out.println("[GetCagnot - Cagnotte: ] "+cgt);
+				log.info("[GetCagnot - Cagnotte: ] "+cgt);
 				
 				response.setContentType("application/json; charset=UTF-8");
 				response.setHeader("Cache-Control", "no-cache");

@@ -40,7 +40,7 @@ public class AirtimeForm {
 		this.airtimeDao = airtimeDao;
 		this.caissierDao = caissierDao;
 		this.partnerDao = partnerDao;
-		supergameAPI = new SuperGameDAOAPI();
+		supergameAPI = SuperGameDAOAPI.getInstance();
 	}
 	
 	public void manage_admin(HttpServletRequest request){
@@ -79,7 +79,7 @@ public class AirtimeForm {
 				    CaissierDto user = new CaissierDto();
 				    user.setLoginc(cais.getLoginc());
 				    user.setPartner(cais.getPartner());
-				    Partner p = partnerDao.findById(user.getPartner());
+				    Partner p = partnerDao.find(user.getPartner());
 //					Airtime airtme = airtimeDao.find(cais);
 //					if(airtme !=null)
 //						balance = airtme.getBalance();
@@ -96,7 +96,7 @@ public class AirtimeForm {
 //					double mvt = airtimeDao.findMvt(cais.getIdCaissier());
 //					airtimeDao.updateMvt(cais.getIdCaissier(), mvt+credit);
 				
-				
+				System.out.println("partne aitime: "+p.getCoderace());
 					double solde = supergameAPI.getSuperGameDAO().airtime(Params.url, p.getCoderace(), user.getLoginc(), credit);
 					if (solde == 0) {
 						erreurs.put("error", "caisse absente");

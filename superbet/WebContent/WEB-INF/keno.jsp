@@ -846,7 +846,7 @@ var odds = [];
  			$.ajax({
  				url:"managetime",
  				type:"GET",
- 				async: false,
+ 				//async: false,
  				data:{
  	                'coderace':coderace
  	            },
@@ -860,7 +860,38 @@ var odds = [];
  			});
  		},333);
  	});
-
+	
+	function getInstantChrono() {
+		
+			
+			setInterval(function(){
+				return new Promise((resolve, reject) => {
+				$.ajax({
+				url: "managetime",
+				type: "GET",
+				data: {
+					'coderace' : coderace
+				},
+				success: function (data) {
+					resolve(data)
+				},
+				error: function(error) {
+					reject(error)
+				},
+			})
+		});
+			}, 333)
+		
+	}
+	
+/*	$(function(){
+		getInstantChrono()
+			.then((data) => {
+				console.log("Promise time ", JSON.stringify(data))
+				//timekeno = data.timekeno;
+			})
+	})
+*/
 	//recuperation du bonus
 	async function miseAJbonus(){
 		//var url = 'http://localhost:9090/api/v1/supergames/bonuskeno/'+coderace;

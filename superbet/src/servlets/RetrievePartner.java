@@ -2,17 +2,18 @@ package servlets;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.google.gson.Gson;
+
 import modele.Partner;
 import superbetDAO.DAOFactory;
 import superbetDAO.PartnerDAO;
-
-import com.google.gson.Gson;
 
 public class RetrievePartner extends HttpServlet{
 	
@@ -32,8 +33,8 @@ public class RetrievePartner extends HttpServlet{
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		String idpartner = request.getParameter("coderace");
 		//System.out.println("Idpartner: "+idpartner);
-		ArrayList<String> list = new ArrayList<String>();
-		ArrayList<Partner> last;
+		List<String> list = new ArrayList<String>();
+		List<Partner> last;
 		
 		last = partnerDao.getAllPartners();
 //		if(idpartner.equalsIgnoreCase("1")) {

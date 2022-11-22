@@ -1,16 +1,12 @@
 package config;
 
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.Locale;
+import java.util.List;
 import java.util.TimerTask;
 
 import org.apache.commons.lang3.time.DateUtils;
 
-import modele.Airtime;
-import modele.Caissier;
 import modele.Partner;
 import superbetDAO.AirtimeDAO;
 import superbetDAO.CaissierDAO;
@@ -128,7 +124,7 @@ private static TimerTask task;
 	public static void process(){
 		//recherche de tous les partners
 		System.out.println("Ouverture caisse");
-		ArrayList<Partner> listPartners = partnerDao.getAllPartners();
+		List<Partner> listPartners = partnerDao.getAllPartners();
 		
 		try {
 			

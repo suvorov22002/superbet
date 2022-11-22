@@ -58,7 +58,7 @@ public class ConfigDAOImpl implements ConfigDAO{
 						throw new DAOException( "Échec de la création du caissier en base, aucun ID auto-généré retourné." );
 					}
 				} catch ( SQLException e ) {
-					throw new DAOException( e );
+					e.printStackTrace();
 				} finally {
 					fermeturesSilencieuses( valeursAutoGenerees, preparedStatement, connexion );
 				}

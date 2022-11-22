@@ -24,7 +24,7 @@ public class ManageCagnotte extends HttpServlet {
 private  ISuperGameDAOAPILocal  supergameAPI;
 	
 	public void init() throws ServletException {
-		supergameAPI = new SuperGameDAOAPI();
+		supergameAPI = SuperGameDAOAPI.getInstance();
 	}
 	
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {

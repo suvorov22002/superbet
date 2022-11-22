@@ -325,7 +325,7 @@ function buildNumeroLesPLusTirees() {
 function buildDernierMultiplicateur() {
    
     //build first row
-    let htmlTr = "<tr><td><span>time</span></td>";
+    let htmlTr = "<tr><td><span>multi</span></td>";
     const page4bloc4Table2 = $('#page4bloc4-table-2');
 //    for (let i = 0; i < arrayDernierMultiplicateur.length; i++) {
 //        htmlTr += "<td><span>" + arrayDernierMultiplicateur[i].time + "</span></td>";
@@ -337,7 +337,7 @@ function buildDernierMultiplicateur() {
     //end build first row
 
     //build second row
-    htmlTr += "<tr><td><span>multi</span></td>";
+    htmlTr += "<tr><td><span>time</span></td>";
 //   for (let i = 0; i < arrayDernierMultiplicateur.length; i++) {
 //        htmlTr += "<td><span>" + arrayDernierMultiplicateur[i].temp + "</span></td>";
 //    }

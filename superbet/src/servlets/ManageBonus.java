@@ -29,7 +29,7 @@ public class ManageBonus extends HttpServlet{
 	public static final String CONF_DAO_FACTORY = "daofactory";
 	
 	public void init() throws ServletException {
-		supergameAPI = new SuperGameDAOAPI();
+		supergameAPI = SuperGameDAOAPI.getInstance();
 		this.kenoDao = ( (DAOFactory)getServletContext().getAttribute( CONF_DAO_FACTORY )).getKenoDao();
 	}
 	

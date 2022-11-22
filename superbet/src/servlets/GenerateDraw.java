@@ -45,8 +45,7 @@ public class GenerateDraw extends HttpServlet {
     public void init() throws ServletException {
 		/* Récupération d'une instance de notre DAO caissier */
 		this.kenoDao = ( (DAOFactory)getServletContext().getAttribute( CONF_DAO_FACTORY )).getKenoDao();
-		
-		supergameAPI = new SuperGameDAOAPI();
+		supergameAPI = SuperGameDAOAPI.getInstance();
 	}
 
 	/**
@@ -62,7 +61,7 @@ public class GenerateDraw extends HttpServlet {
 		// On construit le tableau JSON des résultat
         JsonArrayBuilder arrayBuilder = Json.createArrayBuilder();
         
-        System.out.println("Generate_draw drawnumbk: "+UtileKeno.drawKeno);
+      //  System.out.println("Generate_draw drawnumbk: "+UtileKeno.drawKeno);
        // On construit l'objet JSON pour l'expediteur
            JsonObjectBuilder objectBuilder = Json.createObjectBuilder();
            objectBuilder.add("drawnumbk", UtileKeno.drawKeno);

@@ -24,15 +24,15 @@ public class UtileKeno {
 	
 	public static double num10[] = {0,0,0,1,2,3,5,10,200,2000,10000};
 	public static double num9[] = {0,0,0,1,2,3,25,100,1500,9000};
-	public static double num8[] = {0,0,0,1,4,15,50,1200,8000};
+	public static double num8[] = {0,0,0,1,2,6,50,1200,8000};//{0,0,0,1,4,15,50,1200,8000};
 	public static double num7[] = {0,0,0,1,3,30,220,3000};
-	public static double num6[] = {0,0,1,2,10,60,800};
-	public static double num5[] = {0,0,1,3,30,500};
-	public static double num4[] = {0,0,2,10,100};
-	public static double num3[] = {0,1,3,50};
-	public static double num2[] = {0,1,10};
-	public static double numAll[] = {0,4.1,14.5,60.5,275,1400,6500};
-	public static double numOut[] = {0,1.7,2.1,2.5,3.2,4.2,5.5,7.5,10,13.5,18.5};
+	public static double num6[] = {0,0,1,2,3,25,800};
+	public static double num5[] = {0,0,1,2,8,500};
+	public static double num4[] = {0,0,2,4,75};
+	public static double num3[] = {0,1,2,10};
+	public static double num2[] = {0,1,8};
+	public static double numAll[] = {0,3.6,14,60,275,1400,6500};
+	public static double numOut[] = {0,1.2,1.6,2,2.7,3.7,5,7,9.5,13,18};
 	public static double numSpec[] = {1.85,1.87,3.80};
 	
 	public static int timeKeno = 185;
