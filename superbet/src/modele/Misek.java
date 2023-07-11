@@ -10,6 +10,7 @@ public class Misek implements Serializable {
 	private static final long serialVersionUID = -1513834781350102614L;
 	
 	private Long idmisek;
+	private Long numeroTicket;
 	private String idCaissier;
 	private String heurMise;
 	private String sumMise;
@@ -34,6 +35,16 @@ public class Misek implements Serializable {
 	public void setIdmisek(Long idmisek) {
 		this.idmisek = idmisek;
 	}
+
+	public Long getNumeroTicket() {
+		return numeroTicket;
+	}
+
+
+	public void setNumeroTicket(Long numeroTicket) {
+		this.numeroTicket = numeroTicket;
+	}
+
 
 	public String getIdCaissier() {
 		return idCaissier;

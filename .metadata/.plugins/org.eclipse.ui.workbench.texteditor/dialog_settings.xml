@@ -6,23 +6,23 @@
 		<item key="wholeword" value="false"/>
 		<item key="incremental" value="false"/>
 		<item key="isRegEx" value="false"/>
-		<item key="selection" value="gamestate"/>
+		<item key="selection" value="[DisplaKeno ]"/>
 		<list key="findhistory">
-			<item value="gamestate"/>
-			<item value="getState"/>
-			<item value="getCagnotte"/>
-			<item value="sumodd"/>
-			<item value="versem"/>
-			<item value="sOdd"/>
-			<item value="mapToCais"/>
-			<item value="create"/>
-			<item value="crea"/>
-			<item value="ICI"/>
-			<item value="ICII"/>
-			<item value="ICIII"/>
-			<item value="ICIIII"/>
-			<item value="array"/>
-			<item value="manageo"/>
+			<item value="[DisplaKeno ]"/>
+			<item value="updatebonus"/>
+			<item value="multiplicateur"/>
+			<item value="mapToKeno"/>
+			<item value="SQL_F_PREVIOUS_H_DRAW"/>
+			<item value="UtileKeno.drawKeno = &quot;&quot;"/>
+			<item value="REFRESHTIME KENO"/>
+			<item value="KENO"/>
+			<item value="executor"/>
+			<item value="calculateDraw()"/>
+			<item value="UtileKeno.drawKeno"/>
+			<item value="future"/>
+			<item value="development"/>
+			<item value="endofday"/>
+			<item value="debug"/>
 		</list>
 		<list key="replacehistory">
 		</list>
@@ -30,8 +30,8 @@
 	<section name="org.eclipse.ui.texteditor.FindReplaceDialog_dialogBounds">
 		<item key="DIALOG_X_ORIGIN" value="825"/>
 		<item key="DIALOG_Y_ORIGIN" value="332"/>
-		<item key="DIALOG_WIDTH" value="284"/>
-		<item key="DIALOG_HEIGHT" value="390"/>
-		<item key="DIALOG_FONT_NAME" value="1|Segoe UI|9.0|0|WINDOWS|1|-12|0|0|0|400|0|0|0|1|0|0|0|0|Segoe UI"/>
+		<item key="DIALOG_WIDTH" value="414"/>
+		<item key="DIALOG_HEIGHT" value="454"/>
+		<item key="DIALOG_FONT_NAME" value="1|Segoe UI|9.0|0|WINDOWS|1|-15|0|0|0|400|0|0|0|1|0|0|0|0|Segoe UI"/>
 	</section>
 </section>

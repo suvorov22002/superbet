@@ -1120,8 +1120,12 @@ function manage_keno(evt) {
 		document.getElementById('amount_error').innerHTML = "Credit insuffisant";
 		return false;
 	}
-	if(amount ==='' || parseInt(amount) < 200 || parseInt(amount) > 20000){
+	if(amount ==='' || parseInt(amount) < 200){
 		document.getElementById('amount_error').innerHTML = "montant incorrect";
+		return false;
+	}
+	else if(amount ==='' || parseInt(amount) > 10000){
+		document.getElementById('amount_error').innerHTML = "maximum depassé";
 		return false;
 	}
 	
@@ -1130,6 +1134,8 @@ function manage_keno(evt) {
 	var amount = $("#montant").val();
 	var multi = $("input[name='multi1']:checked").val();
 	var code = $("#code").val();
+
+	console.log('Valid amount: '+amount);
 	//submit du formulaire
     //document.forms["form_man_keno"].submit();
     // $("#print").prop("disabled",true);
@@ -1149,6 +1155,9 @@ function manage_keno(evt) {
 					var _fecha = result._fecha;
 					var idpath0 = result.path;
 					var coupon = result.coupon;
+
+					console.log('result coupon: '+JSON.stringify(coupon));
+					console.log('result _fecha: '+JSON.stringify(_fecha));
 					
 					
 					if (coupon === undefined) {
@@ -1297,9 +1306,6 @@ function check_barcode(evt){
 	
 	if(code ==='' || code.length < 13){
 		evt.preventDefault();
-	//if(code ==='' || code.length != 10){
-		//console.log('error');
-		//document.getElementById('coupon_error').innerHTML = "code ticket incorrect";
 		return;
 	}
 
@@ -1339,14 +1345,16 @@ function do_effVers() {
 	
 	callCheckSlip(code, vers);
 }
+
 function callCheckSlip(code, vers) {
 		
 		var code = $("#barcode").val();
 			
 			document.getElementById('coupon_error').innerHTML = "";
-			console.log("code: "+code+" Versement: "+vers);
+			//console.log("code: "+code+" Versement: "+vers);
+
 			if(code.trim().length === 0 && vers.trim().length === 0){
-				console.log('error');
+				//console.log('error');
 				document.getElementById('coupon_error').innerHTML = "code ticket incorrect";
 				return;
 			}
@@ -1361,10 +1369,10 @@ function callCheckSlip(code, vers) {
 						'versement':vers
 					},
 				success:function(result){
-//					console.log('result evenements: '+JSON.stringify(result.evenements));
-//					console.log('result drawData: '+JSON.stringify(result.drawData));
-//					console.log('result multiplicité: '+JSON.stringify(result.multiplicite));
-//					console.log('result Resultat: '+JSON.stringify(result.resultat));
+					// console.log('result evenements: '+JSON.stringify(result.evenements));
+					// console.log('result drawData: '+JSON.stringify(result.drawData));
+					// console.log('result multiplicité: '+JSON.stringify(result.multiplicite));
+					// console.log('result Resultat: '+JSON.stringify(result.resultat));
 					
 					var span = document.getElementById("coupon_error");
 				
@@ -1734,9 +1742,17 @@ function addlinesTableVers(value){
   
   res = drawData['gain_total'] !== undefined ? drawData['gain_total'] : " ";
   document.getElementById('versement').value = res;
+  
+  var res = drawData['xmulti'] !== undefined ? drawData['xmulti'] : " ";
+  let resMultiplicateur = [];
+  resMultiplicateur = res.split("-");
   //document.getElementById('barcode').value = "";
   document.getElementById('barcode').focus
-	//console.log('MULTI: '+multi);
+  
+  multi = events.length;
+  console.log('MULTI: '+multi);
+  var isMulti = drawData['multi'] !== undefined ? drawData['multi'] : 0;
+  
 	
   for(let i=0;i<multi;i++){
 
@@ -1746,6 +1762,7 @@ function addlinesTableVers(value){
 	let TD3= document.createElement("td");
 	let TD4= document.createElement("td");
 	let TD5= document.createElement("td");
+	let TD6= document.createElement("td");
 	var num = i + parseInt(drawData['draw_num']);
 	let txt1 = document.createTextNode(num);
 	var expr = (events[i])['cote'] !== undefined ? (events[i])['cote'] : 0;
@@ -1754,12 +1771,15 @@ function addlinesTableVers(value){
 	let txt4 = document.createTextNode(drawData['player_choice']);
 	expr = (events[i])['resultTour'] !== undefined ? (events[i])['resultTour'] : '';
 	let txt5 = document.createTextNode(expr);
+	let txt6 = document.createTextNode(resMultiplicateur[i]);
+	if(isMulti == 0) txt6 = document.createTextNode(1);
 	$('.pari_state').toggleClass('erreur', true);
 	TD1.appendChild(txt1);
 	TD2.appendChild(txt2);
 	TD3.appendChild(txt3);
 	TD4.appendChild(txt4);
 	TD5.appendChild(txt5);
+	TD6.appendChild(txt6);
 	
 
 	TR.appendChild(TD1);
@@ -1767,13 +1787,15 @@ function addlinesTableVers(value){
 	TR.appendChild(TD3);
 	TR.appendChild(TD4);
 	TR.appendChild(TD5);
+	TR.appendChild(TD6);
 		
 		document.getElementById('res_tirage').appendChild(TR);
 		$(TD1).addClass('col-md-1');
 		$(TD2).toggleClass('col-md-1', true);
 		$(TD3).toggleClass('col-md-2', true);
-		$(TD4).toggleClass('col-md-3', true);
+		$(TD4).toggleClass('col-md-2', true);
 		$(TD5).toggleClass('col-md-5', true);
+		$(TD6).toggleClass('col-md-1', true);
 		
 		etat = (events[i])['etat'];
 		

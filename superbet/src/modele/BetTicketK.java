@@ -30,7 +30,7 @@ public class BetTicketK implements Serializable {
 	private int bonusCod;
 	private double sumWin = 0d;
 	private int archive;
-	private int xmulti; //multiplicateur de gain
+	private String xmulti; //multiplicateur de gain
 	private Long caissier;
 	private Long keno;
 	private Long idMiseT;
@@ -45,6 +45,7 @@ public class BetTicketK implements Serializable {
 	private String message;
 	private Versement vers;
 	private List<EffChoicek> list_efchk = new ArrayList<EffChoicek>();
+	private boolean cagnotte = false;
 	
 	
 	public BetTicketK() {
@@ -111,10 +112,10 @@ public class BetTicketK implements Serializable {
 	public void setArchive(int archive) {
 		this.archive = archive;
 	}
-	public int getXmulti() {
+	public String getXmulti() {
 		return xmulti;
 	}
-	public void setXmulti(int xmulti) {
+	public void setXmulti(String xmulti) {
 		this.xmulti = xmulti;
 	}
 	public Long getCaissier() {
@@ -225,6 +226,14 @@ public class BetTicketK implements Serializable {
 
 	public void setVers(Versement vers) {
 		this.vers = vers;
+	}
+	
+	public boolean isCagnotte() {
+		return cagnotte;
+	}
+
+	public void setCagnotte(boolean cagnotte) {
+		this.cagnotte = cagnotte;
 	}
 
 	@Override

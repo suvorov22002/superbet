@@ -160,21 +160,25 @@ public class Refresh implements Runnable {
 					UtileKeno.canbet = false;
 					UtileKeno.messagek = "pari fermé";
 					//UtileKeno.drawKeno = this.supergameAPI.getSuperGameDAO().retrieveCombinaison(Params.url, UtileKeno.drawnumk, coderace);
+					UtileKeno.drawKeno = "";
 					future = calculateDraw();
 					System.out.println("REFRESHTIME KENO: "+UtileKeno.timeKeno+" *** "+UtileKeno.drawKeno);
 				}
 				else if(UtileKeno.gamestate == 1 && UtileKeno.timeKeno > 11) {
 					UtileKeno.canbet = true;
+					UtileKeno.drawKeno = "";
 				}
 				
 				if(UtileKeno.timeKeno < 1 ) {
 					countDown = false;
+					
 					if (future != null) {
 						UtileKeno.drawKeno = future.get();
 						isDraw = true;
 						UtileKeno.timeKeno = 185;
 					}
 					else {
+						UtileKeno.drawKeno = "";
 						future = calculateDraw();
 					}
 					
@@ -244,6 +248,7 @@ public class Refresh implements Runnable {
 							UtileKeno.messagek = "pari ouvert - tirage en cours";
 							b =  supergameAPI.getSuperGameDAO().retrieveCombi(Params.url, coderace);	
 							UtileKeno.drawKeno = b.getDrawnumbK();
+							
 							UtileKeno.multiplicateur = b.getMultiplicateur();
 							UtileKeno.drawnumk = b.getDrawnumK();
 					//		System.out.println("KRES drawnumk: "+UtileKeno.drawnumk);
@@ -254,6 +259,7 @@ public class Refresh implements Runnable {
 							countDown = true;
 							search_draw = false;
 							UtileKeno.canbet = true;
+							
 						}
 					}
 					
@@ -301,7 +307,8 @@ public class Refresh implements Runnable {
 			  //  System.out.println("UtileKeno.timeKeno: "+UtileKeno._timeKeno+" "+controltime+"  "+this.getDatecreation());
 				Thread.sleep(1000);
 			} catch (IOException | JSONException | URISyntaxException | DAOAPIException | InterruptedException | ExecutionException e) {
-				e.printStackTrace();
+				//e.printStackTrace();
+				System.err.print("REFRESHK ERROR: "+e);
 				search_draw = false;
 				UtileKeno.drawKeno = "";
 			}
@@ -335,9 +342,9 @@ public class Refresh implements Runnable {
 				return instance;
     }
 
-    private HashMap<String, Integer> triAvecValeur( Map<String, String> m ){
+    private Map<String, Integer> triAvecValeur( Map<String, String> m ){
 		
-		HashMap<String, Integer> map = new HashMap<String, Integer>();
+		Map<String, Integer> map = new HashMap<String, Integer>();
 		
 	      Iterator it = m.entrySet().iterator();
 	      while(it.hasNext()) {
@@ -348,13 +355,15 @@ public class Refresh implements Runnable {
 	
 		
 	   List<Map.Entry<String, Integer>> list = new LinkedList<Map.Entry<String, Integer>>( map.entrySet() );
-	   Collections.sort( list, new Comparator<Map.Entry<String, Integer>>(){
-	      public int compare( Map.Entry<String, Integer> o1, Map.Entry<String, Integer> o2 ){
-	          return (o1.getValue()).compareTo( o2.getValue());
-	      }
-	   });
+//	   Collections.sort( list, new Comparator<Map.Entry<String, Integer>>(){
+//	      public int compare( Map.Entry<String, Integer> o1, Map.Entry<String, Integer> o2 ){
+//	          return (o1.getValue()).compareTo( o2.getValue());
+//	      }
+//	   });
+	   
+	   Collections.sort( list, (o1, o2) -> (o1.getValue()).compareTo( o2.getValue()));
 
-	   HashMap<String, Integer> map_apres = new LinkedHashMap<String, Integer>();
+	   Map<String, Integer> map_apres = new LinkedHashMap<String, Integer>();
 	   for(Map.Entry<String, Integer> entry : list)
 	     map_apres.put( entry.getKey(), entry.getValue() );
 	   return map_apres;

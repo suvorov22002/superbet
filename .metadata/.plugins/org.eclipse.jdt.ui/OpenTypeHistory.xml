@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <typeInfoHistroy>
-<typeInfo handle="=superbet/src&lt;superbetDAO{CagnotteDAO.java[CagnotteDAO" modifiers="513" timestamp="1621766929573"/>
-<typeInfo handle="=superbet/src&lt;superbetDAO.api.interfaces{ISuperGameDAOAPILocal.java[ISuperGameDAOAPILocal" modifiers="513" timestamp="1623361110072"/>
-<typeInfo handle="=superbet/C:\/Program Files\/Java\/jdk1.8.0_251\/jre\/lib\/rt.jar=/owner.project.facets=/java=/=/javadoc_location=/https:\/\/docs.oracle.com\/javase\/8\/docs\/api\/=/&lt;java.io(Serializable.class[Serializable" modifiers="1537" timestamp="1606516178388"/>
+    <typeInfo handle="=superbet/src&lt;superbetDAO{CagnotteDAO.java[CagnotteDAO" modifiers="513" timestamp="1662087592176"/>
+    <typeInfo handle="=superbet/src&lt;superbetDAO.api.interfaces{ISuperGameDAOAPILocal.java[ISuperGameDAOAPILocal" modifiers="513" timestamp="1662087592182"/>
+    <typeInfo handle="=superbet/C:\/Program Files\/Java\/jdk1.8.0_251\/jre\/lib\/rt.jar=/javadoc_location=/https:\/\/docs.oracle.com\/javase\/8\/docs\/api\/=/=/owner.project.facets=/java=/&lt;java.io(Serializable.class[Serializable" modifiers="1537" timestamp="1650408663961"/>
 </typeInfoHistroy>

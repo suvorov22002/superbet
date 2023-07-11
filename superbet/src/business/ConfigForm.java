@@ -12,7 +12,7 @@ import org.codehaus.jettison.json.JSONException;
 import org.jasypt.util.password.ConfigurablePasswordEncryptor;
 
 import config.Params;
-import modele.Cagnotte;
+import modele.CagnotteDto;
 import modele.Caissier;
 import modele.CaissierDto;
 import modele.Config;
@@ -194,7 +194,7 @@ public final class ConfigForm {
 
 	public ConfigForm(KenoDAO kenoDao,MisetDAO misetDao,UtilDAO utilDao,EffChoicekDAO effchoicekDao,MisekDAO misekDao,
 			VersementDAO verstDao, PartnerDAO partnerDao, Misek_tempDAO misektpDao, CaissierDAO caissierDao, ConfigDAO configDao, SpinDAO spinDao, 
-			AirtimeDAO airtimeDao, GameCycleDAO game_cycleDao, CagnotteDAO cagnotteDao){
+			AirtimeDAO airtimeDao, GameCycleDAO game_cycleDao){
 		this.kenoDao = kenoDao;
 		this.misetDao = misetDao;
 		this.effchoicekDao = effchoicekDao;
@@ -208,7 +208,6 @@ public final class ConfigForm {
 		this.spinDao = spinDao;
 		this.airtimeDao = airtimeDao;
 		this.game_cycleDao = game_cycleDao;
-		this.cagnotteDao = cagnotteDao;
 		supergameAPI = SuperGameDAOAPI.getInstance();
 	}
 	
@@ -446,15 +445,14 @@ public final class ConfigForm {
 			}
 		}
 		else if(action.equalsIgnoreCase("addcagnotte")){
-			resultat_c = "Cagnotte mis ра jour";
+			
 			String detail_lot = "";
-			long t1,t2;
+			CagnotteDto cagnotte = new CagnotteDto();
+			
 			dat1 = getName(request, FIELD_DATE1);
 			String partner = getName(request, "ncbonus_part2");
-			Cagnotte cagnotte = new Cagnotte();
 			String lot = getName(request, "ncbonus_part");
 			String heur = getName(request, "cg_heure");
-			Partner part = partnerDao.find(partner);
 			
 			if(lot == null) {
 				setErreurs_c("Update", "Veuillez choisir un lot");
@@ -467,7 +465,7 @@ public final class ConfigForm {
 				return;
 			}
 			
-		//	System.out.println("Lot: "+lot+" Date: "+dat1+":"+heur+" partner: "+partner);
+			System.out.println("Lot: "+lot+" Date: "+dat1+":"+heur+" partner: "+partner);
 			if(lot.equalsIgnoreCase("1")) {
 				detail_lot = "tel";
 			}
@@ -488,17 +486,13 @@ public final class ConfigForm {
 			}
 			
 			cagnotte.setLot(detail_lot);
-			cagnotte.setDay(dat1);
-			cagnotte.setHeur(heur);
-			//cagnotte.setPartner(part);
-			cagnotte.setIdpart(part.getIdpartner());
+			cagnotte.setHeur(dat1 + " " + heur);
 			cagnotte.setJeu("");
 			
 			
 			try {
-				//cagnotteDao.create(cagnotte);
-				
 				cagnotte = supergameAPI.getSuperGameDAO().saveJackpot(Params.url, cagnotte, partner);
+				resultat_c = "Cagnotte mis ра jour";
 			} catch (IOException | JSONException | URISyntaxException | DAOAPIException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();

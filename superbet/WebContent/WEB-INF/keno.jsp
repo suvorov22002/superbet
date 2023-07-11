@@ -62,6 +62,7 @@
 		let bonus_2 = [];
 		let bonus_1 = [];
 		let arrayDernierTirage = [];
+		let arrayDernierMultiplicateur = [];
 		let arrayNumeroLesPlusTirees = [];
 		let arrayNumeroLesMoinsTirees = [];
 		let arrayLastBonus = [];
@@ -263,8 +264,9 @@
 								    },
 								];
 								break;
-								
+							
 								default:
+									
 									break;
 						}
 						
@@ -349,7 +351,7 @@
 
    function retrieveSumOdd(){
 //console.log("retrieveSumOdd: ");
-var odds = [];
+     var odds = [];
    	 $.ajax({
           url:"sumodd",
           type:"GET",
@@ -399,7 +401,7 @@ var odds = [];
    retrieveSumOdd();
 
    function retrieveMultiplicateur(){
-    //  console.log("CODERACE: "+coderace);
+      console.log("CODERACE-RETRIEVE MULTIPLICATEUR: "+coderace);
         $.ajax({
           url:"multiplicateur",
           type:"POST",
@@ -409,13 +411,16 @@ var odds = [];
 		  },
           success:function(result){
           	arrayLastMultiplicateur = result;
+			console.log(JSON.stringify(result))
+			
+			
             $.each(result, function(key, value){
        
            //   console.log('Multiplicateur: '+key+' - '+value['multiplicateur']);
            //   console.log('heureTirage: '+result[key]['heureTirage'].substring(11));
 
               var nbre = arrayLastMultiplicateur.length;
-           //   console.log("nbre multi: "+nbre);
+              console.log("nbre multi: "+nbre);
               switch(nbre){
                 
                     case 1:
@@ -737,7 +742,7 @@ var odds = [];
                         arrayDernierMultiplicateur = [
                             {
                                 temp: arrayLastMultiplicateur[0]['multiplicateur'],
-                                time: arrayLastMultiplicateur[0]['heureTirage'].substring(11),
+                                time: (arrayLastMultiplicateur[0]['heureTirage'].substring(11)),
                             },
                             {
                                 temp: arrayLastMultiplicateur[1]['multiplicateur'],

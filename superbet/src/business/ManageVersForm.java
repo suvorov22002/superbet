@@ -131,52 +131,37 @@ public final class ManageVersForm {
 		Versement verst = null;
 		Partner part = null;
 		boolean already_paid = Boolean.FALSE;
+		String coderace;
 		bonusDown = Boolean.FALSE;
 		
 		String versement = getVersement( request, FIELD_VERS);
 		String barcode = getBarcode( request,FIELD_CODE ) ;
 		//System.out.println("BARCODE h: "+barcode);
-	//	System.out.println("caissier h: "+caissier.getPartner());
-		if((barcode==null || barcode.length() < 12) && versement.isEmpty()) {
+		if((barcode == null || barcode.length() < 12) && versement.isEmpty()) {
 			resultat = "Code du ticket incorrect<br/>";
 			setErreurs(FIELD_CODE, resultat);
 			return null;
 		}
 		
 		barcode = barcode.length() > 12 ? barcode.substring(0, 12) : barcode;
-//		try {
-//			//part = partnerDao.findById(caissier.getPartner());
-//			part = partnerDao.find(caissier.getPartner());
-//			System.out.println("part: "+part);
-//		}
-//		catch(NumberFormatException e) {
-//			e.printStackTrace();
-//			return null;
-//		}
-		
-		
-		String coderace = caissier.getPartner();
+		coderace = caissier.getPartner();
 		 
 	//	System.out.println("BARCODE h: "+barcode);
-		 if ( versement == null || versement.trim().length() == 0 || versement.equalsIgnoreCase("")
-				 ) {
-			 //System.out.println("traiter ticket: "+versement);
+		 if ( StringUtils.isBlank(versement)) {
 			 
 	        verst = new Versement();
-	       
+	      
 			if(barcode == null){
 				return null;
 			}
 			else{
-				
-			//	System.out.println("BARCODE: "+barcode);
-				
+			
 				if(!isTesting){
 					isTesting = true;
 					BetTicketK b = null;
 					try {
 						b =  supergameAPI.getSuperGameDAO().checkTicket(Params.url, coderace,  barcode);
-						//System.out.println("BETK: "+b.getList_efchk().size());
+						System.out.println("BETK: "+b.getList_efchk().size());
 					} catch (IOException | JSONException | URISyntaxException | DAOAPIException e) {
 						e.printStackTrace();
 						resultat = "ERREUR LORS DE LA VERIFICATION<br/>";
@@ -235,7 +220,7 @@ public final class ManageVersForm {
 						   String lib_pari = utilDao.searchPariLById(b.getList_efchk().get(0).getIdparil())[3];
 						 
 					//	   System.out.println("BBB: "+b);
-						   multiplicite = b.getMultiplicite();
+						  
 			    		   setDrawData("barcode", b.getBarcode());
 			    		   setDrawData("player_choice", b.getList_efchk().get(0).getKchoice());
 			    		   setDrawData("multi", ""+ b.getMultiplicite());
@@ -246,10 +231,14 @@ public final class ManageVersForm {
 			    		   setDrawData("draw_result", b.getDraw_result());
 			    		   setDrawData("prix_total", ""+b.getSummise());
 			    		   setDrawData("gain_total", ""+b.getSumWin());
-			    		   
+			    		   setDrawData("xmulti", b.getXmulti());
+			    		 
 			    		   List<EffChoicek> list_efchk;
 			    		   list_efchk = b.getList_efchk();
-			    		  
+			    		   
+			    		  // multiplicite = list_efchk.size();
+			    		   
+			    		   
 			    		   boolean eval = true;
 			    		   for(EffChoicek efck : list_efchk) {
 			    			   
@@ -258,14 +247,19 @@ public final class ManageVersForm {
 			    				   details_tick.put("cote", efck.getCote());
 			    				   details_tick.put("resultTour", efck.getDrawresult());
 			    				   details_tick.put("etat", efck.isState() ? "true" : "false");
+			    				   details_tick.put("draw_num", String.valueOf(efck.getDrawnum()));
+			    				   details_tick.put("choice", efck.getKchoice());
 			    			   }
 			    			   else {
 			    				   eval = false;
 			    				   details_tick.put("cote", "-");
 			    				   details_tick.put("resultTour", "-");
+			    				   details_tick.put("draw_num", "-");
 			    			   }
 			    			   this.evenements.add(details_tick);
 			    		   }
+			    		   
+			    		   multiplicite = this.evenements.size();
 			    		   
 			    		   if("TICKET NON EVALUE".equalsIgnoreCase(b.getMessage())){
 								resultat = "TICKET NON EVALUE,<br/>TIRAGE EN COURS.<br/>";
@@ -280,6 +274,10 @@ public final class ManageVersForm {
 			    		   if(eval && gg == 0){
 			    			   resultat = "Ticket perdant";
 			    			   setErreurs(FIELD_CODE, resultat);
+			    			   if(b.isCagnotte()) {
+			    				   resultat = "Ticket CAGNOTTE";
+				    			   setErreurs(FIELD_CODE, resultat);
+			    			   }
 			    		   }
 			    		   else if(eval && gg != 0){
 			    			   if(bonusDown) {
@@ -289,6 +287,10 @@ public final class ManageVersForm {
 			    				   resultat = "Ticket gagnant"; 
 			    			   }
 			    			   setErreurs(FIELD_CODE, resultat);
+			    			   if(b.isCagnotte()) {
+			    				   resultat += "Ticket CAGNOTTE";
+				    			   setErreurs(FIELD_CODE, resultat);
+			    			   }
 			    		   }
 			    		   			    		  
 			    		   verst.setTypeVers("K");
@@ -310,47 +312,6 @@ public final class ManageVersForm {
 					return null;
 				}
 				//on verifie si le ticket n'a pas deja été payé
-				
-//				Miset miset = misetDao.searchTicketT(barcode);
-//				if(miset != null){ //le ticket existe
-//					
-//					Versement vers = verstDao.find_vers_miset(""+miset.getIdMiset());
-//					
-//					if(vers != null){
-//						System.out.println("TICKET DEJA PAYE: "+barcode+" , "+vers);
-//						//le ticket a deja été traité
-//						resultat = "Ticket deja pay�";
-//						setErreurs(FIELD_CODE, resultat);
-//						/* implementation here */
-//						return null;
-//					}
-//					else{
-//						System.out.println("VERSEMENT TICKET: "+barcode);
-//						Versement versemt = new Versement();
-//						
-//						String txtDate=new SimpleDateFormat("dd/MM/yyyy,H:m:s", Locale.FRANCE).format(new Date());
-//						long tms;
-//						try {
-//							tms = Timestamp.givetimestamp(txtDate);
-//							
-//							double mvt = airtimeDao.findMvt(caissier.getIdCaissier());
-//							airtimeDao.updateMvt(caissier.getIdCaissier(), mvt+Double.parseDouble(versement));
-//							
-////							versemt.setCaissier(""+caissier.getIdCaissier());
-////							versemt.setDatV(txtDate);
-////							versemt.setHeureV(""+tms);
-////							versemt.setTypeVers(miset.getTypeJeu());
-////							versemt.setMontant(Double.parseDouble(versement));
-////							versemt.setMise(miset.getIdMiset());
-////							
-////							verstDao.create(versemt);
-//						} catch (ParseException | DAOException e) {
-//							// TODO Auto-generated catch block
-//							e.printStackTrace();
-//						}
-//						
-//					}
-//				}
 				
 				return verst;
 	     }

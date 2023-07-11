@@ -1,12 +1,8 @@
 INDEX VERSION 1.4+D:\projets_JC\superbet\.metadata\.plugins\org.eclipse.wst.jsdt.core\indexes
 3295056838.index
 4152083568.index
-2894920506.index
 2143051576.index
-3236053295.index
-2179461459.index
+2894920506.index
+1905747793.index
 2404556370.index
-4019983741.index
-591765228.index
-2577437568.index
 4091015197.index

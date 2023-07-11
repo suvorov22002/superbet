@@ -52,7 +52,7 @@ public class DisplayKeno extends HttpServlet {
 		Partner coderace = partnerDao.find(partner);
 		
 		if(coderace != null){
-			System.out.println("[DisplaKeno ] "+partner+" [Partner] "+coderace);
+			//System.out.println("[DisplaKeno ] "+partner+" [Partner] "+coderace);
 			req.setAttribute("partner", coderace.getCoderace());
 			this.getServletContext().getRequestDispatcher(VUE).forward(req, res);
 		}

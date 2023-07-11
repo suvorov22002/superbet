@@ -147,7 +147,7 @@ public final class ManageSpinForm {
 				}
 			}
 			else{
-				resultat = "Veuillez saisir un montant correct";
+				resultat = "Veuillez saisir un montant correct SP";
 				setErreurs(FIELD_AMOUNT, resultat);
 	    		canSubmit = false;
 			}
@@ -273,7 +273,7 @@ public final class ManageSpinForm {
         String valeur = request.getParameter( nomChamp );
        // System.out.println("valeur amount: "+nomChamp);
        if ( valeur == null || valeur.trim().length() == 0 ) {
-    	   resultat = "Veuillez saisir un montantt valide";
+    	   resultat = "Veuillez saisir un montant valide";
 		   setErreurs(FIELD_AMOUNT, resultat);
            return null;
        } else{

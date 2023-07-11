@@ -8,11 +8,12 @@ import java.util.Map;
 import org.apache.http.client.ClientProtocolException;
 import org.codehaus.jettison.json.JSONException;
 
+import config.Params;
 import modele.AdminTicketDto;
 import modele.Airtime;
 import modele.BetTicketK;
 import modele.BonusSet;
-import modele.Cagnotte;
+import modele.CagnotteDto;
 import modele.Caissier;
 import modele.GameCycle;
 import modele.GameCycleDto;
@@ -101,7 +102,7 @@ public class SuperGameDAO extends AbstractDAOAPI<SuperGameDAO>{
 		return this.addUser(url, cais, coderace);
 	}
 	
-	public Cagnotte getCagnot(String url, String coderace) throws ClientProtocolException, IOException, JSONException, URISyntaxException, DAOAPIException{
+	public CagnotteDto getCagnot(String url, String coderace) throws ClientProtocolException, IOException, JSONException, URISyntaxException, DAOAPIException{
 		return this.getCagnotte(url, coderace);
 	}
 
@@ -129,7 +130,7 @@ public class SuperGameDAO extends AbstractDAOAPI<SuperGameDAO>{
 		return this.getMaxMisek(url, coderace);
 	}
 
-	public double getMiseKCycle(String url, String coderace, long mise, long l) throws ClientProtocolException, IOException, JSONException, URISyntaxException, DAOAPIException{
+	public Map<String, Double> getMiseKCycle(String url, String coderace, long mise, long l) throws ClientProtocolException, IOException, JSONException, URISyntaxException, DAOAPIException{
 		return this.miseKCycle(url, coderace, mise, l);
 	}
 	
@@ -181,7 +182,7 @@ public class SuperGameDAO extends AbstractDAOAPI<SuperGameDAO>{
 		return this.partner(url, part);
 	}
 
-	public Cagnotte saveJackpot(String url, Cagnotte cagnotte, String coderace) throws ClientProtocolException, IOException, JSONException, URISyntaxException, DAOAPIException{
+	public CagnotteDto saveJackpot(String url, CagnotteDto cagnotte, String coderace) throws ClientProtocolException, IOException, JSONException, URISyntaxException, DAOAPIException{
 		return this.creerCagnot(url, cagnotte, coderace);
 	}
 
@@ -196,7 +197,10 @@ public class SuperGameDAO extends AbstractDAOAPI<SuperGameDAO>{
 	public List<KenoRes> getLdraw(String url, String coderace) throws ClientProtocolException, IOException, JSONException, URISyntaxException, DAOAPIException{
 		return this.lDraw(url, coderace);
 	}
-
 	
+	public List<KenoRes> getLastMulti(String url, String coderace)throws ClientProtocolException, IOException, JSONException, URISyntaxException, DAOAPIException{
+		return this.lastTwelveDraw(url, coderace);
+	}
+
 
 }

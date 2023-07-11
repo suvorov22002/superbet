@@ -8,18 +8,17 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.codehaus.jettison.json.JSONException;
-
 import com.google.gson.Gson;
 
+import org.codehaus.jettison.json.JSONException;
+
 import config.Params;
-import lombok.extern.slf4j.Slf4j;
-import modele.Cagnotte;
+import modele.CagnotteDto;
 import superbetDAO.api.exeception.DAOAPIException;
 import superbetDAO.api.implementations.SuperGameDAOAPI;
 import superbetDAO.api.interfaces.ISuperGameDAOAPILocal;
 
-@Slf4j
+
 public class GetCagnot extends HttpServlet{
 
 	/**
@@ -44,12 +43,12 @@ public class GetCagnot extends HttpServlet{
 	
 		 try {
 			 String json;	
-			 Cagnotte cgt = supergameAPI.getSuperGameDAO().getCagnot(Params.url, coderace);
-				log.info("[GetCagnot - Cagnotte: ] "+cgt);
+			 CagnotteDto cgt = supergameAPI.getSuperGameDAO().getCagnot(Params.url, coderace);
+				
 				
 				response.setContentType("application/json; charset=UTF-8");
 				response.setHeader("Cache-Control", "no-cache");
-                if (cgt == null ) json = new Gson().toJson(new Cagnotte());
+                if (cgt == null ) json = new Gson().toJson(new CagnotteDto());
                 else json = new Gson().toJson(cgt);
 				
                 response.getWriter().write(json);

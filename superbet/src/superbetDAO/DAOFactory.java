@@ -12,7 +12,6 @@ import com.jolbox.bonecp.BoneCP;
 import com.jolbox.bonecp.BoneCPConfig;
 
 import superbetDAOImpl.AirtimeDAOImpl;
-import superbetDAOImpl.CagnotteDAOImpl;
 import superbetDAOImpl.CaissierDAOImpl;
 import superbetDAOImpl.ConfigDAOImpl;
 import superbetDAOImpl.EffChoicekDAOImpl;
@@ -169,8 +168,5 @@ public class DAOFactory {
 			return new GameCycleDAOImpl(this);
 		}
 	  
-	  public CagnotteDAO getCagotteDao() {
-		  return new CagnotteDAOImpl(this);
-	  }
 
 }

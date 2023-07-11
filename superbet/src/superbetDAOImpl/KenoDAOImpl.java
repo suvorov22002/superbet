@@ -50,7 +50,7 @@ public class KenoDAOImpl implements KenoDAO {
 			+ " WHERE multiplicateur != '0' AND coderace=? "
 			+ "ORDER BY drawnumk DESC "
 			+ "LIMIT 0,100 ";
-	
+
 	
 	public KenoDAOImpl(DAOFactory daoFactory) {
 		this.daofactory = daoFactory;

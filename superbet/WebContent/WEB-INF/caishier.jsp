@@ -144,7 +144,7 @@
                         <td class="col-xs-4">
                           <input type="text" id="alea_nbre" name="alea_nbre" title="nombre de balle" size="3" maxlength="3" onkeypress="return aleaNbre(event);" autocomplete="off"/>&nbsp;&nbsp;
                           
-						  <button type="button" class="btn btn-success" onclick="return place_alea(event);">Tirage Aleatoire</button>
+						               <button type="button" class="btn btn-success" onclick="return place_alea(event);">Tirage Aleatoire</button>
                         </td>
                         
                     </tr>
@@ -169,7 +169,7 @@
             </table>
            </fieldset>
         </div>
-        <div class="col-sm-3 coupon">
+        <div class="col-sm-3 coupon imenu1">
             <fieldset>
               <legend>Coupon</legend>
                 <!--  <div class="control-group">-->
@@ -420,7 +420,7 @@
      <form action="versement" method="POST" name="form_ver">
        <div class="row">
         <div class="col-sm-2 code_barre">
-           <h3>CODE BARE</h3>
+           <h3>BARCODE</h3>
            <span id="coupon_error" class="coupon_error" style="color:${v_form.resultat == 'Ticket perdant' ? 'red':'green'};font-style:plain;font-weight:bold;">${v_form.resultat}</span><br/>
         </div>
         <div class="col-sm-10 check_ticket">
@@ -428,47 +428,17 @@
            <table class="table table-fixed t_pay">
               <thead>
                 <tr>
-                  <th class="col-md-1">Evenement</th>
-                <!--   <th class="col-md-1">Cote</th>-->
-                  <th class="col-md-1">Cote</th>
-                  <th class="col-md-2">Jeu</th>
-                  <th class="col-md-3">Selection</th>
-                  <th class="col-md-5">Prix</th>
+                  <th class="col-sm-1">Evenement</th>
+                  <th class="col-sm-1">Cote</th>
+                  <th class="col-sm-2">Jeu</th>
+                  <th class="col-sm-2">Selection</th>
+                  <th class="col-sm-5">Prix</th>
+                   <th class="col-sm-1">Xcateur</th>
                   <!--  <th class="col-md-1">Resultat</th>-->
                 </tr>
-             </thead>
-              <tbody class='t_fixed_hedears' id="res_tirage">
-               <c:forEach var="i" begin="1" end="${v_form.multiplicite}">
-	             <!--   <tr class="${(v_form.evenements[i-1])['etat'] == 'true' ? 'succes':'erreur'}">-->
-	              <tr>
-	                <td class="${(v_form.evenements[i-1])['etat'] == 'true' ? 'succes':'erreur'} 
-	                	<c:choose>
-                          <c:when test="${(v_form.evenements[i-1])['etat'] == 'true'}">
-                          	<c:out value="succes"/>
-                          </c:when>
-                          <c:when test="${(v_form.evenements[i-1])['etat'] == 'false'}">
-                          	<c:out value="erreur"/>
-                          </c:when>
-                          <c:otherwise>
-                            <c:out value="pending"/>
-                          </c:otherwise>
-                        </c:choose>
-	                
-	                
-	                
-	                col-md-1">${i-1+v_form.drawData['draw_num']}<br/></td>
-	              <!--   <td class="col-md-1">${(v_form.evenements[i-1])['etat']}<br/></td>-->
-	                <td class="col-md-1">${(v_form.evenements[i-1])['cote']}<br/></td>
-	                <td class="col-md-2">${v_form.drawData['cparil']}<br/></td>
-	                <td class="col-md-3">${v_form.drawData['player_choice']}<br/></td>
-	                <td class="col-md-5">${(v_form.evenements[i-1])['resultTour']}<br/></td>
-	               <!-- <td class="col-md-1">
-	                  <div class="form-check checked" >
-	                    <input type="checkbox" checked disabled class="form-check-input checked" id="">
-	                  </div>
-	                </td>-->
-	              </tr>
-               </c:forEach>
+             </thead> 
+              <tbody id="res_tirage">
+        
               </tbody>
             </table>
         </div>
@@ -493,7 +463,7 @@
                   <td class="col-xs-1"><label for=""></label></td>
                   <td class="col-xs-5"><label for=""></label></td>
               </tr>
-           
+            
               <tr>
                  <td class="col-xs-1"><label for="prix">Code Barre</label></td>
                  <td class="col-xs-1"><input type="text" size="20" style="text-align:center;" maxlength="15" id="barcode" name="barcode" onkeypress="return verif_coupon(event);" oninput="return check_barcode(event);" autocomplete="off"/></td>

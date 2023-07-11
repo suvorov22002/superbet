@@ -18,8 +18,6 @@ import org.codehaus.jettison.json.JSONException;
 
 import config.Params;
 import config.UtileKeno;
-import lombok.extern.slf4j.Slf4j;
-import modele.Keno;
 import modele.KenoRes;
 import modele.Partner;
 import superbetDAO.DAOFactory;
@@ -32,7 +30,7 @@ import superbetDAO.api.interfaces.ISuperGameDAOAPILocal;
 /**
  * Servlet implementation class UpdateBonus
  */
-@Slf4j
+
 public class UpdateBonus extends HttpServlet {
 	private static final long serialVersionUID = 1L;
     
@@ -123,10 +121,6 @@ public class UpdateBonus extends HttpServlet {
 		
 		String coderace = request.getParameter("partner");
 		Partner p = partnerDao.find(coderace);
-		//System.out.println("coderace updatebonus: "+coderace);
-	//	Keno keno = kenoDao.find_Max_draw(coderace);
-		//System.out.println("UPDATE BONUS KENO: "+keno);
-		String[] maj_last = kenoDao.find_Max_draw_bis(coderace);
 		String[] last = kenoDao.getLastKdraw(coderace);
 		String[] last_bonus = kenoDao.getLastKBonus(coderace);
 		
@@ -156,7 +150,7 @@ public class UpdateBonus extends HttpServlet {
 				   str = "";
 				   str = str + ks.getDrawnumK() + "_" + ks.getDrawnumbK() + "_" + ks.getMultiplicateur() + "_" + ks.getHeureTirage().replace('h',':').substring(11);
 				   lastsK[l++] = str;
-				  // System.out.println(str);
+				   //System.out.println(str);
 			   }
 		} catch (JSONException | URISyntaxException | DAOAPIException e) {
 			e.printStackTrace();
@@ -261,6 +255,7 @@ public class UpdateBonus extends HttpServlet {
                     objectBuilder.add("draw1", lastsK[0]);
                     break;
                 default:
+                	
                 	break;
             }
             

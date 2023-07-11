@@ -73,6 +73,7 @@ public class ManageKeno extends HttpServlet {
 			slip.setResultat(k_form.getResultat());
 			slip.setPath(req.getContextPath());
 			
+			
 	    }
 	    else {
 	    	session.invalidate();

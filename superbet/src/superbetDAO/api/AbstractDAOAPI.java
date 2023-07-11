@@ -43,7 +43,7 @@ import modele.AdminTicketDto;
 import modele.Airtime;
 import modele.BetTicketK;
 import modele.BonusSet;
-import modele.Cagnotte;
+import modele.CagnotteDto;
 import modele.Caissier;
 import modele.CaissierDto;
 import modele.GameCycle;
@@ -735,9 +735,9 @@ public abstract class AbstractDAOAPI<T> {
         }
     }
 	
-	public Cagnotte creerCagnot(String url, Cagnotte cagnotte, String coderace) throws ClientProtocolException, IOException, JSONException, URISyntaxException, DAOAPIException {
+	public CagnotteDto creerCagnot(String url, CagnotteDto cagnotte, String coderace) throws ClientProtocolException, IOException, JSONException, URISyntaxException, DAOAPIException {
 
-		Cagnotte p = null;
+		CagnotteDto p = null;
 		String playload = null;
 		String resp_code;
 		HttpPost post;
@@ -1487,9 +1487,12 @@ public abstract class AbstractDAOAPI<T> {
 		}
 	}
 	
-	public double miseKCycle(String url, String coderace, long mise, long l) throws ClientProtocolException, IOException, 
+	public Map<String, Double> miseKCycle(String url, String coderace, long mise, long l) throws ClientProtocolException, IOException, 
 		JSONException, URISyntaxException, DAOAPIException {
+		
 		String resp_code;
+		Map<String, Double> respMap = null;
+		
 		HttpGet getRequest = new HttpGet(url+"/totalMisek/"+coderace+"/"+mise+"/"+l);
 		// add request parameter, form parameters
 		getRequest.setHeader("content-type", "application/json");
@@ -1506,7 +1509,7 @@ public abstract class AbstractDAOAPI<T> {
 	        		String content = EntityUtils.toString(entity);
 	        	//	//System.out.println(content);
 	        		if(!isValidJson(content)) {
-	        			return 0;
+	        			return respMap;
 	        		}
 	                JSONObject json = new JSONObject(content);
 	                
@@ -1515,27 +1518,26 @@ public abstract class AbstractDAOAPI<T> {
 	                JSONObject j = new JSONObject(resp_code);
 	                String code = j.getString("code");
 	                if(!code.equalsIgnoreCase("200")) {
-	                	return 0l;
+	                	return respMap;
 	                }
 	                
 	                String retSrc = j.getString("data");
 	    //            //System.out.println(retSrc);
 	                JSONObject jsonObj = new JSONObject(retSrc.toString());
 	                
-	                if(jsonObj.has("sumMise")) {
-	                	max = jsonObj.getDouble("sumMise");
+	                if(jsonObj.has("sumMise") && jsonObj.has("sumWin")) {
+	                	respMap = new HashMap<>();
+	                	respMap.put("sumMise", jsonObj.getDouble("sumMise"));
+	                	respMap.put("sumWin", jsonObj.getDouble("sumWin"));
 	                }
-	                else {
-	                	max = 0;
-	                }        	           
+	                      	           
     			}
         	}
         	catch(Exception e) {
         		e.printStackTrace();
-        		return 0;
         	}
         	
-			return max;
+			return respMap;
 		}
 	}
 	
@@ -1997,7 +1999,7 @@ public abstract class AbstractDAOAPI<T> {
 		  }
 	}
 	
-	public Cagnotte getCagnotte(String url, String coderace) throws ClientProtocolException, IOException, 
+	public CagnotteDto getCagnotte(String url, String coderace) throws ClientProtocolException, IOException, 
 					JSONException, URISyntaxException, DAOAPIException {
 	String resp_code;
 	HttpGet getRequest = new HttpGet(url+"/cagnotte/"+coderace);
@@ -2005,7 +2007,7 @@ public abstract class AbstractDAOAPI<T> {
 	getRequest.setHeader("content-type", "application/json");
 	
 	try (CloseableHttpResponse response = this.getClosableHttpClient().execute(getRequest)) {
-		Cagnotte cgt = new Cagnotte();
+		CagnotteDto cgt = new CagnotteDto();
 		HttpEntity entity = null;
 		
 		try{
@@ -2029,7 +2031,7 @@ public abstract class AbstractDAOAPI<T> {
                 	return null;
                 }
                 JSONObject betkObject = j.getJSONObject("cagnot");
-             //   ////System.out.println("betkObject: "+betkObject);
+                System.out.println("betkObject: "+betkObject);
                 cgt = this.mapToCagnotte(betkObject);
                // vers.setMessage(j.getString("message"));
            
@@ -2433,6 +2435,67 @@ public abstract class AbstractDAOAPI<T> {
 		}
 	}
     
+    public List<KenoRes> lastTwelveDraw(String url, String coderace) throws ClientProtocolException, IOException, JSONException, URISyntaxException, DAOAPIException {
+    	
+    	List<KenoRes> kenr = null;
+    	
+    	String resp_code;
+		HttpGet getRequest = new HttpGet(url+"/last-twelve/"+coderace);
+		// add request parameter, form parameters
+		getRequest.setHeader("content-type", "application/json");
+		
+		try (CloseableHttpResponse response = this.getClosableHttpClient().execute(getRequest)) {
+        	
+        	HttpEntity entity = null;
+        	
+        	try{
+        		entity = response.getEntity();
+        		
+        		if (entity != null) {
+        			
+	        		String content = EntityUtils.toString(entity);
+	        	//    System.out.println("result12: "+content);
+	        		if(!isValidJson(content)) {
+	        			return null;
+	        		}
+	                JSONObject json = new JSONObject(content);
+	                
+	                //Verification du code reponse
+	                resp_code = json.getString("entity");
+	              
+	                JSONObject j = new JSONObject(resp_code);
+	                
+	                String code = j.getString("code");
+	                if(!code.equalsIgnoreCase("200")) {
+	                	return null;
+	                }
+	                
+	                String retSrc = j.getString("data");
+	                JSONObject jsonObj = new JSONObject(retSrc.toString());
+	                
+	                if(jsonObj.has("bonus")) {
+	                	String list_json = jsonObj.getString("bonus");
+	                	JSONArray jObj = new JSONArray(list_json.toString());
+	                	
+	        			int n = jObj.length();
+	        			kenr = new ArrayList<>(n);
+	        			
+	        			for(int i=0 ; i< n ; i++) {
+	        				JSONObject jo = jObj.getJSONObject(i);
+	        				////System.out.println("tickets "+jo);
+	        				kenr.add(this.mapToKenoRes(jo));
+	        			}
+	                	
+	                }   	           
+    			}
+        	}
+        	catch(Exception e) {
+        		e.printStackTrace();
+        	}
+			return kenr;
+		}
+    }
+    
     public List<KenoRes> bonus(String url, String coderace) throws ClientProtocolException, IOException, JSONException, URISyntaxException, DAOAPIException {
     	
     	List<KenoRes> kenres = null;
@@ -2684,8 +2747,8 @@ public abstract class AbstractDAOAPI<T> {
 		return o;
 	}
 	
-	public Cagnotte mapToCagnotte(JSONObject obj) throws JsonParseException, JsonMappingException, IOException, JSONException {
-		Cagnotte o = this.mapper.enable(DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY).readValue(obj.toString(), Cagnotte.class);
+	public CagnotteDto mapToCagnotte(JSONObject obj) throws JsonParseException, JsonMappingException, IOException, JSONException {
+		CagnotteDto o = this.mapper.enable(DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY).readValue(obj.toString(), CagnotteDto.class);
 		return o;
 	}
 	

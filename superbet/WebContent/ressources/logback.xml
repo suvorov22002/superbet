@@ -1,0 +1,6 @@
+<configuration>
+    <!-- Not necessary if specifying a logging level for a specific package -->
+    <root level="info"/>
+    <!-- Replace with whatever package is annoying you -->
+    <logger name="org.eclipse.jgit" level="info"/>
+</configuration>

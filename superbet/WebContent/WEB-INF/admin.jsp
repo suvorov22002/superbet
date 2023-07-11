@@ -34,7 +34,7 @@
         </div>
       </div>
   </div> 
-  <div class="container">
+  <div class="container-fluid">
       <!-- Contenu interface finance -->
       <div class="interf_finance" style="display:${state==1 ? 'block' :'none'};">
        <form method="post" action="administration">
@@ -95,10 +95,11 @@
                       <td class="col-xs-2">${empty fin_form.sum_keno ? 0 : fin_form.sum_keno}</td>
                       <td class="col-xs-2">${empty fin_form.nbre_v_keno ? 0 : fin_form.nbre_v_keno}</td>
                       <td class="col-xs-2">${empty fin_form.sum_v_keno ? 0 : fin_form.sum_v_keno}</td>
-                      <td class="col-xs-1">${fin_form.balance}</td>
-                      <td class="col-xs-1">${fin_form.percent_keno}</td>
+                      <td class="col-xs-1">${empty fin_form.balance ? 0 : fin_form.balance}</td>
+                      <td class="col-xs-1">${empty fin_form.percent_keno ? 0 : fin_form.percent_keno}</td>
                     </tr>
-                      <tr>
+                   
+					<tr>
                       <td class="col-xs-2">Spin</td>
                       <td class="col-xs-2">0</td>
                       <td class="col-xs-2">0</td>
@@ -194,11 +195,11 @@
                           <th class="col-xs-1">Frequence</th>
                           <th class="col-xs-1">Rang</th>
                           <th class="col-xs-1">Return</th>
-                          <th class="col-xs-1">Mise</th>
+                          <th class="col-xs-2">Mise</th>
                           <th class="col-xs-1">Payé</th>
                           <th class="col-xs-1">Jackpot</th>
                           <th class="col-xs-1">Curr %</th>
-						  <th class="col-xs-1">Real %</th>
+						              <!-- <th class="col-xs-1">Real %</th> -->
                         </tr>
                     </thead>
                       <tbody>
@@ -210,12 +211,12 @@
                             <td class="col-xs-1">${turn_form.gmc[i-1].jeu}</td>
                             <td class="col-xs-1">${turn_form.gmc[i-1].hitfrequence}%</td>
                             <td class="col-xs-1">${turn_form.gmc[i-1].position}</td>
-                            <td class="col-xs-1">${turn_form.gmc[i-1].refundp}&nbsp;&nbsp;XAF</td>
-                            <td class="col-xs-1">${turn_form.gmc[i-1].stake}</td>
+                            <td class="col-xs-1">${turn_form.gmc[i-1].refundp}</td>
+                            <td class="col-xs-2">${turn_form.gmc[i-1].stake}</td>
                             <td class="col-xs-1">${turn_form.gmc[i-1].payout}</td>
                             <td class="col-xs-1">${turn_form.gmc[i-1].jkpt}</td>
                             <td class="col-xs-1">${turn_form.gmc[i-1].curr_percent}%</td>
-							<td class="col-xs-1">${turn_form.gmc[i-1].real_percent}%</td>
+							              <!-- <td class="col-xs-1">${turn_form.gmc[i-1].real_percent}%</td> -->
                           </tr>
                         </c:forEach>
                       </tbody>
@@ -938,23 +939,23 @@
                       <td class="col-xs-6"><label>Heure Cagnotte:</label>&nbsp;&nbsp;
                         <select class="ncbonus_part2" name="cg_heure" id="cgsel_salle" style="width:80px;">
                             <option value=""></option>
-                            <option value="10:00">10:00</option>
-                            <option value="11:00">11:00</option>
-                            <option value="14:00">14:00</option>
-                            <option value="16:00">16:00</option>
-                            <option value="17:00">17:00</option>
-                            <option value="18:00">18:00</option>
-                            <option value="19:00">19:00</option>
-                            <option value="20:00">20:00</option>
-                            <option value="21:00">21:00</option>
-                            <option value="22:00">22:00</option>
+                            <option value="10:00:00">10:00</option>
+                            <option value="11:00:00">11:00</option>
+                            <option value="14:00:00">14:00</option>
+                            <option value="16:00:00">16:00</option>
+                            <option value="17:00:00">17:00</option>
+                            <option value="18:00:00">18:00</option>
+                            <option value="19:00:00">19:00</option>
+                            <option value="20:00:00">20:00</option>
+                            <option value="21:00:00">21:00</option>
+                            <option value="22:00:00">22:00</option>
                           </select>
                       </td>
                     </tr>
                     <tr>
                         <td class="col-xs-2"></td>
                         <td class="col-xs-6">
-                        	<input type="submit" class="btn btn-success" id="addcagnotte" value="Activer cagnotte" onclick="updateLogoCagnotte();" />&nbsp;&nbsp;
+                        	<input type="submit" class="btn btn-success" id="addcagnotte" value="Activer cagnotte"/>&nbsp;&nbsp;
                         	<span class="${empty con_form.erreurs_c ? 'succes' :'erreur'}"> ${con_form.resultat_c}</span>
                         </td>
                         <td class="col-xs-4">

@@ -128,6 +128,7 @@ public final class ManageKenoForm {
 
 	@SuppressWarnings("unused")
 	public Coupon print(HttpServletRequest request, Caissier caissier){
+		
 		String amount = getValeurAmount(request, FIELD_AMOUNT);
 		String ichoice;
 		String coderace;
@@ -136,7 +137,7 @@ public final class ManageKenoForm {
 		betk = new BetTicketK();
 		
 		EDraw = "";
-	//	System.out.println("caissier.getPartner(): "+caissier.getPartner());
+		
 		Partner partner;
 	//	partner = partnerDao.findById(Integer.parseInt(""+caissier.getPartner()));
 		List<Partner> partners = partnerDao.getAllPartners();
@@ -158,12 +159,9 @@ public final class ManageKenoForm {
 		}
 		
 		betk.setIdPartner(partner.getIdpartner());
-	//	betk.setIdPartner(1L);
 		
 		coderace = partner.getCoderace();
-//		Config config = configDao.find(coderace);
-//		bonusrate = config.getBonusrate();
-		
+	
 		Miset miset = new Miset();
 		Misek misek = new Misek();
 		Misek_temp misektp = new Misek_temp();
@@ -186,10 +184,12 @@ public final class ManageKenoForm {
 		String fecha = txtDate.toString().substring(0,10);
 		
 		long tms;
-		
+//		long time1 = System.currentTimeMillis();
+//		System.out.println("TIME TICKET 1: "+time1);
 		if(ichoice != null && !ichoice.equalsIgnoreCase("")){
 			
 			if(amount != null){
+				
 				if(erreurs.isEmpty()){
 					//Verification du solde
 					try {
@@ -198,6 +198,7 @@ public final class ManageKenoForm {
 					} catch (IOException | JSONException | URISyntaxException | DAOAPIException e) {
 						e.printStackTrace();
 					}
+				//	System.out.println("BALANCE: " +balance+" - " + (System.currentTimeMillis()-time1));
 					mt = Double.parseDouble(amount);
 					mt = mt * tp;
 					mt = (double)((int)(mt*100))/100;
@@ -263,50 +264,20 @@ public final class ManageKenoForm {
 							e.printStackTrace();
 							return null;
 						}
-						
+						long time2 = System.currentTimeMillis();
+
 						maxIdkeno = k_max.getIdKeno();
 
 						betk.setKeno(maxIdkeno);
-						
-//						misek.setIdCaissier(""+caissier.getId());
-//						misek.setHeurMise(""+tms);
-//						misek.setSumMise(""+mt);
-//						misek.setDatMise(txtDate);
-//						misek.setEtatMise("attente");
-//						misek.setDrawNumK(keno.getDrawNumK());
-//						misek.setBonusCodeK(""+bncd);
-//						misek.setIdMiset(""+idmiset);
-//						misek.setIdKeno(""+maxIdkeno);
-//						misek.setXmulti((xmulti.equalsIgnoreCase("Oui")) ? 1 : 0);
-					
 						betk.setCaissier(caissier.getIdCaissier());
 						betk.setHeureMise(""+tms);
 						betk.setDateMise(txtDate);
-//						System.out.println("k_max.getDrawnumK(): "+k_max.getDrawnumK());
 						betk.setDrawnumk(Integer.parseInt(k_max.getDrawnumK()));
-						betk.setXmulti((xmulti.equalsIgnoreCase("Oui")) ? 1 : 0);
-						
-//						msk = misekDao.create(misek);
-						//idmisek = misekDao.findId();
-//						idmisek = misekDao.findId(""+idmiset);
-						
+						betk.setXmulti(String.valueOf((xmulti.equalsIgnoreCase("Oui")) ? 1 : 0));
 						betk.setMultiplicite(multiplicite);
 						betk.setCotejeu(typejeu);
 						betk.setEvent(event);
-					//	betk.setIdPartner(idPartner);
-						//traitements si coupon mutltiple
-//						if(multiplicite > 1){
-//							gain_min = (mt/multiplicite) * typejeu;
-//							gain_min = (double)((int)(gain_min*100))/100;
-//							
-//							misektp.setMulti(multiplicite);
-//							misektp.setSumMise(gain_min);
-//							misektp.setEtatMise(1);
-//							misektp.setIdmisek(idmisek);
-//							
-//							misektpDao.create(misektp);
-//						}
-						
+					
 						double mtant;
 						mtant = Double.parseDouble(amount);
 						mtant = mtant / event;
@@ -314,31 +285,15 @@ public final class ManageKenoForm {
 						String str_="";
 						mfk = 0;
 						
-				//		for(int i=0;i<event;i++){
-							
-							
-							str_ = ichoice;
-							
-				//			System.out.println("- "+i+": "+str_);
-							
-							effchoicek.setIdparil(utilDao.searchPariL(codeParil)[1]);
-				//			effchoicek.setIdmisek(""+idmisek);
-							effchoicek.setKchoice(str_);
-				//			effchoicek.setIdkeno(""+(maxIdkeno+i));
-							effchoicek.setIdkeno(maxIdkeno);
-				//			effchoicek.setMtchoix(""+mtant);
-							
-							betk.setParil(utilDao.searchPariL(codeParil)[1]);
-							betk.setKchoice(str_);
-							
-//							List<EffChoicek> list_efchk = new ArrayList<EffChoicek>();
-//							list_efchk.add(effchoicek);
-//							list_efchk.add(effchoicek);
-//							betk.setList_efchk(list_efchk);
+						str_ = ichoice;
+
+						effchoicek.setIdparil(utilDao.searchPariL(codeParil)[1]);
+						effchoicek.setKchoice(str_);
+						effchoicek.setIdkeno(maxIdkeno);
 						
-				//			mfk += effchoicekDao.create(effchoicek);
+						betk.setParil(utilDao.searchPariL(codeParil)[1]);
+						betk.setKchoice(str_);
 							
-				//		  } 
 					    BetTicketK b = null;
 				//	    System.out.println("betk*** "+betk);
 						try {
@@ -355,15 +310,11 @@ public final class ManageKenoForm {
 					      }	 
 					      EDraw = EDraw + dr[dr.length-1];
 						
-//						if(mst!=0 && msk!=0 && mfk==event){
 					    if(b != null) {
 							// Creation du coupon de jeu
-//							double mvt = airtimeDao.findMvt(caissier.getIdCaissier());
-//							airtimeDao.updateMvt(caissier.getIdCaissier(), mvt-mt);
-							
+
 							crd.setRoom(coderace);
 							crd.setBarcode(b.getBarcode());
-							//crd.setBarcode("770008849808");
 							crd.setCodepari(codeParil);
 							crd.setEventscote(""+typejeu);
 							crd.setEvents(EDraw);
@@ -380,18 +331,20 @@ public final class ManageKenoForm {
 							_fecha = new String[multiplicite];
 							
 							Date currentDate = new Date();
+							
 							for(int ii=0;ii<multiplicite;ii++) {
+								
 								txtDate=new SimpleDateFormat("dd/MM/yyyy,H:mm:s", Locale.FRANCE).format(currentDate);
 								hora =  txtDate.toString().substring(11,16);
 								fecha = txtDate.toString().substring(0,10);
 					
-								//System.out.println("_fecha "+fecha+"  "+hora);
 								_fecha[ii] = fecha+"  "+hora;
 								
 								Calendar c = Calendar.getInstance();
 						        c.setTime(currentDate);
 								c.add(Calendar.MINUTE, 6);
 								currentDate = c.getTime();
+								
 							}
 							
 					//		partnerDao.update_bonusk(amountbonus, bncd, coderace);

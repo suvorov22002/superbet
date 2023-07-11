@@ -2,11 +2,6 @@ package modele;
 
 import java.io.Serializable;
 
-import lombok.Data;
-import lombok.NoArgsConstructor;
-
-@Data
-@NoArgsConstructor
 public class Config implements Serializable{
 	
 	/**
@@ -27,7 +22,7 @@ public class Config implements Serializable{
 	private String coderace;
 	private int config;
 	
-/*
+
 	public Long getIdConfig() {
 		return idConfig;
 	}
@@ -131,6 +126,6 @@ public class Config implements Serializable{
 	public void setBnsbmax(double bnsbmax) {
 		this.bnsbmax = bnsbmax;
 	}
-	*/
+	
 	
 }

@@ -17,7 +17,6 @@ import javax.servlet.http.HttpServletRequest;
 import org.codehaus.jettison.json.JSONException;
 
 import config.Params;
-import lombok.extern.slf4j.Slf4j;
 import modele.Misek;
 import modele.Partner;
 import modele.Versement;

@@ -392,8 +392,8 @@ function seekCagnot(){
         success:function(result){
             $.each(result, function(index, value){
                 var barc = result['barcode'];
-                console.log("CAGNOTTE: "+result['jeu']);
-                console.log("CAGNOTTE: "+result['lot']);
+            //    console.log("CAGNOTTE: "+result['jeu']);
+            //    console.log("CAGNOTTE: "+result['lot']);
 
                 if (barc != 0) {
                     imagePage1 = "";

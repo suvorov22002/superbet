@@ -519,7 +519,7 @@ function animationSquare() {
 
                                         let intervalId4 = setInterval(
                                             () => {
-                                                console.log(' animationOutputZoom '+arrayNumroSortant[n])
+       //                                         console.log(' animationOutputZoom '+arrayNumroSortant[n])
                                                  if(arrayNumroSortant[n] != undefined)
                                                     animationOutputZoom(arrayNumroSortant[n]);
                                                 n++;

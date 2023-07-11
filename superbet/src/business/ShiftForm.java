@@ -92,17 +92,15 @@ public final class ShiftForm {
 	    		String end = getValeurChamp(request, FIELD_NAME);
 	    		//System.out.println("end: "+end);
 	    		if(end !=null && end.equalsIgnoreCase("endofday")){
-	    			System.out.println("CAISSIER1: "+caissier.getLoginc());
+	    			//System.out.println("CAISSIER1: "+caissier.getLoginc());
 	    			caissier.setStatut("N");
 			    //	caissierDao.updateState(caissier);
 			    	endday = "";
 	    		}
 	    		else{
-	    			String state,  mIn1, mIn2,mIn3,mIn4, mOut, bonusCumul;
-	    			int misetD1,misetB1,misetK1,misetP1,miset1,vers;
-	    			int totalBillet = 0, tTvers = 0;
-	    			double mtIn = 0, mtOut = 0, balance = 0, bonusCumuls = 0, balance0 = 0, reste=0;
-	    			double sum_entrG,sum_versG,sum_entrB,sum_entrK,sum_entrP,sum_diff;
+	    			int misetK1,misetP1,vers;
+	    			double mtIn = 0, mtOut = 0, balance = 0, balance0 = 0;
+	    			double sum_entrG,sum_versG,sum_entrB,sum_entrK,sum_entrP;
 	    			
 	    			sum_entrG = 0.0;
 	    		    sum_versG = 0.0;
@@ -133,7 +131,7 @@ public final class ShiftForm {
 	    				
 	    				sum_versG = shiftday.getCashoutk() + shiftday.getCashoutp(); //total payé
 	    				setShift("cashout", ""+sum_versG);
-	    				System.out.println("cashout: "+sum_versG+" id: "+caissier.getIdCaissier()+" t1: "+t1+" t2: "+t2);
+	    			//	System.out.println("cashout: "+sum_versG+" id: "+caissier.getIdCaissier()+" t1: "+t1+" t2: "+t2);
 	    				
 	    				misetK1 = shiftday.getSlipk(); //nombre de ticket de keno joués	
 	    				misetP1 = shiftday.getSlipp(); //nombre de ticket de spin joués	

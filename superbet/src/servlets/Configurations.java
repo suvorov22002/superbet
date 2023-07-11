@@ -9,7 +9,6 @@ import javax.servlet.http.HttpServletResponse;
 
 import business.ConfigForm;
 import superbetDAO.AirtimeDAO;
-import superbetDAO.CagnotteDAO;
 import superbetDAO.CaissierDAO;
 import superbetDAO.ConfigDAO;
 import superbetDAO.DAOFactory;
@@ -52,7 +51,6 @@ public class Configurations extends HttpServlet {
 	private SpinDAO spinDao;
 	private AirtimeDAO airtimeDao;
 	private GameCycleDAO gamecycleDao;
-	private CagnotteDAO cagnotteDao;
 	
 	public void init() throws ServletException {
 		/* Récupération d'une instance de notre DAO caissier */
@@ -69,7 +67,6 @@ public class Configurations extends HttpServlet {
 		this.spinDao = ((DAOFactory)getServletContext().getAttribute(CONF_DAO_FACTORY)).getSpinDao();
 		this.airtimeDao = ((DAOFactory)getServletContext().getAttribute(CONF_DAO_FACTORY)).getAirtimeDao();
 		this.gamecycleDao = ((DAOFactory)getServletContext().getAttribute(CONF_DAO_FACTORY)).getGameCycleDao();
-		this.cagnotteDao = ((DAOFactory)getServletContext().getAttribute(CONF_DAO_FACTORY)).getCagotteDao();
 	}
     /**
      * @see HttpServlet#HttpServlet()
@@ -88,38 +85,44 @@ public class Configurations extends HttpServlet {
 	}
 
 	/**
+	 * @throws IOException 
+	 * @throws ServletException 
 	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// TODO Auto-generated method stub
 		
-		ConfigForm con_form = new ConfigForm(kenoDao,misetDao,utilDao,effchoicekDao,misekDao,
-				verstDao, partnerDao, misektpDao, caissierDao, configDao, spinDao, airtimeDao, gamecycleDao, cagnotteDao);
 		
-		con_form.manage_config(request);
+			ConfigForm con_form = new ConfigForm(kenoDao,misetDao,utilDao,effchoicekDao,misekDao,
+				verstDao, partnerDao, misektpDao, caissierDao, configDao, spinDao, airtimeDao, gamecycleDao);
 		
-		if(con_form.getAction().equalsIgnoreCase("addpartner")){ //ajout de partenaire
-			request.setAttribute("action", 1);
+		
+	
+			con_form.manage_config(request);
+			if(con_form.getAction().equalsIgnoreCase("addpartner")){ //ajout de partenaire
+				request.setAttribute("action", 1);
+				
+				request.setAttribute("state", 6);
+				
+			}
+			else if(con_form.getAction().equalsIgnoreCase("addcaissier")){
+				request.setAttribute("action", 3);
+				
+				request.setAttribute("state", 6);
+			}
+			else if(con_form.getAction().equalsIgnoreCase("addbonus")){
+				request.setAttribute("action", 5);
+				
+				request.setAttribute("state", 6);
+			}
+			else if(con_form.getAction().equalsIgnoreCase("addcagnotte")){
+				request.setAttribute("action", 7);
+				
+				request.setAttribute("state", 6);
+			}
 			
-			request.setAttribute("state", 6);
-			
-		}
-		else if(con_form.getAction().equalsIgnoreCase("addcaissier")){
-			request.setAttribute("action", 3);
-			
-			request.setAttribute("state", 6);
-		}
-		else if(con_form.getAction().equalsIgnoreCase("addbonus")){
-			request.setAttribute("action", 5);
-			
-			request.setAttribute("state", 6);
-		}
-		else if(con_form.getAction().equalsIgnoreCase("addcagnotte")){
-			request.setAttribute("action", 7);
-			
-			request.setAttribute("state", 6);
-		}
-		request.setAttribute( ATT_FORM, con_form );
+			request.setAttribute( ATT_FORM, con_form );
+		
 		this.getServletContext().getRequestDispatcher(VUE_ADMIN).forward(request, response);
 	}
 
