@@ -20,6 +20,7 @@ import modele.GameCycleDto;
 import modele.Keno;
 import modele.KenoRes;
 import modele.Misek;
+import modele.Partner;
 import modele.PartnerDto;
 import modele.ResPartner;
 import modele.ShiftDay;
@@ -48,6 +49,10 @@ public class SuperGameDAO extends AbstractDAOAPI<SuperGameDAO>{
 	
 	public Caissier getCaissier(String url, Caissier cais, String partner) throws ClientProtocolException, IOException, JSONException, URISyntaxException, DAOAPIException{
 		return this.getUser(cais, url, partner);
+	}
+	
+	public Caissier getCaissierAdmin(String url, Caissier cais) throws ClientProtocolException, IOException, JSONException, URISyntaxException, DAOAPIException{
+		return this.getUserAdmin(cais, url);
 	}
 	
 	public Double getSolde(String url, Long ncp) throws ClientProtocolException, IOException, JSONException, URISyntaxException, DAOAPIException{
@@ -201,6 +206,17 @@ public class SuperGameDAO extends AbstractDAOAPI<SuperGameDAO>{
 	public List<KenoRes> getLastMulti(String url, String coderace)throws ClientProtocolException, IOException, JSONException, URISyntaxException, DAOAPIException{
 		return this.lastTwelveDraw(url, coderace);
 	}
-
+	
+	public List<Caissier> getSuperAdmin(String url)throws ClientProtocolException, IOException, JSONException, URISyntaxException, DAOAPIException{
+		return this.superAdmin(url);
+	}
+	
+	public Boolean checkPartner(String url, String coderace) throws ClientProtocolException, IOException, JSONException, URISyntaxException, DAOAPIException{
+		return this.getPartner(url, coderace);
+	}
+	
+	public List<Partner> getAllPartner(String url)throws ClientProtocolException, IOException, JSONException, URISyntaxException, DAOAPIException{
+		return this.retrieveAllPartner(url);
+	}
 
 }

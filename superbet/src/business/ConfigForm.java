@@ -8,6 +8,7 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.commons.lang3.StringUtils;
 import org.codehaus.jettison.json.JSONException;
 import org.jasypt.util.password.ConfigurablePasswordEncryptor;
 
@@ -219,57 +220,100 @@ public final class ConfigForm {
 		action = getName( request, "idconfig" );// definit l'action Ã  traiter. ajout partner, ajout caissier...
 		
 		if(action.equalsIgnoreCase("addpartner")){
+			
 			coderace = getName( request, FIELD_CODERACE );
 			zone = getName( request, FIELD_ZONE );
 			
 			// recupere tous les partenaires
 		    lpartner = partnerDao.getAllPartners();
+		   
 			
-			if(coderace == null){
+			if(StringUtils.isBlank(coderace)){
 				return;
 			}
-			if(coderace.length() < 5){
-	  		  setErreurs(FIELD_CODERACE, "Longueur du nom très court");
-	  		  resultat = "Nom très court, 5 caractères minimum";
-	  		  return;
-			}
-		 try {
-			//Partner partner = partnerDao.find(coderace);
 			
-			 PartnerDto pdto = new PartnerDto();
-			 pdto.setCoderace(coderace);
-			 pdto.setZone(zone);
-			 ResPartner resp = supergameAPI.getSuperGameDAO().submitPartner(Params.url, pdto);
-			 Partner p = resp.getPartner();
-			 String respMess = resp.getMessage();
-
-			 Partner part = new Partner();
-			 part.setCoderace(coderace);
-			 part.setZone(zone);
-			 part.setGroupe(1);
-			 part.setActif(1);
-			 part.setCob("opened");
-
-			 if ("EXISTS".equalsIgnoreCase(respMess)) {
-
-				 Partner partner = partnerDao.find(coderace);
-
-				 if (partner == null) {
-					 addNewPartenaire(part);
+			String[] spaceCoderace = coderace.trim().split(" ");
+			String[] pointCoderace = coderace.trim().split(".");
+			
+			if(coderace.length() < 5){
+				
+	  		  	setErreurs(FIELD_CODERACE, "Longueur du nom très court");
+	  		  	resultat = "Nom très court, 5 caractères minimum";
+	  		  	return;
+	  		  	
+			}
+			else if(spaceCoderace.length > 1) {
+				
+				setErreurs(FIELD_LOGIN, "Pas d'espace dans le nom du partenaire");
+				resultat = "Pas d'espace dans le nom du partenaire.";
+		  		return;
+		  		
+			}
+			
+			if(pointCoderace.length > 1) {
+				
+				setErreurs(FIELD_LOGIN, "Pas de point dans le nom du partenaire");
+				resultat = "Pas de point dans le nom du partenaire.";
+		  		return;
+		  		
+			}
+			
+		
+			try {
+			
+				 Partner partn = partnerDao.find(coderace);
+				 
+				 if(partn == null) {
+					 
+					 Partner part = new Partner();
+					 part.setCoderace(coderace);
+					 part.setZone(zone);
+					 part.setGroupe(1);
+					 part.setActif(1);
+					 part.setCob("opened");
+					 boolean isAdded = addNewPartenaire(part);
+					 
+					 if(isAdded) {
+						 
+						 PartnerDto pdto = new PartnerDto();
+						 pdto.setCoderace(coderace);
+						 pdto.setZone(zone);
+						 ResPartner resp = supergameAPI.getSuperGameDAO().submitPartner(Params.url, pdto);
+						 String respMess = resp.getMessage();
+						 
+						 if ("EXISTS".equalsIgnoreCase(respMess)) {
+							 
+							 setErreurs(FIELD_CODERACE, "present");
+							 resultat = "Partenaire/Salle deja présent.";
+							 return;
+							 
+						 }
+						 else if("NEW".equalsIgnoreCase(respMess)) {
+							 resultat = "Partenaire créer avec success.";
+						 }
+						 
+					 }
+					 else {
+						 
+						 setErreurs(FIELD_CODERACE, "present");
+						 resultat = "Erreur lors de la creation des partenaires.";
+						 return;
+						 
+					 }
+					 
 				 }
 				 else {
+					 
 					 setErreurs(FIELD_CODERACE, "present");
-					 resultat = "Partenaire/Salle deja présent.";
+					 resultat = "Login partenaire deja existant.";
+					 return;
+					 
 				 }
-
-			 }
-			 else if("NEW".equalsIgnoreCase(respMess)) {
-				 addNewPartenaire(part);
-			 }
-
+			
 		 } catch (IOException | JSONException | URISyntaxException | DAOAPIException e) {
-			 // TODO Auto-generated catch block
 			 e.printStackTrace();
+			 setErreurs(FIELD_CODERACE, "present");
+			 resultat = "Erreur lors de la creation des partenaires.";
 		 }
 		}
 		else if(action.equalsIgnoreCase("addcaissier")){
@@ -281,19 +325,32 @@ public final class ConfigForm {
 			String profil = getName(request, FIELD_PROFIL);
 			String partner = getName(request, FIELD_PARTNER);
 			
-			if(login == null || pass == null || profil == null || partner == null){
+			if(StringUtils.isBlank(login) || StringUtils.isBlank(pass) || StringUtils.isBlank(profil) || StringUtils.isBlank(partner)){
 				return;
 			}
+			
+			String[] spaceLogin = login.trim().split(" ");
 			if(login.length() < 5){
 	  		  setErreurs_u(FIELD_LOGIN, "Longueur du login très court");
 	  		  resultat_u = "Login très court, 5 caractères minimum";
 	  		  return;
 			}
-			if(pass.length() < 5){
+			else if(spaceLogin.length > 1) {
+				setErreurs_u(FIELD_LOGIN, "Pas d'espace dans le login");
+		  		resultat_u = "Pas d'espace dans le login.";
+		  		return;
+			}
+			
+			
+			if(pass.length() < 6){
 	  		  setErreurs_u(FIELD_PASS, "Longueur du mot de passe très court");
 	  		  resultat_u = "pass très court, 5 caractÃ¨res minimum";
 	  		  return;
 			}
+			
+			ConfigurablePasswordEncryptor passwordEncryptor = new ConfigurablePasswordEncryptor();
+			passwordEncryptor.setAlgorithm( Params.ALGO_CHIFFREMENT );
+			passwordEncryptor.setPlainDigest( false );
 			
 			Caissier caissier = caissierDao.findByLogin(login);
 			Long idpartner = partnerDao.find(partner).getIdpartner();
@@ -305,17 +362,13 @@ public final class ConfigForm {
 				idprofil = 1L;
 			}
 			
-			ConfigurablePasswordEncryptor passwordEncryptor = new ConfigurablePasswordEncryptor();
-			passwordEncryptor.setAlgorithm( Params.ALGO_CHIFFREMENT );
-			passwordEncryptor.setPlainDigest( false );
 			String passChiffre = passwordEncryptor.encryptPassword(pass);
-			
-			
 			setUser("nomc", nom_user);
 			setUser("loginc", login);
-			setUser("passc", passChiffre);
+			setUser("passc", "******");
 			
 			if(caissier == null){
+				
 				int n = 0;
 				Caissier cais = new Caissier();
 				cais.setNomc(nom_user);
@@ -326,36 +379,50 @@ public final class ConfigForm {
 				cais.setGrpe(1);
 				//System.out.println(cais);
 				n = caissierDao.create(cais);
+				
 				try {
+					
 					if (n > 0) {
+						// Utilisateur crée en local
+						
 						CaissierDto caisDto = new CaissierDto();
 						caisDto.setNomc(nom_user);
 						caisDto.setLoginc(login);
-						caisDto.setMdpc(passChiffre);
+						caisDto.setMdpc(pass);
 						caisDto.setPartner(partner);
 						caisDto.setProfil(idprofil);
 						caisDto.setGrpe(1);
 						//System.out.println(caisDto);
-						cais = supergameAPI.getSuperGameDAO().saveUser(Params.url, caisDto, partner);
-						//System.out.println("USER: "+caisDto);
+						Caissier caisse = supergameAPI.getSuperGameDAO().saveUser(Params.url, caisDto, partner);
+						if(caisse == null) {
+							
+							caissierDao.delete(cais);
+							setErreurs_u(FIELD_LOGIN, "Echec lors de la creation");
+							resultat_u = "Echec lors de la creation.";
+							return;
+						}
+						
+						resultat_u="Caissier crée avec succes";
+						
 					}
 					
 				} catch (IOException | JSONException | URISyntaxException | DAOAPIException e) {
 					e.printStackTrace();
 					return;
 				}
-				if(n > 0){	
-					Caissier user = caissierDao.findByLogin(login);
-					//creation de la ligne des mouvements
-					airtimeDao.createMvt(user.getIdCaissier(), 0);
-					resultat_u="Caissier crée avec succes";
-					return;
-				}
-				else{
-					setErreurs_u(FIELD_LOGIN, "Echec de creation");
-					resultat_u = "Echec de creation";
-					return;
-				}
+				
+//				if(n > 0){	
+//					Caissier user = caissierDao.findByLogin(login);
+//					//creation de la ligne des mouvements
+//					airtimeDao.createMvt(user.getIdCaissier(), 0);
+//					resultat_u="Caissier crée avec succes";
+//					return;
+//				}
+//				else{
+//					setErreurs_u(FIELD_LOGIN, "Echec de creation");
+//					resultat_u = "Echec de creation";
+//					return;
+//				}
 				
 				
 			}
@@ -534,8 +601,9 @@ public final class ConfigForm {
 		return valeur;
 	}
 	
-	private void addNewPartenaire(Partner part) {
+	private boolean addNewPartenaire(Partner part) {
 		
+		int nb_race;
 		Long n = 0L;
 		n = partnerDao.create(part);
 		
@@ -553,7 +621,7 @@ public final class ConfigForm {
 			ken.setDrawnumbK("'1-2-3-4-5-6-7-8-9-10-11-12-13-14-15-16-17-18-19-20'");
 			ken.setCoderace(coderace);
 			ken.setHeureTirage("01/01/2020-00:00:00");
-			int nb_race = kenoDao.create(ken);
+			nb_race = kenoDao.create(ken);
 			
 			//misetDao.createFree(n);
 			
@@ -563,7 +631,7 @@ public final class ConfigForm {
 			else{
 				setErreurs(FIELD_CODERACE, "Echec de creation");
 				resultat = "Echec de creation";
-				return;
+				return Boolean.FALSE;
 			}
 			
 			for (Partner pp : lpartner) {
@@ -575,7 +643,9 @@ public final class ConfigForm {
 		else {
 			setErreurs(FIELD_CODERACE, "Echec de creation");
 			resultat = "Echec de creation";
-			return;
+			return Boolean.FALSE;
 		}
+		
+		return Boolean.TRUE;
 	}		
 }

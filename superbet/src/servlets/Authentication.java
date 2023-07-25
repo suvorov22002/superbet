@@ -53,8 +53,11 @@ public class Authentication extends HttpServlet {
 	   AuthenticationForm form = new AuthenticationForm(caissierDao, airtimeDao,partnerDao); 
 	   Caissier caissier = form.authenticateCaissier(req);
 	 
+	   req.setAttribute( ATT_FORM, form );
+	   req.setAttribute("state", 1);
+	   
 	   if(caissier != null){
-		  // System.out.println("caissier "+caissier.getIdCaissier());
+		 
 		   for(Caissier cais : refresh.getCustomers()){
 				//System.out.println("CAISSIER: "+caissier.getLoginc());
 				if(caissier.getLoginc().equalsIgnoreCase(cais.getLoginc())){
@@ -64,17 +67,10 @@ public class Authentication extends HttpServlet {
 		  }
 		  if(!inside){
 				refresh.addClient(caissier);
-				//System.out.println("Ajoute un caissier");
 		  }
-		  System.out.println("Nombre de caissier connectés: "+refresh.getCustomers().size());
-	   }
-	   /* Stockage du formulaire et du bean dans l'objet request */
-	   req.setAttribute( ATT_FORM, form );
-	   //req.setAttribute( ATT_USER, caissier );  
-	   session.setAttribute( ATT_USER, caissier );
-	   req.setAttribute("state", 1);
-      
-	    if(caissier != null){
+		  
+		   session.setAttribute( ATT_USER, caissier );
+
 	    	if(caissier.getProfil() == 1){
 	    		this.getServletContext().getRequestDispatcher(VUE_ADMIN).forward(req, res);
 	    	}
@@ -83,7 +79,8 @@ public class Authentication extends HttpServlet {
 	    	}
 	    }
 	    else{
-	    	res.sendRedirect(req.getContextPath()+VUE);
+	    	//res.sendRedirect(req.getContextPath()+VUE);
+	    	this.getServletContext().getRequestDispatcher(VUE).forward(req, res);
 	    }
 		
 		

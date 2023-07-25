@@ -1598,7 +1598,7 @@
                 const response = await fetch(url);
                 const myJson = await response.json(); //extract JSON from the http response
                   // do something with myJson
-                //console.log('myJson '+myJson);
+                console.log('myJson '+myJson);
                 timekeno = myJson
             }
             else{

@@ -7,14 +7,13 @@ import modele.Partner;
 
 public interface CaissierDAO {
 	
-	int create(Caissier caissier) throws DAOException;
-	Caissier find(String login, String pass) throws DAOException;
-	Caissier update(Caissier caissier) throws DAOException;
-	Caissier findById(Long id) throws DAOException;
-	void delete(Caissier caissier) throws DAOException;
-	int updateState(Caissier caissier) throws DAOException;
-	Caissier findByLogin(String login) throws DAOException;
-	ArrayList<Caissier> findByPartner(String coderace) throws DAOException;
-	Caissier findByLoginIdPartner(String login, String coderace)
-			throws DAOException;
+	int create(Caissier caissier);
+	Caissier find(String login, String pass) ;
+	Caissier update(Caissier caissier) ;
+	Caissier findById(Long id) ;
+	void delete(Caissier caissier) ;
+	int updateState(Caissier caissier) ;
+	Caissier findByLogin(String login) ;
+	ArrayList<Caissier> findByPartner(String coderace) ;
+	Caissier findByLoginIdPartner(String login, String coderace);
 }

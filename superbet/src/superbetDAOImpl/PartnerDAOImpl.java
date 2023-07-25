@@ -9,6 +9,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.List;
 
 import modele.Partner;
 import modele.PartnerDto;
@@ -305,14 +306,14 @@ public class PartnerDAOImpl implements PartnerDAO {
 	}
 	
 	@Override
-	public synchronized ArrayList<Partner> getAllPartners() throws DAOException {
+	public List<Partner> getAllPartners() throws DAOException {
 		// TODO Auto-generated method stub
 		Connection connexion = null;
 		PreparedStatement preparedStatement = null;
 		ResultSet resultSet = null;
 		String[] last;
 		Partner partner = null;
-		ArrayList<Partner> lastsK = new ArrayList<Partner>();
+		List<Partner> lastsK = new ArrayList<Partner>();
 		
 		try {
 			/* Récupération d'une connexion depuis la Factory */

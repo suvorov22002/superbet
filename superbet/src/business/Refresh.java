@@ -55,37 +55,14 @@ public class Refresh implements Runnable {
 	
 	public static String RESULT  = "";
 	
-	private ControlDisplayKeno _cds;
 	public static boolean isDraw = false; //controle si le tirage est en cours
 	public static boolean countDown = true; //controle le compteur de temps avant tirage
 	public static String drawCombi = null;
 	public static int drawNum = 0;
-	private String multiplix;
-	//private int drawCount;
-	private MisekDAO misekDao;
-	private MisetDAO misetDao;
 	private KenoDAO kenoDao;
-	private ConfigDAO configDao;
-	private CaissierDAO caissierDao;
 	private PartnerDAO partnerDao;
-	private GameCycleDAO gmcDao;
-	private Misek_tempDAO misektpDao;
 	List<Partner> partners;
-	private double miseTotale;
-	private double miseTotale_s; //cycle suivant
-	private String arrangement_pos;
-	private double sumdist, gMp, gmp;
-	private ArrayList<Misek> listTicket = new ArrayList();;
-	private  Map<Miset, Misek> mapTicket = new HashMap<Miset, Misek>();
-	private  Map<Miset, Misek> map_wait = new HashMap<Miset, Misek>();
-	private int refill;
-	private int xtour;
-	private Long misef;
 	private boolean search_draw;
-	private boolean controltime;
-	private boolean dead_round = false;
-	private int idmisek_max;
-	private GameCycle gmc;
 	private Date datecreation;
 	private boolean alive;
 	private int drawCount = 130;
@@ -101,6 +78,7 @@ public class Refresh implements Runnable {
 		thread = new Thread(this);
 		this.alive = true;
 		this.kenoDao = DAOFactory.getInstance().getKenoDao();
+		this.partnerDao = DAOFactory.getInstance().getPartnerDao();
 		supergameAPI = SuperGameDAOAPI.getInstance();
 	}
 	
@@ -127,7 +105,6 @@ public class Refresh implements Runnable {
 	@Override
 	public void run() {
 		search_draw = false;
-		controltime = false;
 		this.alive = true;
 		b = new KenoRes();
 		Keno k;
@@ -139,27 +116,14 @@ public class Refresh implements Runnable {
 			drawCount = 130;
 			try {
 				//recupération du temps
-				//UtileKeno.timeKeno = this.supergameAPI.getSuperGameDAO().getTime(Params.url, coderace);
+
 				if(countDown) {
-					// System.out.println("REFRESHTIME KENO: "+UtileKeno.timeKeno);
 					 UtileKeno.timeKeno--;
 				}
-				
-//				if(UtileKeno.timeKeno == 100) {
-//					Map<String, String> s = new HashMap();
-//					s = supergameAPI.getSuperGameDAO().sumKeno(Params.url, coderace);
-//					System.out.println("Avant le tri: "+s);
-//					HashMap<String, Integer> m = triAvecValeur( s );
-//					System.out.println("Après le tri: "+m);
-//				}
-					
-		//		System.out.println("UtileKeno.timeKeno: "+UtileKeno.timeKeno);
-			
-				
+
 				if(UtileKeno.timeKeno == 11 && UtileKeno.gamestate == 1) {
 					UtileKeno.canbet = false;
 					UtileKeno.messagek = "pari fermé";
-					//UtileKeno.drawKeno = this.supergameAPI.getSuperGameDAO().retrieveCombinaison(Params.url, UtileKeno.drawnumk, coderace);
 					UtileKeno.drawKeno = "";
 					future = calculateDraw();
 					System.out.println("REFRESHTIME KENO: "+UtileKeno.timeKeno+" *** "+UtileKeno.drawKeno);
@@ -182,7 +146,6 @@ public class Refresh implements Runnable {
 						future = calculateDraw();
 					}
 					
-					System.out.println(" FUTURE*** "+UtileKeno.drawKeno);
 				}
 				
 				if (StringUtils.isBlank(coderace)) {
@@ -227,7 +190,6 @@ public class Refresh implements Runnable {
 							k.setMultiplicateur(b.getMultiplicateur());
 							k.setCoderace(coderace);
 							int n = kenoDao.create(k);
-							System.out.println("line local cree: "+n);
 							
 						}
 						

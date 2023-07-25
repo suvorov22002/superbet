@@ -17,8 +17,8 @@ public class CaissierDAOImpl implements CaissierDAO {
 	
 	private DAOFactory daofactory;
 	
-	private static final String SQL_F_LOGIN_PASS = "SELECT * FROM caissier WHERE loginC=? "; 
-	private static final String SQL_F_LOGIN = "SELECT * FROM caissier WHERE loginC=? "; 
+	//private static final String SQL_F_LOGIN_PASS = "SELECT * FROM caissier WHERE loginC=? "; 
+	private static final String SQL_F_LOGIN =      "SELECT * FROM caissier WHERE loginC=? "; 
 	private static final String SQL_C_CAISSIER = "INSERT INTO caissier (idprofil, nomC, loginC, mdpC, coderace, idCaissier) VALUES"
 			+ "(?,?,?,?,?,?)";
 	//private static final String SQL_C_CAISSIER = "INSERT INTO caissier (idprofil, nomC, loginC, mdpC, coderace, idgroupe) VALUES"
@@ -27,13 +27,14 @@ public class CaissierDAOImpl implements CaissierDAO {
     private static final String SQL_F_LOGIN_PARTNER = "SELECT * FROM caissier WHERE coderace  = ?  "; 
 	private static final String SQL_F_LOGIN_CODERACE = "Select * from caissier where loginC=? and coderace = ?";
 	private static final String SQL_F_ID = "Select * from caissier where idCaissier = ? ";
+	private static final String SQL_D_CAISSIER = "Delete From caissier Where loginC = ? ";
 	
 	public CaissierDAOImpl(DAOFactory daoFactory){
 		this.daofactory = daoFactory;
 	}
 
 	@Override
-	public int create(Caissier caissier) throws IllegalArgumentException, DAOException {
+	public int create(Caissier caissier){
 		// TODO Auto-generated method stub
 		Connection connexion = null;
 		PreparedStatement preparedStatement = null;
@@ -52,7 +53,8 @@ public class CaissierDAOImpl implements CaissierDAO {
 			
 			/* Analyse du statut retourné par la requête d'insertion */
 			if ( statut == 0 ) {
-				throw new DAOException( "Échec de la création du caissier, aucune ligne ajoutée dans la table." );
+				//throw new DAOException( "Échec de la création du caissier, aucune ligne ajoutée dans la table." );
+				return 0;
 			}
 			/* Récupération de l'id auto-généré par la requête d'insertion */
 			
@@ -61,10 +63,12 @@ public class CaissierDAOImpl implements CaissierDAO {
 			/* Puis initialisation de la propriété id du bean Utilisateur avec sa valeur */
 				caissier.setIdCaissier( valeursAutoGenerees.getLong( 1 ) );
 			} else {
-				throw new DAOException( "Échec de la création du caissier en base, aucun ID auto-généré retourné." );
+//				throw new DAOException( "Échec de la création du caissier en base, aucun ID auto-généré retourné." );
+				return 0;
 			}
 		} catch ( SQLException e ) {
-			throw new DAOException( e );
+			//throw new DAOException( e );
+			return 0;
 		} finally {
 			fermeturesSilencieuses( valeursAutoGenerees, preparedStatement, connexion );
 		}
@@ -73,34 +77,7 @@ public class CaissierDAOImpl implements CaissierDAO {
 	}
 
 	@Override
-	public Caissier find(String login, String pass) throws DAOException {
-		// TODO Auto-generated method stub
-		Connection connexion = null;
-		PreparedStatement preparedStatement = null;
-		ResultSet resultSet = null;
-		Caissier caissier = null;
-		
-		try {
-			/* Récupération d'une connexion depuis la Factory */
-			connexion = daofactory.getConnection();
-			preparedStatement = initialisationRequetePreparee( connexion, SQL_F_LOGIN_PASS, false, login  );
-			resultSet = preparedStatement.executeQuery();
-			
-			/* Parcours de la ligne de données de l'éventuel ResulSet retourné */
-			if ( resultSet.next() ) {
-				caissier = map( resultSet );
-			}
-		} catch ( SQLException e ) {
-			throw new DAOException( e );
-		} finally {
-			fermeturesSilencieuses( resultSet, preparedStatement, connexion );
-		}
-		
-		return caissier;
-	}
-	
-	@Override
-	public Caissier findByLogin(String login) throws DAOException {
+	public Caissier find(String login, String pass) {
 		// TODO Auto-generated method stub
 		Connection connexion = null;
 		PreparedStatement preparedStatement = null;
@@ -118,7 +95,7 @@ public class CaissierDAOImpl implements CaissierDAO {
 				caissier = map( resultSet );
 			}
 		} catch ( SQLException e ) {
-			throw new DAOException( e );
+			e.printStackTrace();
 		} finally {
 			fermeturesSilencieuses( resultSet, preparedStatement, connexion );
 		}
@@ -127,7 +104,34 @@ public class CaissierDAOImpl implements CaissierDAO {
 	}
 	
 	@Override
-	public Caissier findByLoginIdPartner(String login, String coderace) throws DAOException {
+	public Caissier findByLogin(String login)  {
+		// TODO Auto-generated method stub
+		Connection connexion = null;
+		PreparedStatement preparedStatement = null;
+		ResultSet resultSet = null;
+		Caissier caissier = null;
+		
+		try {
+			/* Récupération d'une connexion depuis la Factory */
+			connexion = daofactory.getConnection();
+			preparedStatement = initialisationRequetePreparee( connexion, SQL_F_LOGIN, false, login  );
+			resultSet = preparedStatement.executeQuery();
+			
+			/* Parcours de la ligne de données de l'éventuel ResulSet retourné */
+			if ( resultSet.next() ) {
+				caissier = map( resultSet );
+			}
+		} catch ( SQLException e ) {
+			e.printStackTrace();
+		} finally {
+			fermeturesSilencieuses( resultSet, preparedStatement, connexion );
+		}
+		
+		return caissier;
+	}
+	
+	@Override
+	public Caissier findByLoginIdPartner(String login, String coderace)  {
 		// TODO Auto-generated method stub
 		Connection connexion = null;
 		PreparedStatement preparedStatement = null;
@@ -145,7 +149,7 @@ public class CaissierDAOImpl implements CaissierDAO {
 				caissier = map( resultSet );
 			}
 		} catch ( SQLException e ) {
-			throw new DAOException( e );
+			e.printStackTrace();
 		} finally {
 			fermeturesSilencieuses( resultSet, preparedStatement, connexion );
 		}
@@ -155,24 +159,38 @@ public class CaissierDAOImpl implements CaissierDAO {
 
 	
 	@Override
-	public Caissier update(Caissier caissier) throws DAOException {
+	public Caissier update(Caissier caissier)  {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public void delete(Caissier caissier) throws DAOException {
-		// TODO Auto-generated method stub
-
+	public void delete(Caissier caissier)  {
+		
+		Connection connexion = null;
+		PreparedStatement preparedStatement = null;
+		int res = 0;
+		
+		try {
+			/* Récupération d'une connexion depuis la Factory */
+			connexion = daofactory.getConnection();
+			preparedStatement = initialisationRequetePreparee( connexion, SQL_D_CAISSIER, false, caissier.getLoginc());
+		    res = preparedStatement.executeUpdate();
+			
+		} catch ( SQLException e ) {
+			e.printStackTrace();
+		} finally {
+			fermeturesSilencieuses( preparedStatement, connexion );
+		}
 	}
 	
 	@Override
-	public int updateState(Caissier caissier) throws DAOException {
+	public int updateState(Caissier caissier)  {
 		Connection connexion = null;
 		PreparedStatement preparedStatement = null;
 		ResultSet valeursAutoGenerees = null;
 		
-		int statut;
+		int statut = 0;
 		
 		try {
 			/* Récupération d'une connexion depuis la Factory */
@@ -180,14 +198,10 @@ public class CaissierDAOImpl implements CaissierDAO {
 			preparedStatement = initialisationRequetePreparee( connexion,SQL_U_CAISSIER_STATE, false, caissier.getStatut(), caissier.getLoginc());
 			
 			statut = preparedStatement.executeUpdate();
-			
-			/* Analyse du statut retourné par la requête d'insertion */
-			if ( statut == 0 ) {
-				throw new DAOException( "Échec de la mise à jour du caissier, aucune ligne ajoutée dans la table." );
-			}
-			
+		
 		} catch ( SQLException e ) {
-			throw new DAOException( e );
+			e.printStackTrace();
+			
 		} finally {
 			fermeturesSilencieuses( valeursAutoGenerees, preparedStatement, connexion );
 		}
@@ -196,7 +210,7 @@ public class CaissierDAOImpl implements CaissierDAO {
 	}
 	
 	@Override
-	public ArrayList<Caissier> findByPartner(String coderace) throws DAOException {
+	public ArrayList<Caissier> findByPartner(String coderace)  {
 		Connection connexion = null;
 		PreparedStatement preparedStatement = null;
 		ResultSet resultSet = null;
@@ -215,7 +229,7 @@ public class CaissierDAOImpl implements CaissierDAO {
 				 lastsK.add(caissier);
 			}
 		} catch ( SQLException e ) {
-			throw new DAOException( e );
+			e.printStackTrace();
 		} finally {
 			fermeturesSilencieuses( resultSet, preparedStatement, connexion );
 		}
@@ -224,7 +238,7 @@ public class CaissierDAOImpl implements CaissierDAO {
 	}
 	
 	@Override
-	public Caissier findById(Long id) throws DAOException {
+	public Caissier findById(Long id)  {
 		Connection connexion = null;
 		PreparedStatement preparedStatement = null;
 		ResultSet resultSet = null;
@@ -241,7 +255,7 @@ public class CaissierDAOImpl implements CaissierDAO {
 				caissier = map( resultSet );
 			}
 		} catch ( SQLException e ) {
-			throw new DAOException( e );
+			e.printStackTrace();
 		} finally {
 			fermeturesSilencieuses( resultSet, preparedStatement, connexion );
 		}

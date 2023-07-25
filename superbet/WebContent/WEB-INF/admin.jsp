@@ -681,7 +681,7 @@
                         <td class="col-xs-4">
                           <select class="form-control " name="ncprofil" id="sel_profil" style="width:300px;">
                             <option>CAISSIER</option>
-                            <!--<option>ADMINISTRATEUR</option>-->
+                            <option>ADMINISTRATEUR</option>
                             </select>
                         </td>
                     </tr>
@@ -1141,6 +1141,7 @@
       function restoreSalle(){
         var dropdown = $('#airtime_room');
         var idcoderace = $('#idpartner2').text();
+        var loginc = $('#idpartner').text();
 
         $('>option',  $('#lockroom')).remove(); // Clean old options first.
         $('>option',  $('#sel_partner')).remove();
@@ -1164,7 +1165,8 @@
           url:"retrievePartner",
           type:"GET",
           data:{
-            'coderace':idcoderace
+            'coderace':idcoderace,
+            'loginc' : loginc
           },
           async: false,
           success:function(result){

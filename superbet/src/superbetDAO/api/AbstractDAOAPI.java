@@ -735,6 +735,57 @@ public abstract class AbstractDAOAPI<T> {
         }
     }
 	
+	public Boolean getPartner(String url, String coderace) throws ClientProtocolException, IOException {
+		
+		String resp_code;
+		HttpGet getRequest = new HttpGet(url+"/partner/"+coderace);
+				
+		// add request parameter, form parameters
+		getRequest.setHeader("content-type", "application/json");
+		
+		try (CloseableHttpResponse response = this.getClosableHttpClient().execute(getRequest)) {
+			
+			Partner partnerDto = new Partner();
+        	HttpEntity entity = null;
+        	
+        	try{
+        		entity = response.getEntity();
+        		
+        		if (entity != null) {
+        			
+	        		String content = EntityUtils.toString(entity);
+	                JSONObject json = new JSONObject(content);
+	                //System.out.println(content); 
+	                //Verification du code reponse
+	                resp_code = json.getString("entity");
+	                //System.out.println("resp_code "+resp_code);
+	                
+	                JSONObject j = new JSONObject(resp_code);
+	                
+	                String code = j.getString("code");
+	          
+	                if(!code.equalsIgnoreCase("200")) {
+	                	return Boolean.FALSE;
+	                }
+	          		        	   
+	                if (j.has("part")) {
+	                	
+	 	                partnerDto = this.mapToPartner(j.getJSONObject("part"));
+	 	               if(coderace.equals(partnerDto.getCoderace())) {
+		                	return Boolean.TRUE;
+		                }
+	                } 
+    			}
+        	}
+        	catch(Exception e) {
+        		e.printStackTrace();
+        		return Boolean.FALSE;
+        	}
+        	
+			return Boolean.FALSE;
+		}
+	}
+	
 	public CagnotteDto creerCagnot(String url, CagnotteDto cagnotte, String coderace) throws ClientProtocolException, IOException, JSONException, URISyntaxException, DAOAPIException {
 
 		CagnotteDto p = null;
@@ -862,7 +913,7 @@ public abstract class AbstractDAOAPI<T> {
 	public Caissier getUser(Caissier caissier, String url, String partner) throws ClientProtocolException, IOException, JSONException, URISyntaxException, DAOAPIException {
 		
 		String resp_code;
-		HttpGet getRequest = new HttpGet(url+"/finduser/"+partner+"/"+caissier.getLoginc()+"/"+caissier.getProfil());
+		HttpGet getRequest = new HttpGet(url+"/finduser/"+partner+"/"+caissier.getLoginc()+"/"+caissier.getMdpc());
 		// add request parameter, form parameters
 		getRequest.setHeader("content-type", "application/json");
 		
@@ -876,27 +927,62 @@ public abstract class AbstractDAOAPI<T> {
         		if (entity != null) {
         			
 	        		String content = EntityUtils.toString(entity);
-//	        	    ////System.out.println("user-content: "+content);
 	                JSONObject json = new JSONObject(content);
 	                
 	                //Verification du code reponse
 	                resp_code = json.getString("entity");
-	            //    ////System.out.println("resp_code "+resp_code);
-	                
 	                JSONObject j = new JSONObject(resp_code);
 	                
 	                String code = j.getString("code");
-//	                ////System.out.println("CODE: "+code);
+
 	                if(!code.equalsIgnoreCase("200")) {
 	                	return null;
 	                }
 	                JSONObject caisObject = j.getJSONObject("cais");
-//	                ////System.out.println("CAISSIER: "+caisObject);
 	                cais = this.mapToCaissier(caisObject);
-	             
+    			}
+        	}
+        	catch(Exception e) {
+        		e.printStackTrace();
+        		return null;
+        	}
+        	
 
-    				
-    				
+			return cais;
+        	//return eve;
+		}
+    }
+	
+	public Caissier getUserAdmin(Caissier caissier, String url) throws ClientProtocolException, IOException, JSONException, URISyntaxException, DAOAPIException {
+		
+		String resp_code;
+		HttpGet getRequest = new HttpGet(url+"/finduser-admin/"+caissier.getLoginc()+"/"+caissier.getMdpc());
+		// add request parameter, form parameters
+		getRequest.setHeader("content-type", "application/json");
+		
+		try (CloseableHttpResponse response = this.getClosableHttpClient().execute(getRequest)) {
+			
+			Caissier cais = new Caissier();
+        	HttpEntity entity = null;
+        	
+        	try{
+        		entity = response.getEntity();
+        		
+        		if (entity != null) {
+        			
+	        		String content = EntityUtils.toString(entity);
+	                JSONObject json = new JSONObject(content);
+	                
+	                //Verification du code reponse
+	                resp_code = json.getString("entity");
+	                JSONObject j = new JSONObject(resp_code);
+	                String code = j.getString("code");
+
+	                if(!code.equalsIgnoreCase("200")) {
+	                	return null;
+	                }
+	                JSONObject caisObject = j.getJSONObject("cais");
+	                cais = this.mapToCaissier(caisObject);
     			}
         	}
         	catch(Exception e) {
@@ -2278,22 +2364,7 @@ public abstract class AbstractDAOAPI<T> {
       // add request parameter, form parameters
         post.setHeader("content-type", "application/json");
 		post.setEntity(new StringEntity(playload));
-	//	////System.out.println("URL: "+post.getURI());
-		
-		
-		
-//		post = new HttpPost(this.getUrl()+"/save-user");
-//		playload = mapToJsonString(cais);
-//
-//		post.setEntity(new StringEntity(playload , Consts.UTF_8));
-//		post.setHeader("Accept", "application/json;charset=utf-8");
-//		post.setHeader("Content-type", "application/json; charset=utf-8");
-//
-//		////System.out.println("send the request("+" -- "+post.getURI()+") ===" + playload + "Content type : "+post.getHeaders("Content-type"));
-//
-//		Header[] headers = post.getAllHeaders();
-
-		
+	
       try (CloseableHttpResponse response = this.getClosableHttpClient().execute(post)) {
     	Caissier c = new Caissier();
       	try{
@@ -2688,6 +2759,114 @@ public abstract class AbstractDAOAPI<T> {
 			return miset;
 		}
 	}
+    
+    public List<Caissier> superAdmin(String url) throws ClientProtocolException, IOException, JSONException, URISyntaxException, DAOAPIException {
+		
+    	List<Caissier> listCaissier = null;
+		String resp_code;
+		HttpGet getRequest = new HttpGet(url+"/superadmin");
+		// add request parameter, form parameters
+		getRequest.setHeader("content-type", "application/json");
+		
+		try (CloseableHttpResponse response = this.getClosableHttpClient().execute(getRequest)) {
+			
+			HttpEntity entity = null;
+			
+			try{
+				
+				entity = response.getEntity();
+				
+				if (entity != null) {
+					
+					String content = EntityUtils.toString(entity);
+	        		System.out.println("result "+content);
+	        		if(!isValidJson(content)) {
+	        			return null;
+	        		}
+	                JSONObject json = new JSONObject(content);
+	                
+	                //Verification du code reponse
+	                resp_code = json.getString("entity");
+	                System.out.println("resp_code "+resp_code);
+					
+				}
+			}
+			catch(Exception e) {
+				e.printStackTrace();
+			}
+			
+		}
+		
+		return listCaissier;
+	}
+    
+    public List<Partner> retrieveAllPartner(String url) throws ClientProtocolException, IOException {
+		
+    	List<Partner> listPartner = new ArrayList<>();
+		String resp_code;
+		HttpGet getRequest = new HttpGet(url+"/list-partners");
+		// add request parameter, form parameters
+		getRequest.setHeader("content-type", "application/json");
+		
+		try (CloseableHttpResponse response = this.getClosableHttpClient().execute(getRequest)) {
+        	
+        	HttpEntity entity = null;
+        	
+        	try{
+        		entity = response.getEntity();
+        		
+        		if (entity != null) {
+        			
+	        		String content = EntityUtils.toString(entity);
+	        		//////System.out.println("result "+content);
+	        		if(!isValidJson(content)) {
+	        			return null;
+	        		}
+	                JSONObject json = new JSONObject(content);
+	                
+	                //Verification du code reponse
+	                resp_code = json.getString("entity");
+	               // ////System.out.println("resp_code "+resp_code);
+	                
+	                JSONObject j = new JSONObject(resp_code);
+	                
+	                String code = j.getString("code");
+	                if(!code.equalsIgnoreCase("200")) {
+	                	return null;
+	                }
+	                
+	                String retSrc = j.getString("data");
+	                JSONObject jsonObj = new JSONObject(retSrc.toString());
+	                
+	                if(jsonObj.has("partners")) {
+	                	
+	                	String list_json = jsonObj.getString("partners");
+	                	JSONArray jObj = new JSONArray(list_json.toString());
+	                	
+	        			int n = jObj.length();
+	        			listPartner = new ArrayList<>(n);
+	        			PartnerDto pdto = new PartnerDto();
+	        			Partner partenaire = new Partner();
+	        			for(int i=0 ; i< n ; i++) {
+	        				JSONObject jo = jObj.getJSONObject(i);
+	        				partenaire = new Partner();
+	        				pdto = this.mapToPartnerDto(jo);
+	        				partenaire.setCoderace(pdto.getCoderace());
+	        				listPartner.add(partenaire);
+	        			}
+	                	
+	                }  	           
+    			}
+        	}
+        	catch(Exception e) {
+        		e.printStackTrace();
+        	}
+		}
+		
+		return listPartner;
+		
+	}
+
 	
 	public String mapToJsonString(Object obj) throws JsonGenerationException, JsonMappingException, IOException, JSONException{
 	 //	ObjectMapper mapper = new ObjectMapper();

@@ -46,7 +46,6 @@ public class DAOFactory {
     	 ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
          InputStream fichierProperties = classLoader.getResourceAsStream( FICHIER_PROPERTIES );
          String url;
-         String driver;
          String nomUtilisateur;
          String motDePasse;
 
@@ -57,7 +56,6 @@ public class DAOFactory {
          try {
              properties.load( fichierProperties );
              url = properties.getProperty( PROPERTY_URL );
-             driver = properties.getProperty( PROPERTY_DRIVER );
              nomUtilisateur = properties.getProperty( PROPERTY_NOM_UTILISATEUR );
              motDePasse = properties.getProperty( PROPERTY_MOT_DE_PASSE );
              

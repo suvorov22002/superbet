@@ -6,8 +6,10 @@
 		<item key="wholeword" value="false"/>
 		<item key="incremental" value="false"/>
 		<item key="isRegEx" value="false"/>
-		<item key="selection" value="[DisplaKeno ]"/>
+		<item key="selection" value=""/>
 		<list key="findhistory">
+			<item value="supergameAPI:"/>
+			<item value="USER:"/>
 			<item value="[DisplaKeno ]"/>
 			<item value="updatebonus"/>
 			<item value="multiplicateur"/>
@@ -21,8 +23,6 @@
 			<item value="UtileKeno.drawKeno"/>
 			<item value="future"/>
 			<item value="development"/>
-			<item value="endofday"/>
-			<item value="debug"/>
 		</list>
 		<list key="replacehistory">
 		</list>

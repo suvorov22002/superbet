@@ -2022,7 +2022,7 @@ function showFormManpartner(){
 	$('#c_bonus').css('display','none');
 	$('#c_cagnotte').css('display','none');
 }
-
+ 
 function showFormAdduser(){
 	
 	$('#c_partner').css('display','none');

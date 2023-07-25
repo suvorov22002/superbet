@@ -38,7 +38,7 @@ public class UrlServer extends HttpServlet{
          
         // On construit l'objet JSON pour l'expediteur
             JsonObjectBuilder objectBuilder = Json.createObjectBuilder();
-        //    System.out.println("UrlServer server - "+Params.url);
+           
             objectBuilder.add("server", Params.url);
 
             arrayBuilder.add(objectBuilder);
