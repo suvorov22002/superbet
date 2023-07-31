@@ -9,7 +9,7 @@ public interface PartnerDAO {
 	
 	Long create(Partner partner) throws DAOException;
 	Partner find(String coderace) throws DAOException;
-	Partner update(Partner partner) throws DAOException;
+	int update(Partner partner) throws DAOException;
 	boolean delete(Partner partner) throws DAOException;
 	int update_bonusk(double dbl, int bncd, String coderace) throws DAOException;
 	int update_bonusp(double dbl, int bncd, String coderace) throws DAOException;

@@ -288,7 +288,7 @@ function verif(evt) {
 						for(let ii=0;ii<tab.length-1;ii++){
 							_str = _str + parseInt(tab[ii]) + "-";
 						}
-						_str = _str + parseInt(tab[tab.length-1]);
+						_str = _str + parseInt(tab[tab.length - 1]);
 
 
 
@@ -393,7 +393,7 @@ function verif(evt) {
 						for(let ii=0;ii<tab.length-1;ii++){
 							_str = _str + parseInt(tab[ii]) + "-";
 						}
-						_str = _str + parseInt(tab[tab.length-1]);
+						_str = _str + parseInt(tab[tab.length - 1]);
 
 
 
@@ -1029,7 +1029,7 @@ function verif(evt) {
 						for(let ii=0;ii<tab.length-1;ii++){
 							_str = _str + parseInt(tab[ii]) + "-";
 						}
-						_str = _str + parseInt(tab[tab.length-1]);
+						_str = _str + parseInt(tab[tab.length - 1]);
 
 
 
@@ -1997,8 +1997,8 @@ function showFormAddpartner(){
 	
 	$('#c_partner').removeClass('invisible');
 	$('#c_partner').addClass('solide');
+
 	$('#c_partner').css('display','block');
-	
 	$('#e_partner').css('display','none');
 	$('#e_caissier').css('display','none');
 	$('#c_cashier').css('display','none');
@@ -2012,15 +2012,23 @@ function showFormAddpartner(){
 
 function showFormManpartner(){
 	
-	$('#c_partner').removeClass('solide');
-	$('#c_partner').addClass('invisible');
-	$('#c_partner').css('display','none');
-	
+	// $('#c_partner').removeClass('solide');
+	// $('#c_partner').addClass('invisible');
+
+	$('#e_partner').removeClass('invisible');
+	$('#e_partner').addClass('solide');
+
+
 	$('#e_partner').css('display','block');
+	$('#c_partner').css('display','none');
 	$('#e_caissier').css('display','none');
 	$('#c_cashier').css('display','none');
 	$('#c_bonus').css('display','none');
 	$('#c_cagnotte').css('display','none');
+
+	$(':input')
+		.not(':button, :submit, :hidden, :reset')
+		.val('');
 }
  
 function showFormAdduser(){
@@ -2039,7 +2047,7 @@ function showFormAdduser(){
 	$(':input')
 	   .not(':button, :submit, :hidden, :reset')
 	   .val('');
- document.getElementById('cpart_state').value='';
+ 	document.getElementById('cpart_state').value='';
 }
 
 function showFormManuser(){
@@ -2089,6 +2097,11 @@ function showFormAddCagnotte(){
 	$(':input')
 	   .not(':button, :submit, :hidden, :reset')
 	   .val('');
+}
+
+function showFormMancagnotte() {
+
+
 }
 
 function printElement(elem){

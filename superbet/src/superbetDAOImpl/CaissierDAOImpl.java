@@ -52,12 +52,12 @@ public class CaissierDAOImpl implements CaissierDAO {
 			statut = preparedStatement.executeUpdate();
 			
 			/* Analyse du statut retourné par la requête d'insertion */
-			if ( statut == 0 ) {
-				//throw new DAOException( "Échec de la création du caissier, aucune ligne ajoutée dans la table." );
-				return 0;
-			}
-			/* Récupération de l'id auto-généré par la requête d'insertion */
-			
+//			if ( statut == 0 ) {
+//				//throw new DAOException( "Échec de la création du caissier, aucune ligne ajoutée dans la table." );
+//				return 0;
+//			}
+//			/* Récupération de l'id auto-généré par la requête d'insertion */
+//			
 			valeursAutoGenerees = preparedStatement.getGeneratedKeys();
 			if ( valeursAutoGenerees.next() ) {
 			/* Puis initialisation de la propriété id du bean Utilisateur avec sa valeur */
@@ -68,7 +68,7 @@ public class CaissierDAOImpl implements CaissierDAO {
 			}
 		} catch ( SQLException e ) {
 			//throw new DAOException( e );
-			return 0;
+			e.printStackTrace();
 		} finally {
 			fermeturesSilencieuses( valeursAutoGenerees, preparedStatement, connexion );
 		}

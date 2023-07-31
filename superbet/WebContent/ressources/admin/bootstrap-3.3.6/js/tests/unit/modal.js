@@ -304,8 +304,8 @@ $(function () {
 
     $('<div id="modal-test"/>')
       .on('hidden.bs.modal', function () {
-        var currentBodyPad = parseInt($body.css('padding-right'), 10)
-        assert.notStrictEqual($body.attr('style'), '', 'body has non-empty style attribute')
+        var currentBodyPad = parseInt($body.css('padding-right'))
+          assert.notStrictEqual($body.attr('style'), '', 'body has non-empty style attribute')
         assert.strictEqual(currentBodyPad, originalBodyPad, 'original body padding was not changed')
         $body.removeAttr('style')
         done()

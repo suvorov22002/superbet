@@ -11,6 +11,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 import javax.ejb.EJB;
 import javax.servlet.http.HttpServletRequest;
@@ -131,7 +133,8 @@ public final class ManageKenoForm {
 		
 		String amount = getValeurAmount(request, FIELD_AMOUNT);
 		String ichoice;
-		String coderace;
+		final String coderace = caissier.getPartner();
+		String icoderace;
 		String xmulti = request.getParameter( FIELD_XTEUR );
 		
 		betk = new BetTicketK();
@@ -140,27 +143,38 @@ public final class ManageKenoForm {
 		
 		Partner partner;
 	//	partner = partnerDao.findById(Integer.parseInt(""+caissier.getPartner()));
-		List<Partner> partners = partnerDao.getAllPartners();
+		Optional<Partner> partners = partnerDao.getAllPartners().stream()
+				.filter(p -> p.getCoderace().equals(coderace) && p.getActif() == 1)
+				.findFirst();
 		
-		if(partners.size() != 1) {
+		if(!partners.isPresent()) {
 			return null;
 		}
 		
-		partner = partners.get(0);
-
-		if(partner == null){
-			return null;
-	    }
-		else if("closed".equalsIgnoreCase(partner.getCob())) {
+		partner = partners.get();
+		
+		if("closed".equalsIgnoreCase(partner.getCob())) {
 			resultat = "Caisse fermée";
 			setErreurs(FIELD_AMOUNT, resultat);
 			canSubmit = false;
 			return null;
 		}
 		
+//		partner = partners.get(0);
+//
+//		if(partner == null){
+//			return null;
+//	    }
+//		else if("closed".equalsIgnoreCase(partner.getCob())) {
+//			resultat = "Caisse fermée";
+//			setErreurs(FIELD_AMOUNT, resultat);
+//			canSubmit = false;
+//			return null;
+//		}
+		
 		betk.setIdPartner(partner.getIdpartner());
 		
-		coderace = partner.getCoderace();
+		icoderace = partner.getCoderace();
 	
 		Miset miset = new Miset();
 		Misek misek = new Misek();
@@ -259,7 +273,7 @@ public final class ManageKenoForm {
 						Long maxdraw;
 						Keno k_max;
 						try {
-							k_max =  supergameAPI.getSuperGameDAO().maxDraw(Params.url, coderace);
+							k_max =  supergameAPI.getSuperGameDAO().maxDraw(Params.url, icoderace);
 						} catch (IOException | JSONException | URISyntaxException | DAOAPIException e) {
 							e.printStackTrace();
 							return null;
@@ -313,7 +327,7 @@ public final class ManageKenoForm {
 					    if(b != null) {
 							// Creation du coupon de jeu
 
-							crd.setRoom(coderace);
+							crd.setRoom(icoderace);
 							crd.setBarcode(b.getBarcode());
 							crd.setCodepari(codeParil);
 							crd.setEventscote(""+typejeu);

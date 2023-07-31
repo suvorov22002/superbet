@@ -55,7 +55,7 @@
                 <tr>
                     <td class="col-xs-3"><label>Date Début:</label>&nbsp;&nbsp;<input type="date" class="date" id="ddebut" name="ddebut" value="${fin_form.dat1}"></td>
                     <td class="col-xs-3"><label>Date Fin:</label>&nbsp;&nbsp;<input type="date" class="date" id="dfin" name="dfin" value="${fin_form.dat2}"></td>
-                    <td class="col-xs-4"><label for="sel1">Partenaire:</label>&nbsp;&nbsp;
+                    <td class="col-xs-4"><label for="selcoderace">Partenaire:</label>&nbsp;&nbsp;
 		                <select class="" name="ficoderace" id="selcoderace">
 		                   <!--<option>RAMATTEST</option>-->
 		                  <option>${fin_form.coderace}</option>
@@ -149,9 +149,9 @@
            </fieldset>
                   <table class="pari">
                     <tr>
-                        <td class="col-xs-2"><label for="pari">Balance:</label></td>
+                        <td class="col-xs-2"><label for="ibalance">Balance:</label></td>
                         <td class="col-xs-4"><input type="text" id="ibalance" name="ibalance" value="${fin_form.sum_keno - fin_form.sum_v_keno}" disabled size="40" maxlength="32"/></td>
-                        <td class="col-xs-2"><label for="pari">Pourcentage:</label></td>
+                        <td class="col-xs-2"><label for="percent">Pourcentage:</label></td>
                         <td class="col-xs-4"><input type="text" id="percent" name="percent" value="${fin_form.percent_keno}" disabled size="40" maxlength="32"/></td>
                     </tr>
                     
@@ -169,7 +169,7 @@
           <div class="col-sm-12">
             <table class="ifinance" style="margin: 5px;">
                   <tr>
-                      <td class="col-xs-4"><label for="sel1">Partenaire:</label>&nbsp;&nbsp;
+                      <td class="col-xs-4"><label for="turncoderace">Partenaire:</label>&nbsp;&nbsp;
                       <select class="" name="turncoderace" id="turncoderace" style="width:300px;">
                          <option>${fin_form.coderace}</option> 
                       </select>
@@ -357,7 +357,7 @@
                         <tr>
                             <td class="col-xs-2"></td>
                             <td class="col-xs-4">
-                              <input type="submit" class="btn btn-success" id="addAirtime" value="Bloquer"/>&nbsp;&nbsp;
+                              <input type="submit" class="btn btn-success" id="block-airtime" value="Bloquer"/>&nbsp;&nbsp;
                               <span id="cpart_lock" class="${empty airtime_form.erreurs ? 'succes' :'erreur'}"> ${airtime_form.resultat} </span>
                             </td>
                         </tr>
@@ -375,9 +375,9 @@
           <div class="col-sm-12">
             <table class="ifinance" style="margin: 5px;">
                   <tr>
-                      <td class="col-xs-3"><label>Date Début:</label>&nbsp;&nbsp;<input type="date" class="date" id="ddebut" name="ddebut" value="${ticket_form.dat1}"></td>
-                      <td class="col-xs-3"><label>Date Fin:</label>&nbsp;&nbsp;<input type="date" class="date" id="dfin" name="dfin" value="${ticket_form.dat2}"></td>
-                      <td class="col-xs-4"><label for="sel1">Partenaire:</label>&nbsp;&nbsp;
+                      <td class="col-xs-3"><label>Date Début:</label>&nbsp;&nbsp;<input type="date" class="date" id="iddebut" name="iddebut" value="${ticket_form.dat1}"></td>
+                      <td class="col-xs-3"><label>Date Fin:</label>&nbsp;&nbsp;<input type="date" class="date" id="idfin" name="idfin" value="${ticket_form.dat2}"></td>
+                      <td class="col-xs-4"><label for="selcoderace1">Partenaire:</label>&nbsp;&nbsp;
                       <select class="" name="selcoderace1" id="selcoderace1" style="width:300px;">
                           <option>${fin_form.coderace}</option>
                       </select>
@@ -521,7 +521,7 @@
           <div class="col-sm-12 cob">
             <fieldset>
               <legend>Rapports caisses</legend>
-                <table class="table table-fixed" id="tble_turn">
+                <table class="table table-fixed" id="rapport-caisse">
                     <thead>
                       <tr>
                         <th class="col-xs-2">Caissier</th>
@@ -554,28 +554,17 @@
                     </tbody>
                   </table>
             </fieldset>
-            <!--<table class="ifinance" style="margin: 5px;">
-              <tr class=""> 
-                <td class=""><input type="button" id="cob" class="btn btn-danger" onclick="doCob()" value="Mise à jour des caisses"></td>
-                <td class=""><input type="button" class="btn btn-success" onclick="openRoom()" value="Ouverture des caisses"></td>
-              </tr>
-            </table>-->
 
-          <div class="col-sm-12" >
-          <input type="button" id="cob" class="btn btn-danger" onclick="doCob()" value="Mise à jour des caisses">
-          <input type="button" class="btn btn-success" onclick="openRoom()" value="Ouverture des caisses">
-          <span id="cob_error" style="color:green;font-weight:bold"></span>
-          <!-- <input type="button" class="btn btn-danger" value="Suspendre bonus">-->
-          </div>
+              <div class="col-sm-12" >
+                  <input type="button" id="cob" class="btn btn-danger" onclick="doCob()" value="Mise à jour des caisses">
+                  <input type="button" class="btn btn-success" onclick="openRoom()" value="Ouverture des caisses">
+                  <span id="cob_error" style="color:green;font-weight:bold"></span>
+              <!-- <input type="button" class="btn btn-danger" value="Suspendre bonus">-->
+              </div>
 
-            
-          <!--  <div class="col-sm-12 interf_cagnotte"> -->
-              
-              
-          <!--  </div> -->
           </div>
        </div>
-      </div>
+<%--      </div>--%>
       </form>
     </div>
     <!-- fin contenu rapports -->
@@ -643,20 +632,22 @@
                     
                </table>
         </div>
-        <div class="col-sm-12" id="e_partner">
+        <div class="col-sm-12 ${action == 2 ? 'solide' : 'invisible'}"  style="display: ${action == 2 ? 'block' : 'none'}" id="e_partner">
           <h3>Gestion partenaires</h3>
           <div class="col-sm-6">
             
               <div class="form-group">
-                <label for="sel1">Choisir partenaire à modifier:</label>
+                <label for="n_cagnotte">Choisir partenaire à modifier:</label>
                 <select class="" name="coderace" id="n_cagnotte" style="width:300px;">
                           
                 </select>
+                  <span id="mpart_state" class="${empty con_form.erreurs ? 'succes' :'erreur'}"> ${con_form.resultat} </span>
               </div>
               <div class="col-xs-12">
-                <button class="btn btn-primary" type="button">Editer</button>
-                <button class="btn btn-info" type="button">Details</button>
-                <button class="btn btn-warning" type="submit">Supprimer</button>
+                  <button class="btn btn-primary" type="submit" id="activerPartner">Activer partenaire</button>
+                  <button class="btn btn-primary" type="button">Editer</button>
+                  <button class="btn btn-info" type="button">Details</button>
+                  <button class="btn btn-warning" type="submit">Supprimer</button>
               </div>
            
           </div>
@@ -677,7 +668,7 @@
                         <td class="col-xs-4"><input type="text" id="ncpass" name="ncpass" value="${con_form.user['passc']}" size="40" maxlength="32" autocomplete="off"/></td>
                     </tr>
                     <tr>
-                        <td class="col-xs-2"><label for="ncprofil">Profil:</label></td>
+                        <td class="col-xs-2"><label for="sel_profil">Profil:</label></td>
                         <td class="col-xs-4">
                           <select class="form-control " name="ncprofil" id="sel_profil" style="width:300px;">
                             <option>CAISSIER</option>
@@ -694,7 +685,7 @@
                         </td>
                     </tr>-->
                     <tr>
-                        <td class="col-xs-2"><label for="ncsalle_cais">Salle:</label></td>
+                        <td class="col-xs-2"><label for="sel_salle">Salle:</label></td>
                         <td class="col-xs-4">
                             <select class="" name="ncsalle_cais" id="sel_salle" style="width:300px;">
                           
@@ -704,7 +695,7 @@
                     <tr>
                         <td class="col-xs-2"></td>
                         <td class="col-xs-4"><input type="submit" class="btn btn-success" id="addcaissier" value="Creer"/>&nbsp;&nbsp;
-                        	<span id="cpart_state" class="${empty con_form.erreurs_u ? 'succes' :'erreur'}"> ${con_form.resultat_u} </span>
+                        	<span id="cpartState" class="${empty con_form.erreurs_u ? 'succes' :'erreur'}"> ${con_form.resultat_u} </span>
                         </td>
                     </tr>
                     
@@ -715,13 +706,13 @@
           <div class="col-sm-6">
            
               <div class="form-group">
-                <label for="sel1">Rechercher utilisateur:</label>
+                <label for="ncrlogin">Rechercher utilisateur:</label>
                 <input type="text" id="ncrlogin" name="ncrlogin" value="" size="40" maxlength="32" placeholder="Veuillez saisir un element à chercher" />
               </div>
               <div class="col-xs-12">
                 <button class="btn btn-primary" type="button">Editer caissier</button>
                 <button class="btn btn-info" type="button">Details caissier</button>
-                <button class="btn btn-warning" type="submit">Suspendre caissier</button>
+                <button class="btn btn-warning" type="button">Suspendre caissier</button>
               </div>
           </div>
         </div>
@@ -805,7 +796,7 @@
                     </tr>
                     <tr>
                         <td class="col-xs-2">
-                            <label>Jackpot rate:</label>
+                            <label for="ncbonus_rate">Jackpot rate:</label>
                         </td>
                         <td class="col-xs-2">
                             <select class="" name="ncbonus_rate" id="ncbonus_rate" style="width:100px;">
@@ -817,7 +808,7 @@
                             </select>
                         </td>
                         <td class="col-xs-2">
-                            <label>Jackpot reserve:</label>  
+                            <label for="reserve">Jackpot reserve:</label>
                         </td>
                         <td class="col-xs-2">
                             <select class="" name="ncbonus_reserve" id="reserve" style="width:100px;">
@@ -875,7 +866,7 @@
                                 <input type="radio" value="1" name="cagnot1">Oui
                               </label>
                               <label class="radio-inline" for="act-bonus">
-                                <input type="radio" value="0" name="cagnot1" checked>Non
+                                <input type="radio" value="0" name="cagnot1" id="act-bonus" checked>Non
                               </label>  
                         </td>
                         <td class="col-xs-4">
@@ -903,8 +894,8 @@
                     <tr>
                         <td class="col-xs-2"></td>
                         <td class="col-xs-6">
-                          <h4><label>>> Lots >></label></h4>
-                          <select class="form-control " name="ncbonus_part" id="sel_salle">
+                          <h4><label for="article">>> Lots >></label></h4>
+                          <select class="form-control " name="ncbonus_part" id="article">
                             <option value="1">Telephone</option>
                             <option value="2">Woofer</option>
                             <option value="3">Tee-shirt</option>
@@ -920,7 +911,7 @@
                     <tr>
                         <td class="col-xs-2"></td>
                         <td class="col-xs-6">
-                          <h4><label>>> Partenaire >></label></h4>
+                          <h4><label for="ncbonus_part2">>> Partenaire >></label></h4>
                           <select class="" name="ncbonus_part2" id="ncbonus_part2" style="width:300px;">
                             <option value="">Choisir partenaire</option>
                             </select>
@@ -936,7 +927,7 @@
                     </tr>
                     <tr>
                       <td class="col-xs-2"></td>
-                      <td class="col-xs-6"><label>Heure Cagnotte:</label>&nbsp;&nbsp;
+                      <td class="col-xs-6"><label for="cgsel_salle">Heure Cagnotte:</label>&nbsp;&nbsp;
                         <select class="ncbonus_part2" name="cg_heure" id="cgsel_salle" style="width:80px;">
                             <option value=""></option>
                             <option value="10:00:00">10:00</option>
@@ -986,7 +977,37 @@
     <script>
         //$( "#code" ).val("MOMO");
         window.onload = date_heure('date_heure');
-        
+
+
+        // let urlServeur = "http://127.0.0.1:9090/api/v1/supergames";
+        // async function getUrlServer() {
+        //
+        //     let intervalUrlServer =  setInterval(async function(){
+        //         if(urlServeur == undefined){
+        //             $.ajax({
+        //                 url:"paramserver",
+        //                 type:"GET",
+        //                 data:{
+        //                     'partner':coderace
+        //                 },
+        //                 success:function(result){
+        //                     $.each(result,  async function(index, value){
+        //                         urlServeur = await value.server;
+        //                         console.log("urlServeur: "+urlServeur);
+        //
+        //                     });
+        //                 }
+        //             });
+        //         }
+        //         else{
+        //             clearInterval(intervalUrlServer);
+        //         }
+        //
+        //     },1000);
+        // }
+        //
+        // getUrlServer();
+        //
        $('#clear').click(function(){
           console.log('clear');
           document.getElementById('code').value='';
@@ -1019,6 +1040,12 @@
     	   console.log('ajout du cagnotte');
     	   $('#idconfig').val("addcagnotte");
        })
+
+        $('#activerPartner').click(function () {
+
+            console.log('Activer partenaire');
+            $('#idconfig').val("activerpartner");
+        })
        
         $(function(){
 
@@ -1091,19 +1118,19 @@
 
         $(function(){
 
-            var menu = $('.imenu-navigation-dark');
+            const menu = $('.imenu-navigation-dark');
 
             menu.slicknav();
 
             // Mark the clicked item as selected
 
             menu.on('click', 'a', function(){
-                var a = $(this);
+                const a = $(this);
 
                 a.siblings().removeClass('selected');
                 a.addClass('selected');
                 
-              $('#c_partner').css('display','none');
+                $('#c_partner').css('display','none');
             	$('#e_partner').css('display','none');
             	$('#e_caissier').css('display','none');
             	$('#c_cashier').css('display','none');
@@ -1171,25 +1198,26 @@
           async: false,
           success:function(result){
             $.each(result, function(key, value){
-          //   console.log('liste: '+key+' - '+value);
-             dropdown.append($('<option/>').val(value).text(value));
-             $('#lockroom').append($('<option/>').val(value).text(value));
-             $('#selcoderace').append($('<option/>').val(value).text(value));
-             $('#selcoderace1').append($('<option/>').val(value).text(value));
-             $('#turncoderace').append($('<option/>').val(value).text(value));
-             $('#sel_partner').append($('<option/>').val(value).text(value));
-             $('#sel_salle').append($('<option/>').val(value).text(value));
-             $('#sel1').append($('<option/>').val(value).text(value));
-             $('#ncbonus_part1').append($('<option/>').val(value).text(value));
-             $('#ncbonus_part2').append($('<option/>').val(value).text(value));
-             $('#n_cagnotte').append($('<option/>').val(value).text(value));
-             $('#nc_rapport1').append($('<option/>').val(value).text(value));
+             //console.log('liste: '+key+' - '+JSON.stringify(value));
+             dropdown.append($('<option/>').val(value.coderace).text(value.coderace));
+             $('#lockroom').append($('<option/>').val(value.coderace).text(value.coderace));
+             $('#selcoderace').append($('<option/>').val(value.coderace).text(value.coderace));
+             $('#selcoderace1').append($('<option/>').val(value.coderace).text(value.coderace));
+             $('#turncoderace').append($('<option/>').val(value.coderace).text(value.coderace));
+             $('#sel_partner').append($('<option/>').val(value.coderace).text(value.coderace));
+             $('#sel_salle').append($('<option/>').val(value.coderace).text(value.coderace));
+             $('#sel1').append($('<option/>').val(value.coderace).text(value.coderace));
+             $('#ncbonus_part1').append($('<option/>').val(value.coderace).text(value.coderace));
+             $('#ncbonus_part2').append($('<option/>').val(value.coderace).text(value.coderace));
+             $('#n_cagnotte').append($('<option/>').val(value.coderace).text(value.coderace));
+             $('#nc_rapport1').append($('<option/>').val(value.coderace).text(value.coderace));
+
              
             });
           }
                 });
         }
-		  restoreSalle();
+        restoreSalle();
    
     function retrieve_user(){
       var sel = document.getElementById("airtime_room");

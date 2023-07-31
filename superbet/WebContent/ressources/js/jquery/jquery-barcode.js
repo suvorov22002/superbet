@@ -189,7 +189,7 @@
       if (addon.length === 2) {
         result += "0000000000";
         // checksum addon
-        checksum = parseInt(addon, 10) % 4;
+        checksum = parseInt(addon) % 4;
         // binary encoding
         for (i = 0; i < 2; i++) {
           part_of_addon = intval(addon.charAt(i));
@@ -1001,7 +1001,7 @@
             datamatrixTemp[i + 1][j + 1] = 1;
           } else {
             datamatrixTemp[i + 1][j + 1] = 0;
-            datamatrixTemp[i + 1][j + 1] = datamatrix[i - 1 - (2 * (parseInt(i / (rowsRegionCW + 2), 10)))][j - 1 - (2 * (parseInt(j / (colsRegionCW + 2), 10)))];
+            datamatrixTemp[i + 1][j + 1] = datamatrix[i - 1 - (2 * (parseInt(i / (rowsRegionCW + 2))))][j - 1 - (2 * (parseInt(j / (colsRegionCW + 2))))];
           }
         }
       }
@@ -1079,7 +1079,7 @@
     var type = typeof val;
     if (type === "string") {
       val = val.replace(/[^0-9-.]/g, "");
-      val = parseInt(val * 1, 10);
+      val = parseInt(val * 1);
       return isNaN(val) || !isFinite(val) ? 0 : val;
     }
     return type === "number" && isFinite(val) ? Math.floor(val) : 0;
@@ -1105,7 +1105,7 @@
   // return a byte string from a hex string color
   function lecCHexColor(hex) {
     var g, r,
-      v = parseInt("0x" + hex.substr(1), 16),
+      v = parseInt("0x" + hex.substr(1)),
       b = v & 0xFF;
     v = v >> 8;
     g = v & 0xFF;
@@ -1115,7 +1115,7 @@
   
   function hexToRGB(hex) {
     var g, r,
-      v = parseInt("0x" + hex.substr(1), 16),
+      v = parseInt("0x" + hex.substr(1)),
       b = v & 0xFF;
     v = v >> 8;
     g = v & 0xFF;
@@ -1158,7 +1158,7 @@
       d = [];
     d[0] = [];
     for (i = 0; i < digit.length; i++) {
-      d[0][i] = parseInt(digit.charAt(i), 10);
+      d[0][i] = parseInt(digit.charAt(i));
     }
     return d;
   }

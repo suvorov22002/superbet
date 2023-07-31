@@ -133,7 +133,8 @@ public final class AuthenticationForm {
 								
 								List<Partner> partners = partnerDao.getAllPartners();
 								if(!partners.isEmpty()) {
-									Params.PARTNER = partners.get(0).getCoderace();
+									Params.PARTNER = partners.stream().filter(p -> p.getActif() == 1).findFirst().get().getCoderace();
+									//Params.PARTNER = partners.get(0).getCoderace();
 								}
 								
 								user =  supergameAPI.getSuperGameDAO().getCaissier(Params.url, caissier, Params.PARTNER);

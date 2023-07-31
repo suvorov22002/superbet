@@ -33,7 +33,8 @@ public class PartnerDAOImpl implements PartnerDAO {
 	private static final String SQL_U_BONUSP_AMOUNT_PARTNER = "UPDATE partner SET bonuspamount = ? , bonuspcode= ?"
 			+ " WHERE coderace = ? ";
 	private static final String SQL_U_BONUSP_RESET_AMOUNT_PARTNER = "UPDATE partner SET bonuspamount = ? WHERE coderace = ? ";
-	private static final String SQL_F_ALL_PARTNER = "select * from partner where actif=1 ";
+	private static final String SQL_F_ALL_PARTNER = "select * from partner ";
+//	private static final String SQL_F_ALL_PARTNER = "select * from partner where actif=1 ";
 	private static final String SQL_C_PARTNER = "Insert Into partner Set coderace=? , zone=? , groupe = ? , actif = ? , cob = ? "; 
 	private static final String SQL_U_COB_PARTNER = "UPDATE partner SET COB = ? WHERE coderace = ? ";
 	private static final String SQL_U_INIT_PARTNER = "UPDATE partner SET actif = ? , cob = ? WHERE coderace = ? ";
@@ -170,12 +171,12 @@ public class PartnerDAOImpl implements PartnerDAO {
 	}
 
 	@Override
-	public Partner update(Partner partner) throws DAOException {
+	public int update(Partner partner) throws DAOException {
 		Connection connexion = null;
 		PreparedStatement preparedStatement = null;
 		ResultSet valeursAutoGenerees = null;
 		
-		int statut;
+		int statut = 0;
 		
 		try {
 			/* Récupération d'une connexion depuis la Factory */
@@ -183,17 +184,14 @@ public class PartnerDAOImpl implements PartnerDAO {
 			preparedStatement = initialisationRequetePreparee( connexion,SQL_U_INIT_PARTNER, false, partner.getActif(), partner.getCob(), partner.getCoderace());
 			statut = preparedStatement.executeUpdate();
 			/* Analyse du statut retourné par la requête d'insertion */
-			if ( statut == 0 ) {
-				return null;
-			}
-			
+		
 		} catch ( SQLException e ) {
 			throw new DAOException( e );
 		} finally {
 			fermeturesSilencieuses( valeursAutoGenerees, preparedStatement, connexion );
 		}
 		
-		return partner;
+		return statut;
 	}
 
 	@Override

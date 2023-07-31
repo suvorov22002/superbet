@@ -2800,9 +2800,9 @@ public abstract class AbstractDAOAPI<T> {
 		return listCaissier;
 	}
     
-    public List<Partner> retrieveAllPartner(String url) throws ClientProtocolException, IOException {
+    public List<PartnerDto> retrieveAllPartner(String url) throws ClientProtocolException, IOException {
 		
-    	List<Partner> listPartner = new ArrayList<>();
+    	List<PartnerDto> listPartner = new ArrayList<>();
 		String resp_code;
 		HttpGet getRequest = new HttpGet(url+"/list-partners");
 		// add request parameter, form parameters
@@ -2845,16 +2845,16 @@ public abstract class AbstractDAOAPI<T> {
 	                	
 	        			int n = jObj.length();
 	        			listPartner = new ArrayList<>(n);
-	        			PartnerDto pdto = new PartnerDto();
-	        			Partner partenaire = new Partner();
+	        			PartnerDto pdto;
+	        			JSONObject jo;
+	        			
 	        			for(int i=0 ; i< n ; i++) {
-	        				JSONObject jo = jObj.getJSONObject(i);
-	        				partenaire = new Partner();
-	        				pdto = this.mapToPartnerDto(jo);
-	        				partenaire.setCoderace(pdto.getCoderace());
-	        				listPartner.add(partenaire);
+	        				
+	        				jo = jObj.getJSONObject(i);
+	        				pdto = mapToPartnerDto(jo);
+	        				listPartner.add(pdto);
+	        				
 	        			}
-	                	
 	                }  	           
     			}
         	}

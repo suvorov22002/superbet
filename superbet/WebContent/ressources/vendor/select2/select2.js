@@ -6217,7 +6217,7 @@ S2.define('select2/selection/stopPropagation',[
             if (!$parent.length) {
                 $parent = $('body');
             }
-            return parseInt($parent.css('fontSize'), 10) || parseInt($elem.css('fontSize'), 10) || 16;
+            return parseInt($parent.css('fontSize')) || parseInt($elem.css('fontSize')) || 16;
         },
 
         getPageHeight: function(elem) {

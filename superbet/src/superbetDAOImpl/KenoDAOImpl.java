@@ -50,6 +50,7 @@ public class KenoDAOImpl implements KenoDAO {
 			+ " WHERE multiplicateur != '0' AND coderace=? "
 			+ "ORDER BY drawnumk DESC "
 			+ "LIMIT 0,100 ";
+	private static final String SQL_D_KENO = "Delete From Keno Where coderace = ? ";
 
 	
 	public KenoDAOImpl(DAOFactory daoFactory) {
@@ -133,8 +134,26 @@ public class KenoDAOImpl implements KenoDAO {
 	}
 
 	@Override
-	public void delete(Keno keno) throws DAOException {
-		// TODO Auto-generated method stub
+	public boolean delete(String coderace) throws DAOException {
+		
+		Connection connexion = null;
+		PreparedStatement preparedStatement = null;
+		int res = 0;
+		
+		try {
+			/* Récupération d'une connexion depuis la Factory */
+			connexion = daofactory.getConnection();
+			preparedStatement = initialisationRequetePreparee( connexion, SQL_D_KENO, false, coderace);
+		    res = preparedStatement.executeUpdate();
+			
+		} catch ( SQLException e ) {
+			throw new DAOException( e );
+		} finally {
+			fermeturesSilencieuses( preparedStatement, connexion );
+		}
+		
+		return (res > 0) ? true : false;
+		
 
 	}
 

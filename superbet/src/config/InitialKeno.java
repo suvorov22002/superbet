@@ -1,11 +1,14 @@
 package config;
 
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 
 import org.apache.commons.lang3.StringUtils;
 import org.codehaus.jettison.json.JSONException;
@@ -44,17 +47,32 @@ public class InitialKeno {
 	
 	public static void intializeKeno() {
 		
-		String coderace="";
+		String coderace;
 		System.out.println(">>> Initialisation du systeme <<<");
+		try (InputStream input = new FileInputStream("C:/jeu/config.properties")) {
+
+            Properties prop = new Properties();
+
+            //load a properties file from class path, inside static method
+            prop.load(input);
+
+            //get the property value and print it out
+            System.out.println(prop.getProperty("url"));
+            Params.url = prop.getProperty("url");
+
+        } catch (IOException ex) {
+            ex.printStackTrace();
+            System.out.println("Sorry, unable to find config.properties");
+         // Recuperation du parametre de connexion au serveur
+         	Params.url = "http://127.0.0.1:9090/api/v1/supergames";
+        }
 		
 		try {
 			
 			
-			// Recuperation du parametre de connexion au serveur
-			Params.url = "http://127.0.0.1:9090/api/v1/supergames";
 
 			List<Partner> partners = partnerDao.getAllPartners();
-			coderace = partners.stream().map(p -> p.getCoderace()).findFirst().orElse("");
+			coderace = partners.stream().filter(p -> p.getActif() == 1).map(p -> p.getCoderace()).findFirst().orElse("");
 //			for (Partner partner : partners) {
 //				coderace = partner.getCoderace();
 //			}

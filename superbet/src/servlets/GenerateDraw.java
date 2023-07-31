@@ -1,25 +1,20 @@
 package servlets;
 
 import java.io.IOException;
-import java.net.URISyntaxException;
 
 import javax.json.Json;
 import javax.json.JsonArrayBuilder;
 import javax.json.JsonObjectBuilder;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
+//import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.codehaus.jettison.json.JSONException;
-
-import config.Params;
 import config.UtileKeno;
-import modele.KenoRes;
 import superbetDAO.DAOFactory;
 import superbetDAO.KenoDAO;
-import superbetDAO.api.exeception.DAOAPIException;
 import superbetDAO.api.implementations.SuperGameDAOAPI;
 import superbetDAO.api.interfaces.ISuperGameDAOAPILocal;
 

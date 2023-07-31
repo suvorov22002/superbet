@@ -101,10 +101,6 @@
 		</div>
 	</div>
 	
-	
-
-	
-	
 	<script src="ressources/vendor/jquery/jquery-3.2.1.min.js"></script>
 	<script src="ressources/vendor/bootstrap/js/popper.js"></script>
 	<script src="ressources/vendor/bootstrap/js/bootstrap.min.js"></script>

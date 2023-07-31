@@ -215,7 +215,7 @@ public class SuperGameDAO extends AbstractDAOAPI<SuperGameDAO>{
 		return this.getPartner(url, coderace);
 	}
 	
-	public List<Partner> getAllPartner(String url)throws ClientProtocolException, IOException, JSONException, URISyntaxException, DAOAPIException{
+	public List<PartnerDto> getAllPartner(String url)throws ClientProtocolException, IOException, JSONException, URISyntaxException, DAOAPIException{
 		return this.retrieveAllPartner(url);
 	}
 

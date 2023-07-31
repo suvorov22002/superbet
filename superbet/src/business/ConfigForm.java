@@ -57,6 +57,7 @@ public final class ConfigForm {
 	private static final String FIELD_BONUSK_RESERVE = "ncbonus_reserve";
 	private static final String FIELD_KCODERACE = "ncbonus_part1";
 	private static final String FIELD_DATE1 = "cgddebut";
+	private static final String FIELD_ACTIVE_PARTNER = "coderace";
 	private  ISuperGameDAOAPILocal  supergameAPI;
 	
 	private  String resultat = null;
@@ -219,7 +220,8 @@ public final class ConfigForm {
 		erreurs_c = new HashMap<String, String>();
 		action = getName( request, "idconfig" );// definit l'action Ã  traiter. ajout partner, ajout caissier...
 		
-		if(action.equalsIgnoreCase("addpartner")){
+	 if(!StringUtils.isBlank(action))
+		if("addpartner".equalsIgnoreCase(action)){
 			
 			coderace = getName( request, FIELD_CODERACE );
 			zone = getName( request, FIELD_ZONE );
@@ -237,8 +239,8 @@ public final class ConfigForm {
 			
 			if(coderace.length() < 5){
 				
-	  		  	setErreurs(FIELD_CODERACE, "Longueur du nom très court");
-	  		  	resultat = "Nom très court, 5 caractères minimum";
+	  		  	setErreurs(FIELD_CODERACE, "Longueur du nom trï¿½s court");
+	  		  	resultat = "Nom trï¿½s court, 5 caractï¿½res minimum";
 	  		  	return;
 	  		  	
 			}
@@ -279,17 +281,28 @@ public final class ConfigForm {
 						 pdto.setCoderace(coderace);
 						 pdto.setZone(zone);
 						 ResPartner resp = supergameAPI.getSuperGameDAO().submitPartner(Params.url, pdto);
+						 if(resp == null) {
+							 
+							 setErreurs(FIELD_CODERACE, "Erreur lors de la creation.");
+							 resultat = "Erreur lors de la creation.";
+							 
+							 partnerDao.delete(part);
+							 kenoDao.delete(part.getCoderace());
+							 configDao.delete(null);
+							 
+							 return;
+						 }
 						 String respMess = resp.getMessage();
 						 
 						 if ("EXISTS".equalsIgnoreCase(respMess)) {
 							 
 							 setErreurs(FIELD_CODERACE, "present");
-							 resultat = "Partenaire/Salle deja présent.";
+							 resultat = "Partenaire/Salle deja present.";
 							 return;
 							 
 						 }
 						 else if("NEW".equalsIgnoreCase(respMess)) {
-							 resultat = "Partenaire créer avec success.";
+							 resultat = "Partenaire crï¿½er avec success.";
 						 }
 						 
 					 }
@@ -331,8 +344,8 @@ public final class ConfigForm {
 			
 			String[] spaceLogin = login.trim().split(" ");
 			if(login.length() < 5){
-	  		  setErreurs_u(FIELD_LOGIN, "Longueur du login très court");
-	  		  resultat_u = "Login très court, 5 caractères minimum";
+	  		  setErreurs_u(FIELD_LOGIN, "Longueur du login tres court");
+	  		  resultat_u = "Login trï¿½s court, 5 caractï¿½res minimum";
 	  		  return;
 			}
 			else if(spaceLogin.length > 1) {
@@ -343,8 +356,8 @@ public final class ConfigForm {
 			
 			
 			if(pass.length() < 6){
-	  		  setErreurs_u(FIELD_PASS, "Longueur du mot de passe très court");
-	  		  resultat_u = "pass très court, 5 caractÃ¨res minimum";
+	  		  setErreurs_u(FIELD_PASS, "Longueur du mot de passe trï¿½s court");
+	  		  resultat_u = "pass trï¿½s court, 5 caractÃ¨res minimum";
 	  		  return;
 			}
 			
@@ -383,7 +396,7 @@ public final class ConfigForm {
 				try {
 					
 					if (n > 0) {
-						// Utilisateur crée en local
+						// Utilisateur cree en local
 						
 						CaissierDto caisDto = new CaissierDto();
 						caisDto.setNomc(nom_user);
@@ -402,7 +415,7 @@ public final class ConfigForm {
 							return;
 						}
 						
-						resultat_u="Caissier crée avec succes";
+						resultat_u="Caissier crï¿½e avec succes";
 						
 					}
 					
@@ -410,25 +423,10 @@ public final class ConfigForm {
 					e.printStackTrace();
 					return;
 				}
-				
-//				if(n > 0){	
-//					Caissier user = caissierDao.findByLogin(login);
-//					//creation de la ligne des mouvements
-//					airtimeDao.createMvt(user.getIdCaissier(), 0);
-//					resultat_u="Caissier crée avec succes";
-//					return;
-//				}
-//				else{
-//					setErreurs_u(FIELD_LOGIN, "Echec de creation");
-//					resultat_u = "Echec de creation";
-//					return;
-//				}
-				
-				
 			}
 			else{
 				setErreurs_u(FIELD_LOGIN, "present");
-				resultat_u = "Login utilisé, veuillez entrer un autre";
+				resultat_u = "Login utilisï¿½, veuillez entrer un autre";
 			}
 		}
 		else if(action.equalsIgnoreCase("addbonus")){
@@ -477,7 +475,7 @@ public final class ConfigForm {
 				}
 				if(mbonusk0 > mbonusk1){
 					setErreurs_b(FIELD_BONUSK1, "Mauvais montant");
-					resultat_b = "Bonus Min supérieur à Bonus Max";
+					resultat_b = "Bonus Min supï¿½rieur ï¿½ Bonus Max";
 					return;
 				}
 				if(bonusk_rate == null || bonusk_rate.equalsIgnoreCase("")){
@@ -491,11 +489,11 @@ public final class ConfigForm {
 					ajout = supergameAPI.getSuperGameDAO().updateBonusK(Params.url, k_rate, mbonusk0, mbonusk1, coderace);
 					if(ajout != 0){
 						erreurs.clear();
-						resultat_b = "Mise à jour du bonus effectué avec succès";
+						resultat_b = "Mise ï¿½ jour du bonus effectuï¿½ avec succï¿½s";
 					}
 					else{
-						setErreurs_b("Update", "Echec de la mise à jour");
-						resultat_b = "Echec de la mise à jour";
+						setErreurs_b("Update", "Echec de la mise ï¿½ jour");
+						resultat_b = "Echec de la mise ï¿½ jour";
 						return;
 					}
 				} catch (IOException | JSONException | URISyntaxException | DAOAPIException e) {
@@ -527,8 +525,8 @@ public final class ConfigForm {
 				return;
 			}
 			if(dat1 == null) {
-				setErreurs_c("Update", "Veuillez choisir le jour de tombée");
-				resultat_c = "Veuillez choisir le jour de tombée";
+				setErreurs_c("Update", "Veuillez choisir le jour de tombee");
+				resultat_c = "Veuillez choisir le jour de tombee";
 				return;
 			}
 			
@@ -559,7 +557,7 @@ public final class ConfigForm {
 			
 			try {
 				cagnotte = supergameAPI.getSuperGameDAO().saveJackpot(Params.url, cagnotte, partner);
-				resultat_c = "Cagnotte mis à  jour";
+				resultat_c = "Cagnotte mis a jour";
 			} catch (IOException | JSONException | URISyntaxException | DAOAPIException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -568,6 +566,32 @@ public final class ConfigForm {
 				return;
 			}
 			
+		}
+		else if("activerpartner".equalsIgnoreCase(action)){
+			
+			coderace = getName(request, FIELD_ACTIVE_PARTNER);
+			if(coderace == null) {
+				
+				resultat = "Erreur lors de l'activation.";
+				setErreurs_c(FIELD_ACTIVE_PARTNER, "Erreur lors de l'activation.");
+				return;
+			}
+			lpartner = partnerDao.getAllPartners();
+			
+			for (Partner pp : lpartner) {
+				
+				if(pp.getCoderace().equals(coderace)) {
+					pp.setActif(1);
+					pp.setCob("opened");
+					resultat = coderace + " activÃ© avec success";
+				}
+				else {
+					pp.setActif(0);
+					pp.setCob("closed");
+				}
+				
+				partnerDao.update(pp);
+			}
 		}
 		
 		
@@ -626,7 +650,7 @@ public final class ConfigForm {
 			//misetDao.createFree(n);
 			
 			if(nb_race > 0){
-				resultat = "Partenaire enregistré avec succes";
+				resultat = "Partenaire enregistrï¿½ avec succes";
 			}
 			else{
 				setErreurs(FIELD_CODERACE, "Echec de creation");

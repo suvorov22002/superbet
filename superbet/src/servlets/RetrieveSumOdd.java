@@ -15,12 +15,9 @@ import javax.json.Json;
 import javax.json.JsonArrayBuilder;
 import javax.json.JsonObjectBuilder;
 import javax.servlet.ServletException;
-import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
-import org.json.JSONObject;
 
 import com.google.gson.Gson;
 
@@ -28,7 +25,6 @@ import config.UtileKeno;
 import modele.Keno;
 import superbetDAO.DAOFactory;
 import superbetDAO.KenoDAO;
-import superbetDAO.PartnerDAO;
 
 /**
  * Servlet implementation class Retrkieve

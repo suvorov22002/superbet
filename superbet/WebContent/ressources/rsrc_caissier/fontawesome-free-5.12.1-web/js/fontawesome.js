@@ -1865,7 +1865,7 @@
     var height = null;
 
     if (IS_IE) {
-      var computedFontSize = parseInt(getComputedStyle(node).fontSize, 10);
+      var computedFontSize = parseInt(getComputedStyle(node).fontSize);
       var boundingClientRect = node.getBoundingClientRect();
       width = boundingClientRect.width / computedFontSize;
       height = boundingClientRect.height / computedFontSize;

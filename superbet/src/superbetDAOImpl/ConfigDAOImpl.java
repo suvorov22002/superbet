@@ -24,6 +24,7 @@ public class ConfigDAOImpl implements ConfigDAO{
 	private static final String SQL_U_CONFIG_BONUS = "update config set stepbonus=? where coderace = ? ";
 	private static final String SQL_U_CONFIG_BONUSK = "update config set bonusrate=?, bnkmin=?, bnkmax=? where coderace = ? ";
 	private static final String SQL_U_CONFIG_BONUSP = "update config set bonusrate=?, bnpmin=?, bnpmax=? where coderace = ? ";
+	private static final String SQL_D_CONFIG = "Delete from config Where coderace = ? ";
 	
 	public ConfigDAOImpl(DAOFactory daoFactory){
 		this.daofactory = daoFactory;
@@ -211,8 +212,25 @@ public class ConfigDAOImpl implements ConfigDAO{
 	}
 
 	@Override
-	public void delete(Config config) throws DAOException {
-		// TODO Auto-generated method stub
+	public boolean delete(String coderace) throws DAOException {
+		
+		Connection connexion = null;
+		PreparedStatement preparedStatement = null;
+		int res = 0;
+		
+		try {
+			/* Récupération d'une connexion depuis la Factory */
+			connexion = daofactory.getConnection();
+			preparedStatement = initialisationRequetePreparee( connexion, SQL_D_CONFIG, false, coderace);
+		    res = preparedStatement.executeUpdate();
+			
+		} catch ( SQLException e ) {
+			throw new DAOException( e );
+		} finally {
+			fermeturesSilencieuses( preparedStatement, connexion );
+		}
+		
+		return (res > 0) ? true : false;
 		
 	} 
 	

@@ -99,23 +99,31 @@ public class Configurations extends HttpServlet {
 		
 	
 			con_form.manage_config(request);
-			if(con_form.getAction().equalsIgnoreCase("addpartner")){ //ajout de partenaire
+			if("addpartner".equalsIgnoreCase(con_form.getAction())){ //ajout de partenaire
 				request.setAttribute("action", 1);
 				
 				request.setAttribute("state", 6);
 				
 			}
-			else if(con_form.getAction().equalsIgnoreCase("addcaissier")){
+			if("activerpartner".equalsIgnoreCase(con_form.getAction())){ //activer partenaire
+				
+				request.setAttribute("action", 2);
+				
+				request.setAttribute("state", 6);
+				
+				
+			}
+			else if("addcaissier".equalsIgnoreCase(con_form.getAction())){
 				request.setAttribute("action", 3);
 				
 				request.setAttribute("state", 6);
 			}
-			else if(con_form.getAction().equalsIgnoreCase("addbonus")){
+			else if("addbonus".equalsIgnoreCase(con_form.getAction())){
 				request.setAttribute("action", 5);
 				
 				request.setAttribute("state", 6);
 			}
-			else if(con_form.getAction().equalsIgnoreCase("addcagnotte")){
+			else if("addcagnotte".equalsIgnoreCase(con_form.getAction())){
 				request.setAttribute("action", 7);
 				
 				request.setAttribute("state", 6);

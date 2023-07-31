@@ -17,6 +17,7 @@ import org.codehaus.jettison.json.JSONException;
 
 import config.Params;
 import modele.Partner;
+import modele.PartnerDto;
 import superbetDAO.DAOFactory;
 import superbetDAO.PartnerDAO;
 import superbetDAO.api.exeception.DAOAPIException;
@@ -45,8 +46,8 @@ public class RetrievePartner extends HttpServlet{
 		String idpartner = request.getParameter("coderace");
 		String loginCaissier = request.getParameter("loginc");
 		System.out.println("loginCaissier: "+loginCaissier);
-		List<String> list = new ArrayList<String>();
-		List<Partner> listePartnaires = new ArrayList<>();
+		List<PartnerDto> list = new ArrayList<>();
+		List<PartnerDto> listePartnaires = new ArrayList<>();
 		
 		try {
 			if (!StringUtils.isBlank(loginCaissier)) {
@@ -57,12 +58,6 @@ public class RetrievePartner extends HttpServlet{
 					
 				}
 			}
-			
-	//		last = partnerDao.getAllPartners();
-	
-			for(Partner partn : listePartnaires){
-				list.add(partn.getCoderace());
-		    }
 		
 		} catch (IOException | JSONException | URISyntaxException | DAOAPIException e) {
 			// TODO Auto-generated catch block
@@ -72,7 +67,7 @@ public class RetrievePartner extends HttpServlet{
 		response.setContentType("application/json; charset=UTF-8");
 		response.setHeader("Cache-Control", "no-cache");
 
-	     String json = new Gson().toJson(list);
+	     String json = new Gson().toJson(listePartnaires);
 		 response.getWriter().write(json);
 	      
 	}

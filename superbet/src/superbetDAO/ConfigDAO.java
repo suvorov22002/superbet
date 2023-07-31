@@ -7,7 +7,7 @@ public interface ConfigDAO {
 	Config find(String coderace) throws DAOException;
 	int update(Config config) throws DAOException;
 	int updateBonus(String step, String coderace) throws DAOException;
-	void delete(Config config) throws DAOException;
+	boolean delete(String coderace) throws DAOException;
 	int updateBonusK(double bonusrate, double bnkmin, double bnkmax,
 			String coderace) throws DAOException;
 	int updateBonusP(double bonusrate, double bnpmin, double bnpmax,

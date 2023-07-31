@@ -11,7 +11,7 @@ public interface KenoDAO {
 	Keno find_Max_draw(String coderace) throws DAOException;
 	String[] find_Max_draw_bis(String coderace) throws DAOException;
 	int update(Keno keno) throws DAOException;
-	void delete(Keno keno) throws DAOException;
+	boolean delete(String coderace) throws DAOException;
 	double findBonusAmount() throws DAOException;
 	int updateBonus(double bonus, int drawnumber) throws DAOException;
 	String[] getLastKdraw(String coderace) throws DAOException;
