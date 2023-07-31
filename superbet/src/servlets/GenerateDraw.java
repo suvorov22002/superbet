@@ -6,7 +6,7 @@ import javax.json.Json;
 import javax.json.JsonArrayBuilder;
 import javax.json.JsonObjectBuilder;
 import javax.servlet.ServletException;
-import javax.servlet.annotation.WebServlet;
+//import javax.servlet.annotation.WebServlet;
 //import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -21,7 +21,7 @@ import superbetDAO.api.interfaces.ISuperGameDAOAPILocal;
 /**
  * Servlet implementation class GenerateDraw
  */
-@WebServlet(description = "generateur de combinaison")
+//@WebServlet(description = "generateur de combinaison")
 public class GenerateDraw extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 	

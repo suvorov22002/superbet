@@ -104,7 +104,7 @@ public class Refresh implements Runnable {
 			//System.out.println("gamestate - "+UtileKeno.gamestate);
 			drawCount = 130;
 			try {
-				//recupération du temps
+				//recupï¿½ration du temps
 
 				if(countDown) {
 					 UtileKeno.timeKeno--;
@@ -112,7 +112,7 @@ public class Refresh implements Runnable {
 
 				if(UtileKeno.timeKeno == 11 && UtileKeno.gamestate == 1) {
 					UtileKeno.canbet = false;
-					UtileKeno.messagek = "pari fermé";
+					UtileKeno.messagek = "pari fermï¿½";
 					UtileKeno.drawKeno = "";
 					future = calculateDraw();
 					System.out.println("REFRESHTIME KENO: "+UtileKeno.timeKeno+" *** "+UtileKeno.drawKeno);
@@ -163,13 +163,8 @@ public class Refresh implements Runnable {
 						UtileKeno.messagek = "pari ouvert - tirage en cours";
 					}
 					
-					if((UtileKeno.gamestate == 2)  && !search_draw) {
-						//UtileKeno.drawKeno = "";
-					//	UtileKeno.drawKeno = b.getDrawnumbK();
-						
-						//System.out.println("Refresh - time: "+UtileKeno.timeKeno+" search_draw: "+search_draw);
-						if(!UtileKeno.drawKeno.equalsIgnoreCase("")) {
-							//System.out.println("Refresh - drawKeno: "+b.getDrawnumK()+"  "+UtileKeno.drawKeno);
+					if((UtileKeno.gamestate == 2)  && !search_draw && !UtileKeno.drawKeno.equalsIgnoreCase("")) {
+
 							search_draw = true;
 							k = new Keno();
 							k.setBonusKamount(""+b.getBonusKamount());
@@ -178,9 +173,9 @@ public class Refresh implements Runnable {
 							k.setDrawnumK(""+b.getDrawnumK());
 							k.setMultiplicateur(b.getMultiplicateur());
 							k.setCoderace(coderace);
-							int n = kenoDao.create(k);
+							kenoDao.create(k);
 							
-						}
+
 						
 					}
 				/*	else if(UtileKeno.gamestate == 1 && search_draw) {
@@ -262,6 +257,7 @@ public class Refresh implements Runnable {
 				System.err.print("REFRESHK ERROR: "+e);
 				search_draw = false;
 				UtileKeno.drawKeno = "";
+				Thread.currentThread().interrupt();
 			}
 		}
 		

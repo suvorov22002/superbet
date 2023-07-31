@@ -2117,7 +2117,7 @@ public abstract class AbstractDAOAPI<T> {
                 	return null;
                 }
                 JSONObject betkObject = j.getJSONObject("cagnot");
-                System.out.println("betkObject: "+betkObject);
+                //System.out.println("betkObject: "+betkObject);
                 cgt = this.mapToCagnotte(betkObject);
                // vers.setMessage(j.getString("message"));
            
@@ -2882,53 +2882,52 @@ public abstract class AbstractDAOAPI<T> {
 	}
 	
 	public BetTicketK mapToBetTicket(JSONObject obj) throws JsonParseException, JsonMappingException, IOException, JSONException {
-		BetTicketK o = this.mapper.enable(DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY).readValue(obj.toString(), BetTicketK.class);
-		return o;
+		return this.mapper.enable(DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY).readValue(obj.toString(), BetTicketK.class);
+		
 	}
 	
 	public Caissier mapToCaissier(JSONObject obj) throws JsonParseException, JsonMappingException, IOException, JSONException {
-		Caissier o = this.mapper.enable(DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY).readValue(obj.toString(), Caissier.class);
-		return o;
+		return this.mapper.enable(DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY).readValue(obj.toString(), Caissier.class);
+		
 	}
 	
 	public Keno mapToKeno(JSONObject obj) throws JsonParseException, JsonMappingException, IOException, JSONException {
-		Keno o = this.mapper.enable(DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY).readValue(obj.toString(), Keno.class);
-		return o;
+		return this.mapper.enable(DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY).readValue(obj.toString(), Keno.class);
+		
 	}
 	
 	public PartnerDto mapToPartnerDto(JSONObject obj) throws JsonParseException, JsonMappingException, IOException, JSONException {
-		PartnerDto o = this.mapper.enable(DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY).readValue(obj.toString(), PartnerDto.class);
-		return o;
+		return this.mapper.enable(DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY).readValue(obj.toString(), PartnerDto.class);
+		
 	}
 	
 	public Partner mapToPartner(JSONObject obj) throws JsonParseException, JsonMappingException, IOException, JSONException {
-		Partner o = this.mapper.enable(DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY).readValue(obj.toString(), Partner.class);
-		return o;
+		return this.mapper.enable(DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY).readValue(obj.toString(), Partner.class);
+		
 	}
 	
 	public BonusSet mapToBonus(JSONObject obj)throws JsonParseException, JsonMappingException, IOException, JSONException {
-		BonusSet bs = this.mapper.enable(DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY).readValue(obj.toString(), BonusSet.class);
-		return bs;
+		return this.mapper.enable(DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY).readValue(obj.toString(), BonusSet.class);
+		
 	}
 	
 	public Versement mapToVersement(JSONObject obj) throws JsonParseException, JsonMappingException, IOException, JSONException {
-		Versement o = this.mapper.enable(DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY).readValue(obj.toString(), Versement.class);
-		return o;
+		return this.mapper.enable(DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY).readValue(obj.toString(), Versement.class);
+		
 	}
 	
 	public KenoRes mapToKenoRes(JSONObject obj) throws JsonParseException, JsonMappingException, IOException, JSONException {
-		KenoRes o = this.mapper.enable(DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY).readValue(obj.toString(), KenoRes.class);
-		return o;
+		return this.mapper.enable(DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY).readValue(obj.toString(), KenoRes.class);
+	
 	}
 	
 	public ShiftDay mapToShiftDay(JSONObject obj) throws JsonParseException, JsonMappingException, IOException, JSONException {
-		ShiftDay o = this.mapper.enable(DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY).readValue(obj.toString(), ShiftDay.class);
-		return o;
+		return this.mapper.enable(DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY).readValue(obj.toString(), ShiftDay.class);
+		
 	}
 	
 	public CagnotteDto mapToCagnotte(JSONObject obj) throws JsonParseException, JsonMappingException, IOException, JSONException {
-		CagnotteDto o = this.mapper.enable(DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY).readValue(obj.toString(), CagnotteDto.class);
-		return o;
+		return this.mapper.enable(DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY).readValue(obj.toString(), CagnotteDto.class);
 	}
 	
 	
@@ -2942,7 +2941,7 @@ public abstract class AbstractDAOAPI<T> {
 	    }
 	}
 	
-	private Boolean isValidJson(String maybeJson){
+	private boolean isValidJson(String maybeJson){
         try {
             final ObjectMapper mapper = new ObjectMapper();
             mapper.readTree(maybeJson);

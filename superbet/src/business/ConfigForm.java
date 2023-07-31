@@ -221,6 +221,7 @@ public final class ConfigForm {
 		action = getName( request, "idconfig" );// definit l'action à traiter. ajout partner, ajout caissier...
 		
 	 if(!StringUtils.isBlank(action))
+		 
 		if("addpartner".equalsIgnoreCase(action)){
 			
 			coderace = getName( request, FIELD_CODERACE );

@@ -14,6 +14,7 @@ public class CagnotteDto implements Serializable {
 	private String jeu;
 	private Partner partner;
 	private int mise;
+	private long barcode;
 	
 	public CagnotteDto() {
 		super();
@@ -57,6 +58,14 @@ public class CagnotteDto implements Serializable {
 
 	public void setMise(int mise) {
 		this.mise = mise;
+	}
+
+	public long getBarcode() {
+		return barcode;
+	}
+
+	public void setBarcode(long barcode) {
+		this.barcode = barcode;
 	}
 	
 }

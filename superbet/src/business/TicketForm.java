@@ -26,8 +26,8 @@ import superbetDAO.api.interfaces.ISuperGameDAOAPILocal;
 
 public class TicketForm {
 	
-	private static final String FIELD_DATE1 = "ddebut";
-	private static final String FIELD_DATE2 = "dfin";
+	private static final String FIELD_DATE1 = "iddebut";
+	private static final String FIELD_DATE2 = "idfin";
 	private static final String FIELD_CODERACE = "selcoderace1";
 	private  String resultat = null;
 	private  Map<String, String> erreurs = new HashMap<String, String>();
@@ -68,7 +68,7 @@ public class TicketForm {
 			
 			misekt = supergameAPI.getSuperGameDAO().allMiset(Params.url, t1, t2, p.getCoderace());
 			if (misekt == null) {
-				resultat = "Aucun ticket trouvé.";
+				resultat = "Aucun ticket trouvï¿½.";
 				return;
 			}
 			taille = misekt.size();
