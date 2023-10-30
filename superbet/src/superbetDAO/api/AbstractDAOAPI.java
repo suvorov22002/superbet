@@ -2,6 +2,7 @@ package superbetDAO.api;
 
 import java.io.IOException;
 import java.io.StringReader;
+import java.net.ConnectException;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -215,6 +216,13 @@ public abstract class AbstractDAOAPI<T> {
 		return o;
 	}
 	
+	private <T> T mapToEntity(JSONObject obj, Class<T> type) throws com.fasterxml.jackson.core.JsonParseException, JsonMappingException, IOException {
+		
+		StringReader reader = new StringReader(obj.toString());
+		T o = this.mapper.readValue(reader, type);
+		return o;
+	}
+	
 	public CaissierDto mapToCaissierDto_(JSONObject obj) throws JsonParseException, JsonMappingException, IOException, JSONException {
 		StringReader reader = new StringReader(obj.toString());
 		CaissierDto o = this.mapper.readValue(reader, CaissierDto.class);
@@ -278,7 +286,8 @@ public abstract class AbstractDAOAPI<T> {
 	
 	public abstract String getUrl();
 
-	public BetTicketK sendPostSlip(String url, BetTicketK slip, String coderace) throws ClientProtocolException, IOException, JSONException, URISyntaxException, DAOAPIException {
+	public BetTicketK sendPostSlip(String url, BetTicketK slip, String coderace) throws ClientProtocolException, IOException, 
+		JSONException, URISyntaxException {
 		
 		String playload = null;
 		String resp_code;
@@ -298,30 +307,38 @@ public abstract class AbstractDAOAPI<T> {
         	BetTicketK bet = new BetTicketK();
         	try{
         		HttpEntity entity = response.getEntity();
-        		
+        	
         		if (entity != null) {
         			
 	        		String content = EntityUtils.toString(entity);
-	        	//	////System.out.println("content: "+content);
+	        	    //System.out.println("content: "+content);
+	        		
+	        		if(!isValidJson(content)) {
+	        			bet.setMessage("Erreur server ticket");
+	        			return bet;
+	        		}
+	        		
 	                JSONObject json = new JSONObject(content);
 	                
-	                //Verification du code reponse
-	                resp_code = json.getString("entity");
-	         //       ////System.out.println("resp_code "+resp_code);
-	                
-	                JSONObject j = new JSONObject(resp_code);
-	                
-	                String code = j.getString("code");
-	                if(!code.equalsIgnoreCase("200")) {
-	                	return null;
+	                if(!json.getBoolean("success")) {
+	                	bet.setMessage(json.getString("message"));
+	                	return bet;
 	                }
-	                JSONObject btkObject = j.getJSONObject("btick");
-	                bet = this.mapToBetTicket(btkObject);
+	                
+	                if(json.has("data")) {
+	                	
+	                	String listJson = json.getString("data");
+	                	JSONObject btkObject = new JSONObject(listJson.toString());
+	                	
+	                	bet = this.mapToBetTicket(btkObject);
+	                	bet.setMessage("");
+	                }
+	                
     			}
         	}
         	catch(Exception e) {
         		e.printStackTrace();
-        		return null;
+        		bet.setMessage("Erreur server ticket");
         	}
             
             return bet;
@@ -329,8 +346,8 @@ public abstract class AbstractDAOAPI<T> {
 
     }
 	
-	public BetTicketK verifyTicket(String url, String coderace,  String barcode) throws ClientProtocolException, IOException, JSONException, URISyntaxException, DAOAPIException{
-		String resp_code;
+	public BetTicketK verifyTicket(String url, String coderace,  String barcode) throws ClientProtocolException, IOException, JSONException, URISyntaxException{
+		
 		HttpGet getRequest = new HttpGet(url+"/findticket/"+coderace+"/"+barcode)
 				;
 		// add request parameter, form parameters
@@ -346,36 +363,33 @@ public abstract class AbstractDAOAPI<T> {
         		if (entity != null) {
         			
 	        		String content = EntityUtils.toString(entity);
-//	        	    ////System.out.println("user-content: "+content);
+	        	    
+	        		if(!isValidJson(content)) {
+	        			betk.setMessage("Erreur server ticket");
+	        			return betk;
+	        		}
+	        		
 	                JSONObject json = new JSONObject(content);
 	                
-	                //Verification du code reponse
-	                resp_code = json.getString("entity");
-	                //System.out.println("resp_code "+resp_code);
-	                
-	                JSONObject j = new JSONObject(resp_code);
-	                
-	                String code = j.getString("code");
-	               
-	                //System.out.println("CODE: "+code);
-//	                if("503".equalsIgnoreCase(code) || "030".equalsIgnoreCase(code)  
-//	                		|| "032".equalsIgnoreCase(code) || "035".equalsIgnoreCase(code)) {
-	                if("503".equalsIgnoreCase(code) || "031".equalsIgnoreCase(code)) {
-	                	betk.setMessage(j.getString("message") );
+	                if(!json.getBoolean("success")) {
+	                	betk.setMessage(json.getString("message"));
 	                	return betk;
-                    }
+	                }
 	                
+	                if(json.has("data")) {
+	                	
+	                	String listJson = json.getString("data");
+	                	JSONObject btkObject = new JSONObject(listJson.toString());
+	                	
+	                	betk = this.mapToBetTicket(btkObject);
+//	                	betk.setMessage("");
+	                }
 	                
-	                JSONObject betkObject = j.getJSONObject("btick");
-	                //System.out.println("RESULTAT: "+betkObject);
-	                betk = this.mapToBetTicket(betkObject);
-	                betk.setMessage(j.getString("message"));
-	           
     			}
         	}
         	catch(Exception e) {
         		e.printStackTrace();
-        		return null;
+        		return betk;
         	}
         	
 
@@ -587,15 +601,15 @@ public abstract class AbstractDAOAPI<T> {
 	      }
 	}
 	
-	public boolean gamecycles(String url, GameCycleDto gmt, String coderace) throws ClientProtocolException, IOException, JSONException, URISyntaxException, DAOAPIException {
+	public List<GameCycle> gamecycles(String url, GameCycleDto gmt, String coderace) throws ClientProtocolException, IOException, JSONException, URISyntaxException, DAOAPIException {
+		
+		List<GameCycle> listGmc = new ArrayList<>();
 		String playload = null;
-		String resp_code;
 		HttpPost post;
-		boolean resp = false;
 		
 		playload = mapToJsonString(gmt);
 		if(!isJSONValid(playload)) {
-			return resp;
+			return new ArrayList<>();
 		}
 		
        post = new HttpPost(url+"/gamecycle/"+coderace);
@@ -605,44 +619,50 @@ public abstract class AbstractDAOAPI<T> {
 		post.setEntity(new StringEntity(playload));
 	
       try (CloseableHttpResponse response = this.getClosableHttpClient().execute(post)) {
-    	int c = 0;
-      	try{
+
       		HttpEntity entity = response.getEntity();
       		
       		if (entity != null) {
-      			
-	        		String content = EntityUtils.toString(entity);
-	        		////System.out.println("content post cycle: "+content);
-	                JSONObject json = new JSONObject(content);
-	                resp_code = json.getString("entity");
-	           //     ////System.out.println("resp_code "+resp_code);
-	                JSONObject j = new JSONObject(resp_code);
-	                
-	                String code = j.getString("code");
-	                if(!code.equalsIgnoreCase("200")) {
-	                	return resp;
-	                }
-	                String retSrc = j.getString("data");
-		        	   
-	                JSONObject jsonObj = new JSONObject(retSrc.toString());
-	                if (jsonObj.has("resp")) {
-	                	resp = jsonObj.getBoolean("resp");
-	                }
-	                else {
-	                	return resp;
-	                }
-	                
-	                
-	                
-  			}
+    			
+        		String content = EntityUtils.toString(entity);
+        		
+        		if(!isValidJson(content)) {
+        			return new ArrayList<>();
+        		}
+                JSONObject json = new JSONObject(content);
+                
+                if(!json.getBoolean("success")) {
+                	return new ArrayList<>();
+                }
+                
+                 
+                if(json.has("data")) {
+                	
+                	String listJson = json.getString("data");
+                	JSONArray jObj = new JSONArray(listJson.toString());
+                	
+        			int n = jObj.length();
+        			listGmc = new ArrayList<>(n);
+        			GameCycle gmdto;
+        			JSONObject jo;
+        			
+        			for(int i=0 ; i< n ; i++) {
+        				
+        				jo = jObj.getJSONObject(i);
+        				//gmdto = mapToGameCycleDto(jo);
+        				gmdto = mapToEntity(jo, GameCycle.class);
+        				listGmc.add(gmdto);
+        				
+        			}
+                }  	           
+			}
       	}
       	catch(Exception e) {
       		e.printStackTrace();
-      		return resp;
+      		return new ArrayList<>();
       	}
           
-          return resp;
-      }
+        return listGmc;
 	}
 	
 	public boolean sendPostEOD(String url, List<String> bkeve) throws ClientProtocolException, IOException, JSONException, URISyntaxException, DAOAPIException {
@@ -1280,9 +1300,10 @@ public abstract class AbstractDAOAPI<T> {
 	
 	public List<GameCycle> gamecyle(String url, String coderace) throws ClientProtocolException, IOException, 
 				JSONException, URISyntaxException, DAOAPIException {
+		
 		List<GameCycle> lgame = null;
 		String resp_code;
-		//System.out.println("result gamecycle "+url+"/gamecycle/"+coderace);
+	
 		HttpGet getRequest = new HttpGet(url+"/gamecycle/"+coderace);
 		// add request parameter, form parameters
 		getRequest.setHeader("content-type", "application/json");
@@ -1730,7 +1751,7 @@ public abstract class AbstractDAOAPI<T> {
 	}
 		
 	public Double getBalance(String url, Long ncp) throws ClientProtocolException, IOException, 
-		JSONException, URISyntaxException, DAOAPIException {
+		JSONException, URISyntaxException, ConnectException {
 		
 		String resp_code;
 		HttpGet getRequest = new HttpGet(url+"/findbalance/"+ncp);
@@ -1782,7 +1803,7 @@ public abstract class AbstractDAOAPI<T> {
         	catch(Exception e) {
        // 	catch(NumberFormatException | NullPointerException | JSONException e) {
         		//System.err.println(e.getMessage());
-        		e.printStackTrace();
+        //		e.printStackTrace();
         		solde = 0d;
         		return solde;
         	}
@@ -2086,50 +2107,52 @@ public abstract class AbstractDAOAPI<T> {
 	}
 	
 	public CagnotteDto getCagnotte(String url, String coderace) throws ClientProtocolException, IOException, 
-					JSONException, URISyntaxException, DAOAPIException {
-	String resp_code;
-	HttpGet getRequest = new HttpGet(url+"/cagnotte/"+coderace);
-	// add request parameter, form parameters
-	getRequest.setHeader("content-type", "application/json");
-	
-	try (CloseableHttpResponse response = this.getClosableHttpClient().execute(getRequest)) {
-		CagnotteDto cgt = new CagnotteDto();
-		HttpEntity entity = null;
+					JSONException, URISyntaxException {
 		
-		try{
-			entity = response.getEntity();
+		String resp_code;
+		HttpGet getRequest = new HttpGet(url+"/cagnotte/"+coderace);
+		// add request parameter, form parameters
+		getRequest.setHeader("content-type", "application/json");
+
+		try (CloseableHttpResponse response = this.getClosableHttpClient().execute(getRequest)) {
 			
-			if (entity != null) {
-    			
-        		String content = EntityUtils.toString(entity);
-        //	    ////System.out.println("user-content: "+content);
-                JSONObject json = new JSONObject(content);
-                
-                //Verification du code reponse
-                resp_code = json.getString("entity");
-           //     ////System.out.println("resp_code "+resp_code);
-                
-                JSONObject j = new JSONObject(resp_code);
-                
-                String code = j.getString("code");
-           //     ////System.out.println("CODE: "+code);
-                if(!code.equalsIgnoreCase("200")) {
-                	return null;
-                }
-                JSONObject betkObject = j.getJSONObject("cagnot");
-                //System.out.println("betkObject: "+betkObject);
-                cgt = this.mapToCagnotte(betkObject);
-               // vers.setMessage(j.getString("message"));
-           
+			CagnotteDto cgt = new CagnotteDto();
+			HttpEntity entity = null;
+
+			try{
+				entity = response.getEntity();
+
+				if (entity != null) {
+
+					String content = EntityUtils.toString(entity);
+					//	    ////System.out.println("user-content: "+content);
+					JSONObject json = new JSONObject(content);
+
+					//Verification du code reponse
+					resp_code = json.getString("entity");
+					//     ////System.out.println("resp_code "+resp_code);
+
+					JSONObject j = new JSONObject(resp_code);
+
+					String code = j.getString("code");
+					//     ////System.out.println("CODE: "+code);
+					if(!code.equalsIgnoreCase("200")) {
+						return null;
+					}
+					JSONObject betkObject = j.getJSONObject("cagnot");
+					//System.out.println("betkObject: "+betkObject);
+					cgt = this.mapToCagnotte(betkObject);
+					// vers.setMessage(j.getString("message"));
+
+				}
 			}
+			catch(Exception e) {
+				e.printStackTrace();
+				return null;
+			}
+
+			return cgt;
 		}
-		catch(Exception e) {
-			e.printStackTrace();
-			return null;
-		}
-		
-		return cgt;
-	  }
 	}
 	
 	public String retrievecombi(String url, int num, String coderace) throws ClientProtocolException, IOException, 
@@ -2169,7 +2192,8 @@ public abstract class AbstractDAOAPI<T> {
 			}
 		}
 		catch(Exception e) {
-			e.printStackTrace();
+			//e.printStackTrace();
+			System.out.println("retSrc combinaison "+combinaison);
 		}
 		//System.out.println("retSrc combinaison "+combinaison);
 		return combinaison;
@@ -2569,7 +2593,7 @@ public abstract class AbstractDAOAPI<T> {
     
     public List<KenoRes> bonus(String url, String coderace) throws ClientProtocolException, IOException, JSONException, URISyntaxException, DAOAPIException {
     	
-    	List<KenoRes> kenres = null;
+    	List<KenoRes> kenres = new ArrayList<>();
     	
     	String resp_code;
 		HttpGet getRequest = new HttpGet(url+"/bonus/"+coderace);
@@ -2588,7 +2612,7 @@ public abstract class AbstractDAOAPI<T> {
 	        		String content = EntityUtils.toString(entity);
 	        	//	//System.out.println("result "+content);
 	        		if(!isValidJson(content)) {
-	        			return null;
+	        			return new ArrayList<>();
 	        		}
 	                JSONObject json = new JSONObject(content);
 	                
@@ -2599,7 +2623,7 @@ public abstract class AbstractDAOAPI<T> {
 	                
 	                String code = j.getString("code");
 	                if(!code.equalsIgnoreCase("200")) {
-	                	return null;
+	                	return new ArrayList<>();
 	                }
 	                
 	                String retSrc = j.getString("data");
@@ -2803,7 +2827,6 @@ public abstract class AbstractDAOAPI<T> {
     public List<PartnerDto> retrieveAllPartner(String url) throws ClientProtocolException, IOException {
 		
     	List<PartnerDto> listPartner = new ArrayList<>();
-		String resp_code;
 		HttpGet getRequest = new HttpGet(url+"/list-partners");
 		// add request parameter, form parameters
 		getRequest.setHeader("content-type", "application/json");
@@ -2813,35 +2836,28 @@ public abstract class AbstractDAOAPI<T> {
         	HttpEntity entity = null;
         	
         	try{
+        		
+        		//System.out.println("response "+response);
         		entity = response.getEntity();
         		
         		if (entity != null) {
         			
 	        		String content = EntityUtils.toString(entity);
-	        		//////System.out.println("result "+content);
+	        		
 	        		if(!isValidJson(content)) {
 	        			return null;
 	        		}
 	                JSONObject json = new JSONObject(content);
 	                
-	                //Verification du code reponse
-	                resp_code = json.getString("entity");
-	               // ////System.out.println("resp_code "+resp_code);
-	                
-	                JSONObject j = new JSONObject(resp_code);
-	                
-	                String code = j.getString("code");
-	                if(!code.equalsIgnoreCase("200")) {
+	                if(!json.getBoolean("success")) {
 	                	return null;
 	                }
 	                
-	                String retSrc = j.getString("data");
-	                JSONObject jsonObj = new JSONObject(retSrc.toString());
-	                
-	                if(jsonObj.has("partners")) {
+	                 
+	                if(json.has("data")) {
 	                	
-	                	String list_json = jsonObj.getString("partners");
-	                	JSONArray jObj = new JSONArray(list_json.toString());
+	                	String listJson = json.getString("data");
+	                	JSONArray jObj = new JSONArray(listJson.toString());
 	                	
 	        			int n = jObj.length();
 	        			listPartner = new ArrayList<>(n);

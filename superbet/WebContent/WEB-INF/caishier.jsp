@@ -67,6 +67,17 @@
   </head>
   <body>
 	
+	<%
+        String userName = null;
+        Cookie[] cookies = request.getCookies();
+        if(cookies !=null){
+            for(Cookie cookie : cookies){
+                if(cookie.getName().equals("caissier")) userName = cookie.getValue();
+            }
+        }
+        if(userName == null) response.sendRedirect("login.jsp");
+    %>
+    
     <div class="container-fluid">
      <span id="idpartner">${caissier.partner}</span>
      <span id="idcaissier">${caissier.idCaissier}</span>
@@ -92,7 +103,7 @@
            <table class="user">
                 <tr>
                     <td class="col-xs-2"><label>USER:</label>&nbsp;&nbsp;<span id="login_pari" class="login">${caissier.loginc}</span></td>
-                    <td class="col-xs-2"><label>Airtime:</label>&nbsp;&nbsp;<span id="balance1" class="balance"></span>&nbsp;&nbsp;<span>FCFA</span></td>
+                    <td class="col-xs-2"><label>Airtime:</label>&nbsp;&nbsp;<span id="balance1" class="balance">${k_form.bonusrate}</span>&nbsp;&nbsp;<span>FCFA</span></td>
                     <td class="col-xs-4"><label>Heure:</label>&nbsp;&nbsp;<span id="date_heure"></span></td>
                     <!-- <td class="col-xs-4"><label>Statut:</label>&nbsp;&nbsp;<span id="" class=""></span></td>-->
                 </tr>
@@ -180,9 +191,9 @@
                    autocomplete="off">
                   
                   <span id="amount_error" style="color:red;font-style:italic;">${k_form.resultat}</span><br/>
-                  <label class="control-label input-label" for="montant" id="">Apport Minimum</label>&nbsp;<span>200 FCFA</span>
+                  <label class="control-label input-label" for="montant" >Apport Minimum</label>&nbsp;<span>FCFA</span>
                   <input class="form-control" type="text" placeholder="200 FCFA" readonly><br/>
-                  <label class="control-label input-label" for="code">Gain Eventuel</label>&nbsp;<span>2 000 FCFA</span><br/>
+                  <label class="control-label input-label" for="code">Gain Eventuel</label>&nbsp;<span>FCFA</span><br/>
                   <input class="form-control" type="text" placeholder="20 000 FCFA" readonly><br/>
                   <label class="control-label input-label" for="code">Bonus</label>&nbsp;<span></span><br/>
                   <input class="form-control input-success" type="text" placeholder="20 000 FCFA" readonly style="text-align: right;"><br/>
@@ -196,9 +207,7 @@
                <!--   <button type="submit" id="print" class="btn btn-primary btn-block canprint" ${caissier.statut == 'N' ? 'disabled' : ''}>Imprimer</button> -->
                   <button type="button" id="print" class="btn btn-primary btn-block canprint" ${caissier.statut == 'N' ? 'disabled' : ''} onclick="return manage_keno(event)">Imprimer</button>
                   <button type="button" class="btn btn-warning btn-block">Annuler</button>
-                  
-                 
-                  
+
                  </div>  
               <br />
             </fieldset>
@@ -739,7 +748,7 @@
                 <th class="col-xs-3">Supprimer</th>
               </tr>
              </thead>
-              <tbody id='prono'>
+              <tbody id='prono_dog'>
                       <!-- les differents parents -->
               </tbody>
             </table>
@@ -754,8 +763,8 @@
 
                   <input class="form-control" type="text" placeholder="200 FCFA" class="amount" id="bmontant" name="montant" onkeypress="return verif_amount(event);" maxlength="5">
                   
-                  <span id="amount_error" style="color:red;font-style:italic;"></span><br/>
-                  <label class="control-label input-label" for="montant" id="">Apport Minimum</label>&nbsp;<span>200 FCFA</span>
+                  <span id="amount_error_dog" style="color:red;font-style:italic;"></span><br/>
+                  <label class="control-label input-label" for="montant">Apport Minimum</label>&nbsp;<span>200 FCFA</span>
                   <input class="form-control" type="text" placeholder="200 FCFA" readonly><br/>
                   <label class="control-label input-label" for="code">Apport Maximum</label>&nbsp;<br/>
                   <input class="form-control" type="text" placeholder="20 000 FCFA" readonly><br/>
@@ -1320,7 +1329,7 @@
         </div>
       </div>
     </form>
-      </div>
+    </div>
      
       <!--</div>-->
     <!-- fin interface shift -->
@@ -1470,10 +1479,11 @@
        let urlServeur = "";
 
       async function getUrlServer() {
-        console.log("urlServeur0: "+urlServeur);
+
          let intervalUrlServer =  setInterval(async function(){
-          if(urlServeur == undefined){
-            $.ajax({
+          if(urlServeur === undefined){
+
+              $.ajax({
                 url:"paramserver",
                 type:"GET",
                 data:{
@@ -1482,7 +1492,7 @@
                 success:function(result){ 
                     $.each(result,  async function(index, value){
                         urlServeur = await value.server;
-                      //  console.log("urlServeur: "+urlServeur);
+                        console.log("urlServeur0: "+urlServeur);
                            
                     });
                 }
@@ -1626,9 +1636,7 @@
 				$.ajax({
 					url:"updatetirage",
 					type:"GET",
-					data:{
-						'coderace':idcoderace
-					},
+
 					success:function(result){
 	 		            // Pour chaque resultat du tableau
 	 		            $.each(result, function(index, value){
@@ -1677,37 +1685,63 @@
               });
         }
     restoreDatas();
-    
-  
-    $(function (){
-        setInterval(function(){
-        
-				$.ajax({
-					url:"updateairtime",
-					type:"GET",
-					data:{
-			            'caissier':idcaissier,
-			            'coderace':idcoderace
-					},
-					success:function(result){
-	 		            // Pour chaque résultat du tableau
-	 		            $.each(result, function(index, value){
-	 		             
-	 		                // on retrouve les paramètres qu'on avait fix� via l'API Json dans la servlet
-                      var airtime = value.balance;
-                      
-	 		               $(".balance").empty();
-	 		             
-	 		               // On mets à jour les differents champs
-	 		               $(".balance").prepend(airtime);
-	 		            
-	 		               
-	 		            });
-					}
-				});
-				
-			},2000);	
-        });
+
+  function restoreBalance(){
+
+      $.ajax({
+          url:"updateairtime",
+          type:"GET",
+          data:{
+              'caissier':idcaissier,
+              'coderace':idcoderace
+          },
+          success:function(result){
+              // Pour chaque résultat du tableau
+              $.each(result, function(index, value){
+
+                  // on retrouve les paramètres qu'on avait fix� via l'API Json dans la servlet
+                  const airtime = value.balance;
+
+                  $(".balance").empty();
+                  // On mets à jour les differents champs
+                  $(".balance").prepend(airtime);
+
+
+              });
+          }
+      });
+  }
+  restoreBalance();
+
+    // $(function (){
+    //     setInterval(function(){
+    //
+	// 			$.ajax({
+	// 				url:"updateairtime",
+	// 				type:"GET",
+	// 				data:{
+	// 		            'caissier':idcaissier,
+	// 		            'coderace':idcoderace
+	// 				},
+	// 				success:function(result){
+	//  		            // Pour chaque résultat du tableau
+	//  		            $.each(result, function(index, value){
+	//
+	//  		                // on retrouve les paramètres qu'on avait fix� via l'API Json dans la servlet
+    //                   var airtime = value.balance;
+    //
+	//  		               $(".balance").empty();
+	//
+	//  		               // On mets à jour les differents champs
+	//  		               $(".balance").prepend(airtime);
+	//
+	//
+	//  		            });
+	// 				}
+	// 			});
+	//
+	// 		},2000);
+    //     });
 		
 	/*	function print_ticket(){
 			$(".modal-printer").printThis({

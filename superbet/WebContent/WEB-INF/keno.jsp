@@ -18,7 +18,7 @@
 	var requete;
 	
 	
-	//-->
+	-->
 	</script>
 </head>
 
@@ -41,13 +41,14 @@
     <div id="page4"></div>
     <!-- End Page 4-->
 
-	
-<!--     <script src="ressources/lottery/js/vendor/jquery-3.4.1.min.js"></script> -->
+
     <script src="ressources/spin/js/jquery.js"></script>
     <script type="text/javascript">
-	  let coderace = $('#partner').text();
-	  console.log("mon partenaire sur "+coderace);
-	  let arrayNumroSortant = [];
+
+        let coderace = $('#partner').text();
+        console.log("KENO JSP - CODERACE >>>> " + coderace)
+
+	    let arrayNumroSortant = [];
 		let outputNumber = [];
 		let trouve_draw = false;
 		let tirage = 0;
@@ -76,20 +77,22 @@
 	    let isJoin = false;
 	    let urlServeur;
 
-
 	    async function getUrlServer() {
-	    	let intervalUrlServer =  setInterval(async function(){
-	    	 	if(urlServeur == undefined){
-	    	 		$.ajax({
+
+            let intervalUrlServer =  setInterval(async function(){
+
+                if(urlServeur === undefined){
+
+                    $.ajax({
 		            url:"paramserver",
 		            type:"GET",
-		            data:{
-		              'partner':coderace
-		            },
+		            async: false,
+
 		            success:function(result){ 
 		                $.each(result,  async function(index, value){
-		                    urlServeur = await value.server;
-		                   console.log("urlServeur: "+urlServeur);
+
+                            urlServeur = await value.server;
+		                    console.log("urlServeur: "+urlServeur);
 		                       
 		                });
 		            }
@@ -102,8 +105,6 @@
 			},1000);
 			
 	    }
-
-	   
 	    getUrlServer();
 
 		function restoreDatas(){
@@ -111,25 +112,23 @@
 			//var itoken = localStorage.getItem("token");
 
 			$.ajax({
-				url:"updatebonus",
+
+                url:"updatebonus",
 				type:"POST",
 				async: false,
 				data:{
 					'partner':coderace
 				},
+
 				success:function(result){
+
 					$.each(result, function(index, value){
-						numero_tirage = value.drawnumk;
-						var nbre = value.tot_tirage;
-						var _nbre = value.tot_bonus;
 
+                        numero_tirage = value.drawnumk;
+                        const nbre = value.tot_tirage;
+                        const _nbre = value.tot_bonus;
 
-					//	if(/* keno == 185 &&*/ gamestate == 2){
-					//	       numero_tirage = numero_tirage - 1;
-					//	}
-						   
-						
-						console.log("_nbre: "+_nbre+" | "+value.bonus1);
+                        console.log("_nbre: "+_nbre+" | "+value.bonus1);
 						switch(nbre){
 							case 1:
 								draw_1 = (value.draw1).split("_");
@@ -344,15 +343,16 @@
 					});
 				}
 			});
-			//console.log("arrayLastBonus: "+arrayLastBonus);
-			//console.log("arrybuild: "+arrayDernierTirage);
+
 		}
 		restoreDatas();
 
    function retrieveSumOdd(){
-//console.log("retrieveSumOdd: ");
-     var odds = [];
-   	 $.ajax({
+    let st;
+       let str;
+       let odds = [];
+       $.ajax({
+
           url:"sumodd",
           type:"GET",
           async: false,
@@ -360,47 +360,49 @@
 			 'partner':coderace
 		  },
           success:function(result){
-          	//console.log(' result: '+JSON.stringify(result));
+
             $.each(result, function(key, value){
             	//console.log(' : '+value.sodd);
-            	var res = (value.sodd).substring(1,value.sodd.length-1);
-				odds = res.split(',');
+                const res = (value.sodd).substring(1, value.sodd.length - 1);
+                odds = res.split(',');
               
             });
           } 
         });
 		
 		for(let j=0;j<9;j++){
-   		var str = [];
-   		var s;
-   		s = odds[j];
-   		str = s.split(':');
-	//	console.log('RESULT: '+str[0].substring(1));
-	//	console.log(str[0].length);
-		var st = {
-					temp : str[0].substring(1, str[0].length - 1)+'X',
-					numero : str[1]
-		         }
-    	arrayNumeroLesPlusTirees.push(st);
-    	arrayNumeroLesMoinsTirees
-	}
 
-	for(let i=79;i>74;i--){
-   		var str = [];
-   		var s;
-   		s = odds[i];
-   		str = s.split(':');
-		var st = {
-					temp : str[0].substring(1, str[0].length - 1)+'X',
-					numero : str[1]
-		         }
-    	arrayNumeroLesMoinsTirees.push(st);
-    	
-	}
+            str = [];
+            let s;
+            s = odds[j];
+   		    str = s.split(':');
+
+            st = {
+                temp: str[0].substring(1, str[0].length - 1) + 'X',
+                numero: str[1]
+            };
+            arrayNumeroLesPlusTirees.push(st);
+    	    //arrayNumeroLesMoinsTirees
+	    }
+
+        for(let i=79; i>74; i--){
+
+            str = [];
+            let s;
+            s = odds[i];
+            str = s.split(':');
+            st = {
+                temp: str[0].substring(1, str[0].length - 1) + 'X',
+                numero: str[1]
+            };
+            arrayNumeroLesMoinsTirees.push(st);
+
+        }
    }
    retrieveSumOdd();
 
    function retrieveMultiplicateur(){
+
       console.log("CODERACE-RETRIEVE MULTIPLICATEUR: "+coderace);
         $.ajax({
           url:"multiplicateur",
@@ -412,16 +414,12 @@
           success:function(result){
           	arrayLastMultiplicateur = result;
 			console.log(JSON.stringify(result))
-			
-			
+
             $.each(result, function(key, value){
        
-           //   console.log('Multiplicateur: '+key+' - '+value['multiplicateur']);
-           //   console.log('heureTirage: '+result[key]['heureTirage'].substring(11));
+                const nbre = arrayLastMultiplicateur.length;
 
-              var nbre = arrayLastMultiplicateur.length;
-              console.log("nbre multi: "+nbre);
-              switch(nbre){
+                switch(nbre){
                 
                     case 1:
                         arrayDernierMultiplicateur = [
@@ -805,13 +803,14 @@
 	//	var url = 'http://localhost:9090/api/v1/supergames/timekeno/'+coderace;
 	
 			setInterval(async function(){
-				if(urlServeur != undefined){
-	               var url = urlServeur+'/counter/'+coderace;
-	                const response = await fetch(url);
-	                const myJson = await response.json(); //extract JSON from the http response
-	                  // do something with myJson
-	            //   console.log('myJson '+myJson.context);
-	                timekeno = myJson
+				if(urlServeur !== undefined){
+
+                    const url = urlServeur + '/counter/' + coderace;
+                    const response = await fetch(url);
+	                 //extract JSON from the http response
+                    // do something with myJson
+                      // console.log('myJson '+myJson.context);
+	                timekeno = await response.json()
 	            }
 	            else{
 	              timekeno = "-:-";
@@ -826,13 +825,14 @@
 	//	var url = 'http://localhost:9090/api/v1/supergames/timekeno/'+coderace;
 	
 			let intervalSumKeno = setInterval(async function(){
-				if(urlServeur != undefined){
-					console.log('this url: '+urlServeur);
-	               var url = urlServeur+'/sumOdd/'+coderace;
-	                const response = await fetch(url);
+				if(urlServeur !== undefined){
+
+
+                    const url = urlServeur + '/sumOdd/' + coderace;
+                    const response = await fetch(url);
 	                const myJson = await response.json(); //extract JSON from the http response
 	                  // do something with myJson
-	               console.log('myJson '+myJson.context);
+	                console.log('myJson '+myJson.context);
 	                
 	            }
 	            else{
@@ -851,15 +851,23 @@
  			$.ajax({
  				url:"managetime",
  				type:"GET",
- 				//async: false,
- 				data:{
- 	                'coderace':coderace
- 	            },
+ 				async: true,
+
  				success:function(result){
  					 $.each(result, function(index, value){
 						 
- 					timekeno = value.timekeno;
- 					//console.log('validation timekeno '+timekeno);
+ 					     timekeno = value.timekeno;
+ 					    // console.log('KENO JSP - validation timekeno '+timekeno);
+
+                         const responseBonus = value.bonusamount;
+                       //  console.log('KENO JSP - validation responseBonus '+responseBonus);
+
+                         //update fields with new value
+                         $("#divide-jackpot").text(responseBonus);
+                         $("#divide4-jackpot").text(responseBonus);
+                         $("#divide2-jackpot").text(responseBonus);
+                         $("#divide3-jackpot").text(responseBonus);
+                         $("#divide-jackpot3").text(responseBonus);
  			          });
  				}
  			});
@@ -901,9 +909,9 @@
 	async function miseAJbonus(){
 		//var url = 'http://localhost:9090/api/v1/supergames/bonuskeno/'+coderace;
 		let miseajourInterval = setInterval(async function(){
-			if(urlServeur != undefined){
-				var url = urlServeur+'/bonuskeno/'+coderace;
-		//	console.log('majbonus var url '+url);
+			if(urlServeur !== undefined){
+
+                const url = urlServeur + '/bonuskeno/' + coderace;
 				const response = await fetch(url);
 		        const responseBonus = await response.json(); //extract JSON from the http response
 		        
@@ -918,14 +926,14 @@
 			
 		},1000);
 	}
-	miseAJbonus();
+	//miseAJbonus();
 
 	//recupération de l'objet keno en cours - game state
     async function buscarState(){
    
 	 //   var url = 'http://localhost:9090/api/v1/supergames/drawcombi/'+coderace;
-	    var url = urlServeur+'/drawcombi/'+coderace;
-	    var draw = null;
+        const url = urlServeur + '/drawcombi/' + coderace;
+        var draw = null;
 
 	    const response1 = await fetch(url);
 	    const myResp = await response1.json(); //extract JSON from the http response
@@ -978,98 +986,79 @@
 	function updateDrawNum2(){ //mise à jour des champs drawnum. page 2 et 3
 
 		$.ajax({
-					url:"updatebonus",
-					type:"GET",
-					data:{
-						'partner':coderace
-					},
-					success:function(result){
 
-						 // page2
-						$("#drawnumb").empty();
+                url:"updatebonus",
+                type:"GET",
+                data:{
+                    'partner':coderace
+                },
+                success:function(result){
 
-						// page3
-						$("#drawnumb3").empty();
-						
-	 		            // Pour chaque r�sultat du tableau
-	 		            $.each(result, function(index, value){
-	 		             
-	 		                var id = value.idkeno;
-	 		                blackout_draw = value.drawnumbk;
-	 		                numero_tirage = value.drawnumk;
-	 		                
-	 		                numero_tirage =  numero_tirage - 1;
+                     // page2
+                    $("#drawnumb").empty();
 
-	 		               $("#drawnumb").prepend( numero_tirage);
-	 		               $("#drawnumb3").prepend( numero_tirage);
-	 		              
-	 		               var token = value.token;
+                    // page3
+                    $("#drawnumb3").empty();
 
-	 		            });
-					}
-				});
+                    // Pour chaque r�sultat du tableau
+                    $.each(result, function(index, value){
+
+                        var id = value.idkeno;
+                        blackout_draw = value.drawnumbk;
+                        numero_tirage = value.drawnumk;
+
+                        numero_tirage =  numero_tirage - 1;
+
+                       $("#drawnumb").prepend( numero_tirage);
+                       $("#drawnumb3").prepend( numero_tirage);
+
+                       var token = value.token;
+
+                    });
+                }
+            });
 	}
 
 		$(function refreshPage(){
-			//console.log('validation');
-			var itoken = localStorage.getItem("token");
-			
-			setInterval(function(){
+			console.log('refresh - page');
+
+            const itoken = localStorage.getItem("token");
+            //console.log("itoken: " + itoken)
+
+            setInterval(function(){
 
 				$.ajax({
+
 					url:"updatebonus",
 					type:"GET",
 					data:{
 						'partner':coderace
 					},
 					success:function(result){
-						// page1
-					//    $("#divide-jackpot").empty();
-					//    $("#divide-jackpot3").empty();
-						 // page4
-					//	$("#divide4-jackpot").empty();
-						 
-						 // page2
-					//	$("#drawnumb").empty();
-					//	$("#divide2-jackpot").empty();
-						
-						// page3
-					//	$("#drawnumb3").empty();
-					//	$("#divide3-jackpot").empty();
-					
-	 		            // Pour chaque r�sultat du tableau
+
 	 		            $.each(result, function(index, value){
-	 		             
-	 		                // on retrouve les param�tres qu'on avait fix� via l'API Json dans la servlet
-	 		                var id = value.idkeno;
-	 		             //   var bonus = value.bonuskamount;
-	 		             //   blackout_draw = value.drawnumbk;
 
-	 		  //           numero_tirage = value.drawnumk;
-	    				 str_combi = value.combi;
-                         gamestate = value.gamestate;
+	    				    str_combi = value.combi;
+                            gamestate = value.gamestate;
 
-	 		            //   $("#drawnumb").prepend(numero_tirage);
-	 		            //   $("#drawnumb3").prepend(numero_tirage);
+	 		                //console.log("str_combi tirage: "+str_combi+" gamestate: "+gamestate);
+                            const token = value.token;
 
-	 		            //    tirage = value.drawnumk;
-	 		            //    console.log("str_combi tirage: "+str_combi+" gamestate: "+gamestate);
-	 		             
-	 		   
-	 		            //   $("#errors").prepend(value.status);
+                            //console.log("Token " +token);
 
-	 		               var token = value.token;
+                            if(itoken === undefined){
+							    localStorage.setItem("token", token);
+						    }
+                            else if(typeof(Storage) !== undefined){
+                                //console.log("iToken != " + Number(itoken) + " | " + Number(token));
+                                if(Number(itoken)!== Number(token)){
 
-						if(itoken === undefined){
-							localStorage.setItem("token", token);
-						}
-						else if(typeof(Storage) != undefined){
-							if(itoken != token){
-								console.log("Token != "+itoken);
-								location.reload(true);
-								localStorage.setItem("token", token);
-							}	
-						}
+                                    localStorage.setItem("token", token);
+                                    window.location.reload(true);
+
+                                }
+
+                            }
 	 		            });
 					}
 				});

@@ -1,6 +1,7 @@
 package servlets;
 
 import java.io.IOException;
+import java.net.ConnectException;
 import java.net.URISyntaxException;
 
 import javax.json.Json;
@@ -35,16 +36,19 @@ public class ManageAirtime extends HttpServlet{
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		
 		String login = request.getParameter("caissier");
-		//System.out.println("login: "+login);
+		String message = "";
 		Long idCaissier = Long.parseLong(login);
 		double balance = 0;	
 		
 		try {
 			balance = supergameAPI.getSuperGameDAO().getSolde(Params.url, idCaissier);
 			balance = (double)((int)(balance*100))/100;
-		} catch (IOException | JSONException | URISyntaxException | DAOAPIException e) {
-			e.printStackTrace();
+		} catch (Exception e) {
+			balance = 0d;
+			message = "Erreur lors de la recuperation du solde";
+			System.out.println("Error $message: " + message);
 		}
+		
 					
 		response.setContentType("application/json; charset=UTF-8");
 		response.setHeader("Cache-Control", "no-cache");
@@ -54,6 +58,7 @@ public class ManageAirtime extends HttpServlet{
 		
 		
 		objectBuilder.add("balance", balance);
+		objectBuilder.add("message", message);
 	    arrayBuilder.add(objectBuilder);
 	    response.getWriter().write(arrayBuilder.build().toString());
 	}

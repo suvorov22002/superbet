@@ -97,7 +97,7 @@ public class InitialKeno {
 				refresh.stop();
 			}
 			
-		} catch (IOException | JSONException | URISyntaxException | DAOAPIException e) {
+		} catch (IOException e) {
 			e.printStackTrace();
 			refresh.stop();
 		}

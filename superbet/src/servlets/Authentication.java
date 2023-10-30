@@ -1,8 +1,10 @@
 package servlets;
 
 import java.io.IOException;
+import java.util.Optional;
 
 import javax.servlet.ServletException;
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -58,24 +60,52 @@ public class Authentication extends HttpServlet {
 	   
 	   if(caissier != null){
 		 
-		   for(Caissier cais : refresh.getCustomers()){
-				//System.out.println("CAISSIER: "+caissier.getLoginc());
-				if(caissier.getLoginc().equalsIgnoreCase(cais.getLoginc())){
-					inside = true;
-					break;
-				}
-		  }
-		  if(!inside){
-				refresh.addClient(caissier);
-		  }
-		  
+		   Optional<Caissier> optionalCaissier = refresh.getCustomers().stream()
+				   .filter(c -> c.getLoginc().equals(caissier.getLoginc())).findFirst();
+		   
+		   if(optionalCaissier.isPresent()) {
+			   inside = true;
+		   }
+		   else {
+			   refresh.addClient(caissier);
+		   }
+		   
+//		   for(Caissier cais : refresh.getCustomers()){
+//				//System.out.println("CAISSIER: "+caissier.getLoginc());
+//				if(caissier.getLoginc().equalsIgnoreCase(cais.getLoginc())){
+//					inside = true;
+//					break;
+//				}
+//		  }
+//		  if(!inside){
+//				refresh.addClient(caissier);
+//		  }
+		   
 		   session.setAttribute( ATT_USER, caissier );
+			//setting session to expiry in 25 mins
+		   session.setMaxInactiveInterval(25*60);
+			
+			
+		   Cookie loginCookie = new Cookie(ATT_USER, caissier.getLoginc());
+		   loginCookie.setMaxAge(25*60);
+		   res.addCookie(loginCookie);
+		   
+		 //Get the encoded URL string
+			String encodedURL = res.encodeRedirectURL("LoginSuccess.jsp");
+			
+		     
 
 	    	if(caissier.getProfil() == 1){
-	    		this.getServletContext().getRequestDispatcher(VUE_ADMIN).forward(req, res);
+	    		encodedURL = res.encodeRedirectURL(VUE_ADMIN);
+	    		this.getServletContext().getRequestDispatcher(encodedURL).forward(req, res);
+	    		//this.getServletContext().getRequestDispatcher(VUE_ADMIN).forward(req, res);
+	    		//res.sendRedirect(req.getContextPath() + "/admin.jsp");
 	    	}
 	    	else if(caissier.getProfil() == 2){
-	    		this.getServletContext().getRequestDispatcher(VUE_CAISSIER).forward(req, res);
+	    		encodedURL = res.encodeRedirectURL(VUE_CAISSIER);
+	    		this.getServletContext().getRequestDispatcher(encodedURL).forward(req, res);
+	    		//this.getServletContext().getRequestDispatcher(VUE_CAISSIER).forward(req, res);
+	    		//res.sendRedirect(VUE_CAISSIER);
 	    	}
 	    }
 	    else{

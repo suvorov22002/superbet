@@ -9,7 +9,6 @@ public class PartnerDto implements Serializable{
 	 */
 	private static final long serialVersionUID = 6517217344478857137L;
 	
-	private Long idpartner;
 	private String coderace;
 	private String zone;
 	private double bonusKamount;
@@ -141,14 +140,6 @@ public class PartnerDto implements Serializable{
 
 	public void setBnsbmax(double bnsbmax) {
 		this.bnsbmax = bnsbmax;
-	}
-
-	public Long getIdpartner() {
-		return idpartner;
-	}
-
-	public void setIdpartner(Long idpartner) {
-		this.idpartner = idpartner;
 	}
 
 	public String getZone() {

@@ -72,12 +72,14 @@ public class ManageKeno extends HttpServlet {
 			slip.setMultiplicite(k_form.getMultiplicite());
 			slip.setResultat(k_form.getResultat());
 			slip.setPath(req.getContextPath());
+			slip.setBalance(k_form.getBonusrate());
 			
 			
 	    }
 	    else {
 	    	session.invalidate();
-	    	res.sendRedirect(req.getContextPath()+VUE);
+	    	//res.sendRedirect(req.getContextPath()+VUE);
+	    	this.getServletContext().getRequestDispatcher(VUE).forward(req, res);
 	    }
 		
 	    res.setContentType("application/json; charset=UTF-8");

@@ -26,7 +26,6 @@ public class Turnover extends HttpServlet{
 	public static final String ATT_FORM = "turn_form";
 	public static final String CONF_DAO_FACTORY = "daofactory";
 	private KenoDAO kenoDao;
-	private UtilDAO utilDao;
 	private PartnerDAO partnerDao;
 	private GameCycleDAO gmcDao;
 	private MisekDAO misekDao;

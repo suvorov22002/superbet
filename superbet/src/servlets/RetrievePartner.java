@@ -59,7 +59,7 @@ public class RetrievePartner extends HttpServlet{
 				}
 			}
 		
-		} catch (IOException | JSONException | URISyntaxException | DAOAPIException e) {
+		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}

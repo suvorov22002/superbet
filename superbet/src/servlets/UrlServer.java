@@ -11,7 +11,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import config.Params;
-import config.UtileKeno;
 
 public class UrlServer extends HttpServlet{
 
@@ -30,17 +29,14 @@ public class UrlServer extends HttpServlet{
 	}
 	
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		 
 		 response.setContentType("application/json; charset=UTF-8");
 		 response.setHeader("Cache-Control", "no-cache");
-		
-		// On construit le tableau JSON des résultat
+	
          	JsonArrayBuilder arrayBuilder = Json.createArrayBuilder();
-         
-        // On construit l'objet JSON pour l'expediteur
             JsonObjectBuilder objectBuilder = Json.createObjectBuilder();
            
             objectBuilder.add("server", Params.url);
-
             arrayBuilder.add(objectBuilder);
         
 //	       // On renvois le résultat

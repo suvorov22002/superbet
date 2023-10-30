@@ -14,6 +14,7 @@ public class SlipForm implements Serializable {
 	private Coupon coupon;
 	private String[] _fecha;
 	private String path; 
+	private double balance;
 	
 	public int getMultiplicite() {
 		return multiplicite;
@@ -44,6 +45,12 @@ public class SlipForm implements Serializable {
 	}
 	public void setPath(String path) {
 		this.path = path;
+	}
+	public double getBalance() {
+		return balance;
+	}
+	public void setBalance(double balance) {
+		this.balance = balance;
 	}
 	
 	

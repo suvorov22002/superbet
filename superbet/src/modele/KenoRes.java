@@ -81,4 +81,13 @@ public class KenoRes implements Serializable {
 	public void setBonuscod(int bonuscod) {
 		this.bonuscod = bonuscod;
 	}
+
+	@Override
+	public String toString() {
+		return "KenoRes [drawnumbK=" + drawnumbK + ", bonusKamount=" + bonusKamount + ", drawnumK=" + drawnumK
+				+ ", heureTirage=" + heureTirage + ", multiplicateur=" + multiplicateur + ", gameState=" + gameState
+				+ ", str_draw_combi=" + str_draw_combi + ", bonuscod=" + bonuscod + "]";
+	}
+	
+	
 }

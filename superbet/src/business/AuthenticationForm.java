@@ -147,7 +147,7 @@ public final class AuthenticationForm {
 									
 								}
 								else {
-									resultat = "Succès de la connexion.";
+									resultat = "Succes de la connexion.";
 									state = user.getStatut();
 								}
 								
@@ -170,11 +170,11 @@ public final class AuthenticationForm {
 					}
 					
 				} else {
-					resultat = "échec de la connexion.";
+					resultat = "Echec de la connexion.";
 				}
 			}
 			catch(DAOException | IOException | JSONException | URISyntaxException | DAOAPIException e){
-				resultat = "échec de la connexion : une erreur imprévue est survenue, merci de réessayer dans quelques instants.";
+				resultat = "Echec de la connexion : une erreur imprï¿½vue est survenue, merci de rï¿½essayer dans quelques instants.";
 				e.printStackTrace();
 			}
 		}

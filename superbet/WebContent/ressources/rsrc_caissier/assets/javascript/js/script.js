@@ -1111,15 +1111,17 @@ function verif_sp_amount(evt) {
 }
  
 function manage_keno(evt) {
-    console.log('manage_keno');
+
+	console.log('manage_keno');
 	$("#print").prop("disabled",true);
-	
-	var balance1 = $("#balance1").text();
-	var amount = $("#montant").val();
-	if(parseInt(balance1) < parseInt(amount)){
-		document.getElementById('amount_error').innerHTML = "Credit insuffisant";
-		return false;
-	}
+
+	const balance1 = $("#balance1").text();
+	let amount = $("#montant").val();
+
+	// if(parseInt(balance1) < parseInt(amount)){
+	// 	document.getElementById('amount_error').innerHTML = "Credit insuffisant";
+	// 	return false;
+	// }
 	if(amount ==='' || parseInt(amount) < 200){
 		document.getElementById('amount_error').innerHTML = "montant incorrect";
 		return false;
@@ -1131,9 +1133,9 @@ function manage_keno(evt) {
 	
 	
 	evt.preventDefault();
-	var amount = $("#montant").val();
-	var multi = $("input[name='multi1']:checked").val();
-	var code = $("#code").val();
+	amount = $("#montant").val();
+	const multi = $("input[name='multi1']:checked").val();
+	const code = $("#code").val();
 
 	console.log('Valid amount: '+amount);
 	//submit du formulaire
@@ -1151,19 +1153,27 @@ function manage_keno(evt) {
 				success:function(result){
 					
 					console.log('result evenements: '+JSON.stringify(result));
-					var multi = result.multiplicite;
-					var _fecha = result._fecha;
-					var idpath0 = result.path;
-					var coupon = result.coupon;
+					const multi = result.multiplicite;
+					const _fecha = result._fecha;
+					const idpath0 = result.path;
+					const coupon = result.coupon;
+					const balance = result.balance;
 
 					console.log('result coupon: '+JSON.stringify(coupon));
 					console.log('result _fecha: '+JSON.stringify(_fecha));
+					console.log('result _balace: '+JSON.stringify(balance));
 					
 					
 					if (coupon === undefined) {
 						document.getElementById('amount_error').innerHTML = result.resultat;
 						return false;
 					}
+
+					// On mets à jour le champ de la balance
+					$(".balance").empty();
+					$(".balance").prepend(balance);
+
+
 					$('.ticket_keno').find('tbody').empty();
 					
 					setCouponValue(coupon, multi, _fecha);
@@ -1321,12 +1331,11 @@ function verif_coupon(evt) {
 	
    // console.log("evt.keyCode: "+evt.keyCode);
     if (accept.indexOf(String.fromCharCode(keyCode)) >= 0 || evt.keyCode===13) {
-        var code = $("#barcode").val();
-        var vers = $("#versement").val();
-        
-        
-        
-    	if (evt.keyCode === 13) {
+		const code = $("#barcode").val();
+		const vers = $("#versement").val();
+
+
+		if (evt.keyCode === 13) {
 			evt.preventDefault();
 			//console.log("le code: "+code+" versement: "+vers);
 			callCheckSlip(code, vers);
@@ -1369,18 +1378,13 @@ function callCheckSlip(code, vers) {
 						'versement':vers
 					},
 				success:function(result){
-					// console.log('result evenements: '+JSON.stringify(result.evenements));
-					// console.log('result drawData: '+JSON.stringify(result.drawData));
-					// console.log('result multiplicité: '+JSON.stringify(result.multiplicite));
-					// console.log('result Resultat: '+JSON.stringify(result.resultat));
-					
-					var span = document.getElementById("coupon_error");
-				
+
+					const span = document.getElementById("coupon_error");
+
 					result.resultat === 'Ticket perdant' ? span.style.color = "red" : span.style.color = "green"
 					$('#coupon_error').prepend(result.resultat);
 				    addlinesTableVers(result);
-				    
-				    if (result.resultat === 'Ticket gagnant' || result.resultat === 'Ticket bonus gagnant') {
+				    if (result.resultat.includes('Ticket gagnant') || result.resultat.includes('Ticket bonus gagnant')) {
 						$("#effVers").prop("disabled",false);
 				    }
 				    else{
@@ -1732,19 +1736,19 @@ function addlinesTableVers(value){
 	var statut = value.resultat;
 	var etat;
 	$('.t_pay').find('tbody').empty();
-	
-	
-  var res = drawData['prix_total'] !== undefined ? drawData['prix_total'] : " ";
-  document.getElementById('prix').value = res;
+
+
+	let res = drawData['prix_total'] !== undefined ? drawData['prix_total'] : " ";
+	document.getElementById('prix').value = res;
   
   res = drawData['montant'] !== undefined ? drawData['montant'] : " ";
   document.getElementById('mise').value = res;
   
   res = drawData['gain_total'] !== undefined ? drawData['gain_total'] : " ";
   document.getElementById('versement').value = res;
-  
-  var res = drawData['xmulti'] !== undefined ? drawData['xmulti'] : " ";
-  let resMultiplicateur = [];
+
+	res = drawData['xmulti'] !== undefined ? drawData['xmulti'] : " ";
+	let resMultiplicateur = [];
   resMultiplicateur = res.split("-");
   //document.getElementById('barcode').value = "";
   document.getElementById('barcode').focus

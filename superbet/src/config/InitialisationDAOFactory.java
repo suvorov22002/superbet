@@ -12,7 +12,6 @@ import javax.servlet.ServletContextListener;
 import business.RecordUser;
 import business.Refresh;
 import superbetDAO.DAOFactory;
-import superbetDAO.PartnerDAO;
 
 public class InitialisationDAOFactory implements ServletContextListener{
 	
@@ -45,13 +44,13 @@ public class InitialisationDAOFactory implements ServletContextListener{
 		String txtDate=new SimpleDateFormat("dd/MM/yyyy,H:m:s", Locale.FRANCE).format(new Date());
 		try {
 			this.token = Timestamp.givetimestamp(txtDate);
-			//System.out.println("I-TOKEN: "+this.token);
+			System.out.println("I-TOKEN: "+this.token);
 		} catch (ParseException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		
-		//config heure de mise à jour des caisses;
+		//config heure de mise ï¿½ jour des caisses;
 		
 		Params.mapHeure.put("23", "23");
 		

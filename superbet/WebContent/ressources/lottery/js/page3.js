@@ -345,8 +345,8 @@ function animationHideNumeroOutput() {
             $('#page3-output-winnner-1').children().eq(i).removeClass('animated pulse');
             $('#page3-output-winnner-1').children().eq(i).addClass('animated bounceOutDown');
             i--;
-            if (i < 0) {
-                startDraw(1);
+            if (i === 0) {
+                //startDraw(1);
                 clearInterval(intervalId1);
                 window.location.reload();
             }

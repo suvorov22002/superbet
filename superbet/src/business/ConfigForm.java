@@ -2,6 +2,7 @@ package business;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -12,6 +13,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.codehaus.jettison.json.JSONException;
 import org.jasypt.util.password.ConfigurablePasswordEncryptor;
 
+import config.DateUtil;
 import config.Params;
 import modele.CagnotteDto;
 import modele.Caissier;
@@ -240,7 +242,7 @@ public final class ConfigForm {
 			
 			if(coderace.length() < 5){
 				
-	  		  	setErreurs(FIELD_CODERACE, "Longueur du nom tr�s court");
+	  		  	setErreurs(FIELD_CODERACE, "Longueur du nom tres court");
 	  		  	resultat = "Nom tr�s court, 5 caract�res minimum";
 	  		  	return;
 	  		  	
@@ -512,58 +514,76 @@ public final class ConfigForm {
 		}
 		else if(action.equalsIgnoreCase("addcagnotte")){
 			
-			String detail_lot = "";
-			CagnotteDto cagnotte = new CagnotteDto();
-			
-			dat1 = getName(request, FIELD_DATE1);
-			String partner = getName(request, "ncbonus_part2");
-			String lot = getName(request, "ncbonus_part");
-			String heur = getName(request, "cg_heure");
-			
-			if(lot == null) {
-				setErreurs_c("Update", "Veuillez choisir un lot");
-				resultat_c = "Veuillez choisir un lot";
-				return;
-			}
-			if(dat1 == null) {
-				setErreurs_c("Update", "Veuillez choisir le jour de tombee");
-				resultat_c = "Veuillez choisir le jour de tombee";
-				return;
-			}
-			
-			System.out.println("Lot: "+lot+" Date: "+dat1+":"+heur+" partner: "+partner);
-			if(lot.equalsIgnoreCase("1")) {
-				detail_lot = "tel";
-			}
-			else if(lot.equalsIgnoreCase("2")) {
-				detail_lot = "woofer";
-			}
-			else if(lot.equalsIgnoreCase("3")) {
-				detail_lot = "tricot";
-			}
-			else if(lot.equalsIgnoreCase("4")) {
-				detail_lot = "conso";
-			}
-			else if(lot.equalsIgnoreCase("5")) {
-				detail_lot = "ecran";
-			}
-			else if(lot.equalsIgnoreCase("6")) {
-				detail_lot = "cash";
-			}
-			
-			cagnotte.setLot(detail_lot);
-			cagnotte.setHeur(dat1 + " " + heur);
-			cagnotte.setJeu("");
-			
-			
 			try {
+				String detail_lot = "";
+				CagnotteDto cagnotte = new CagnotteDto();
+				
+				dat1 = getName(request, FIELD_DATE1);
+				String partner = getName(request, "ncbonus_part2");
+				String lot = getName(request, "ncbonus_part");
+				String heur = getName(request, "cg_heure");
+				
+				if(lot == null) {
+					setErreurs_c("Update", "Veuillez choisir un lot");
+					resultat_c = "Veuillez choisir un lot";
+					return;
+				}
+				if(dat1 == null || heur == null) {
+					setErreurs_c("Update", "Veuillez choisir le jour de tombee");
+					resultat_c = "Veuillez choisir le jour de tombee";
+					return;
+				}
+				
+				
+				if(lot.equalsIgnoreCase("1")) {
+					detail_lot = "tel";
+				}
+				else if(lot.equalsIgnoreCase("2")) {
+					detail_lot = "woofer";
+				}
+				else if(lot.equalsIgnoreCase("3")) {
+					detail_lot = "tricot";
+				}
+				else if(lot.equalsIgnoreCase("4")) {
+					detail_lot = "conso";
+				}
+				else if(lot.equalsIgnoreCase("5")) {
+					detail_lot = "ecran";
+				}
+				else if(lot.equalsIgnoreCase("6")) {
+					detail_lot = "cash";
+				}
+				
+				Date dateJour = new Date();
+				Date date = DateUtil.parse(dat1 + " " + heur, DateUtil.DATE_HOUR_FORMAT_MOMO);
+				
+				System.out.println("Lot: "+lot+" Date: "+dat1+" "+heur+" partner: "+partner);
+				System.out.println("date: "+date);
+				System.out.println("dateJour: "+dateJour);
+				
+				if(date.before(dateJour)) {
+					
+					setErreurs_c("Update", "Erreur de creation cagnotte");
+					resultat_c = "Veuillez choisir une date valide. " + dat1+" "+heur;
+					return;
+					
+				}
+				
+		
+				
+				cagnotte.setLot(detail_lot);
+				cagnotte.setHeur(date);
+				cagnotte.setJeu("");
+			
+			
 				cagnotte = supergameAPI.getSuperGameDAO().saveJackpot(Params.url, cagnotte, partner);
 				resultat_c = "Cagnotte mis a jour";
+				
 			} catch (IOException | JSONException | URISyntaxException | DAOAPIException e) {
-				// TODO Auto-generated catch block
+				
 				e.printStackTrace();
 				setErreurs_c("Update", "Erreur de creation cagnotte");
-				resultat = "Erreur de creation cagnotte";
+				resultat_c = "Erreur de creation cagnotte";
 				return;
 			}
 			

@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -15,6 +16,7 @@ import com.google.gson.Gson;
 import org.codehaus.jettison.json.JSONException;
 
 import config.Params;
+import modele.Keno;
 import modele.KenoRes;
 import superbetDAO.DAOFactory;
 import superbetDAO.KenoDAO;
@@ -45,20 +47,34 @@ public class RetrieveMultiplicateur extends HttpServlet {
 		
 		try {
 			keno = this.supergameAPI.getSuperGameDAO().getLastMulti(Params.url, coderace);
-			String str;
-			for(KenoRes kns : keno) {
-				str = kns.getHeureTirage().replace("h", ":");
-				kns.setHeureTirage(str);
-			}
+//			String str;
+//			for(KenoRes kns : keno) {
+//				str = kns.getHeureTirage().replace("h", ":");
+//				kns.setHeureTirage(str);
+//			}
 		} catch (IOException | JSONException | URISyntaxException | DAOAPIException e) {
-			e.printStackTrace();
+			
+			ArrayList<Keno> listKenos = this.kenoDao.getAllLastKdraw(coderace);
+			keno = listKenos.stream().filter(k -> !"0".equals(k.getStarted())).map(this::computeKeno).collect(Collectors.toList());
+
 		}
 		
-		//System.out.println("Retrieve multplicateur: " + keno.size());
+		
 		response.setContentType("application/json; charset=UTF-8");
 		response.setHeader("Cache-Control", "no-cache");
 
 	     String json = new Gson().toJson(keno);
 		 response.getWriter().write(json);
+	}
+	
+	private KenoRes computeKeno(Keno k) {
+
+		KenoRes kenr = new KenoRes();
+	
+		kenr.setHeureTirage(k.getHeureTirage().replace(':', 'h').replace(',', '-'));
+		kenr.setMultiplicateur(k.getMultiplicateur());
+
+		return kenr;
+
 	}
 }

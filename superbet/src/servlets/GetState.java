@@ -8,11 +8,12 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.codehaus.jettison.json.JSONException;
 
 import config.Params;
 import config.UtileKeno;
-import superbetDAO.DAOFactory;
 import superbetDAO.api.exeception.DAOAPIException;
 import superbetDAO.api.implementations.SuperGameDAOAPI;
 import superbetDAO.api.interfaces.ISuperGameDAOAPILocal;
@@ -23,6 +24,7 @@ public class GetState extends HttpServlet{
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
+	private static final Log logger = LogFactory.getLog(GetState.class);
 	
 	private  ISuperGameDAOAPILocal  supergameAPI;
 	
@@ -36,12 +38,14 @@ public class GetState extends HttpServlet{
 	
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		
-		UtileKeno.gamestate = Integer.parseInt(request.getParameter("state"));
+		int state = Integer.parseInt(request.getParameter("state"));
 		String coderace = request.getParameter("coderace");
 	
 		 try {
-				int b = supergameAPI.getSuperGameDAO().getStates(Params.url, UtileKeno.gamestate, coderace);
-				//System.out.println("Updatebonus gamestate: "+b);
+			 
+			 UtileKeno.gamestate = supergameAPI.getSuperGameDAO().getStates(Params.url, state, coderace);
+			 logger.info("GetState UtileKeno.gamestate: " + UtileKeno.gamestate);
+				
 		 } catch (IOException | JSONException | URISyntaxException | DAOAPIException e) {
 				e.printStackTrace();
 		 }

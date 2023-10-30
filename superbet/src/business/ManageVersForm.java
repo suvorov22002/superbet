@@ -159,142 +159,140 @@ public final class ManageVersForm {
 				if(!isTesting){
 					isTesting = true;
 					BetTicketK b = null;
+					
 					try {
-						b =  supergameAPI.getSuperGameDAO().checkTicket(Params.url, coderace,  barcode);
-						System.out.println("BETK: "+b.getList_efchk().size());
-					} catch (IOException | JSONException | URISyntaxException | DAOAPIException e) {
-						e.printStackTrace();
-						resultat = "ERREUR LORS DE LA VERIFICATION<br/>";
-						setErreurs(FIELD_CODE, resultat);
-						return verst;
-					}
-					
-					if (b == null || "TICKET CHOIX ERROR".equalsIgnoreCase(b.getMessage())) {
-						resultat = "ERREUR LORS DE LA VERIFICATION<br/>";
-						setErreurs(FIELD_CODE, resultat);
-						return verst;
-					}
 						
-					   // Ticket pas existant
-					   if("TICKET INCONNU".equalsIgnoreCase(b.getMessage())){
-							resultat = "TICKET INCONNU,<br/>Veuillez bien saisir le code.<br/>";
-							setErreurs(FIELD_CODE, resultat);
-							setDrawData("montant", " ");
-							setDrawData("prix_total", " ");
-				    		setDrawData("gain_total", " ");
+						b =  supergameAPI.getSuperGameDAO().checkTicket(Params.url, coderace,  barcode);
+						//System.out.println("BETK: "+b);
+						if ((!StringUtils.isBlank(b.getMessage()) && !StringUtils.equals("TICKET NON EVALUE", b.getMessage()))
+							|| StringUtils.equals("TICKET ALREADY PAID", b.getMessage())) {
+							
+							switch(b.getMessage()) {
+								
+								case "TICKET CHOIX ERROR":
+									resultat = "ERREUR LORS DE LA VERIFICATION<br/>";
+									setErreurs(FIELD_CODE, resultat);
+									break;
+								
+								case "TICKET INCONNU":
+									resultat = "TICKET INCONNU,<br/>Veuillez bien saisir le code.<br/>";
+									setErreurs(FIELD_CODE, resultat);
+									setDrawData("montant", " ");
+									setDrawData("prix_total", " ");
+						    		setDrawData("gain_total", " ");
+						    		break;
+						    	
+								case "TICKET ALREADY PAID":
+									already_paid = Boolean.TRUE;
+									resultat = "TICKET DEJA PAYE<br/>"+barcode+"<br/>"+b.getVers().getMontant();
+									setErreurs(FIELD_CODE, resultat);
+									setDrawData("montant", " ");
+									setDrawData("prix_total", " ");
+						    		setDrawData("gain_total", " ");
+						    		break;
+						    		
+								case "TICKET NON RECONNU":
+									resultat = "TICKET NON RECONNU DANS CETTE SALLE<br/>";
+									setErreurs(FIELD_CODE, resultat);
+									break;
+									
+								case "TICKET NON ENREGISTRE":
+									resultat = "TICKET NON ENREGISTRE,<br/>CONTACTER RESPONSABLE.<br/>";
+									setErreurs(FIELD_CODE, resultat);
+									break;
+									
+								default:
+										resultat = "Erreur,<br/>CONTACTER RESPONSABLE.<br/>";
+										setErreurs(FIELD_CODE, resultat);
+										
+							}
+							
 							return verst;
-					        
-					   }
-					   
-					   // Ticket deja paye
-					   if("TICKET ALREADY PAID".equalsIgnoreCase(b.getMessage())){
-							already_paid = Boolean.TRUE;
-							//le ticket a deja été traité
-							resultat = "TICKET DEJA PAYE<br/>"+barcode+"<br/>"+b.getVers().getMontant();
-							setErreurs(FIELD_CODE, resultat);
-							setDrawData("montant", " ");
-							setDrawData("prix_total", " ");
-				    		setDrawData("gain_total", " ");
-							return verst;
-					        
-					   }
-					   
-					   // Mauvais partenaire
-					   if("TICKET NON RECONNU".equalsIgnoreCase(b.getMessage())){
-							resultat = "TICKET NON RECONNU DANS CETTE SALLE<br/>";
-							setErreurs(FIELD_CODE, resultat);
-							return verst;
-					        
-					   }
-					   
-					   // Ticket non enregistre
-					   if("TICKET NON ENREGISTRE".equalsIgnoreCase(b.getMessage())){
-							resultat = "TICKET NON ENREGISTRE,<br/>CONTACTER RESPONSABLE.<br/>";
-							setErreurs(FIELD_CODE, resultat);
-							return verst;
-					        
-					   }
-// 
-					   
-					//	  System.out.println("b.getParil(): "+b.getList_efchk().get(0).getIdparil());
-						   String lib_pari = utilDao.searchPariLById(b.getList_efchk().get(0).getIdparil())[3];
-						 
-					//	   System.out.println("BBB: "+b);
-						  
-			    		   setDrawData("barcode", b.getBarcode());
-			    		   setDrawData("player_choice", b.getList_efchk().get(0).getKchoice());
-			    		   setDrawData("multi", ""+ b.getMultiplicite());
-			    		   setDrawData("cparil", ""+lib_pari);
-			    		   setDrawData("montant", ""+b.getSummise());
-//			    		   setDrawData("u_montant", ""+mtant);
-			    		   setDrawData("draw_num", ""+b.getDrawnumk());
-			    		   setDrawData("draw_result", b.getDraw_result());
-			    		   setDrawData("prix_total", ""+b.getSummise());
-			    		   setDrawData("gain_total", ""+b.getSumWin());
-			    		   setDrawData("xmulti", b.getXmulti());
-			    		 
-			    		   List<EffChoicek> list_efchk;
-			    		   list_efchk = b.getList_efchk();
-			    		   
-			    		  // multiplicite = list_efchk.size();
-			    		   
-			    		   
-			    		   boolean eval = true;
-			    		   for(EffChoicek efck : list_efchk) {
-			    			   
-			    			   Map<String, String> details_tick = new HashMap<String, String>();
-			    			   if(StringUtils.isNotBlank(efck.getDrawresult())) {
-			    				   details_tick.put("cote", efck.getCote());
-			    				   details_tick.put("resultTour", efck.getDrawresult());
-			    				   details_tick.put("etat", efck.isState() ? "true" : "false");
-			    				   details_tick.put("draw_num", String.valueOf(efck.getDrawnum()));
-			    				   details_tick.put("choice", efck.getKchoice());
-			    			   }
-			    			   else {
-			    				   eval = false;
-			    				   details_tick.put("cote", "-");
-			    				   details_tick.put("resultTour", "-");
-			    				   details_tick.put("draw_num", "-");
-			    			   }
-			    			   this.evenements.add(details_tick);
-			    		   }
-			    		   
-			    		   multiplicite = this.evenements.size();
-			    		   
-			    		   if("TICKET NON EVALUE".equalsIgnoreCase(b.getMessage())){
-								resultat = "TICKET NON EVALUE,<br/>TIRAGE EN COURS.<br/>";
-								setErreurs(FIELD_CODE, resultat);
-								return verst;
-						   }
-			    		   
-			    		   
-			    		   
-			    		   double gg = b.getSumWin();
-			    		   bonusDown = b.isBonus();
-			    		   if(eval && gg == 0){
-			    			   resultat = "Ticket perdant";
-			    			   setErreurs(FIELD_CODE, resultat);
-			    			   if(b.isCagnotte()) {
-			    				   resultat = "Ticket CAGNOTTE";
+						}
+						else {
+							
+							   //System.out.println("BETK: "+b);
+							   String lib_pari = utilDao.searchPariLById(b.getListEfchk().get(0).getIdparil())[3];
+							 
+				    		   setDrawData("barcode", b.getBarcode());
+				    		   setDrawData("player_choice", b.getListEfchk().get(0).getKchoice());
+				    		   setDrawData("multi", ""+ b.getMultiplicite());
+				    		   setDrawData("cparil", ""+lib_pari);
+				    		   setDrawData("montant", ""+b.getSummise());
+				    		   setDrawData("draw_num", ""+b.getDrawnumk());
+				    		   setDrawData("draw_result", b.getDrawResult());
+				    		   setDrawData("prix_total", ""+b.getSummise());
+				    		   setDrawData("gain_total", ""+b.getSumWin());
+				    		   setDrawData("xmulti", b.getXmulti());
+				    		 
+				    		   List<EffChoicek> list_efchk;
+				    		   list_efchk = b.getListEfchk();
+				    		   
+				    		  // multiplicite = list_efchk.size();
+				    		   
+				    		   
+				    		   boolean eval = true;
+				    		   for(EffChoicek efck : list_efchk) {
+				    			   
+				    			   Map<String, String> details_tick = new HashMap<String, String>();
+				    			   if(StringUtils.isNotBlank(efck.getDrawresult())) {
+				    				   details_tick.put("cote", efck.getCote());
+				    				   details_tick.put("resultTour", efck.getDrawresult());
+				    				   details_tick.put("etat", efck.isState() ? "true" : "false");
+				    				   details_tick.put("draw_num", String.valueOf(efck.getDrawnum()));
+				    				   details_tick.put("choice", efck.getKchoice());
+				    			   }
+				    			   else {
+				    				   eval = false;
+				    				   details_tick.put("cote", "-");
+				    				   details_tick.put("resultTour", "-");
+				    				   details_tick.put("draw_num", "-");
+				    			   }
+				    			   this.evenements.add(details_tick);
+				    		   }
+				    		   
+				    		   multiplicite = this.evenements.size();
+				    		   
+				    		   if("TICKET NON EVALUE".equalsIgnoreCase(b.getMessage())){
+									resultat = "TICKET NON EVALUE,<br/>TIRAGE EN COURS.<br/>";
+									setErreurs(FIELD_CODE, resultat);
+									return verst;
+							   }
+
+				    		   double gg = b.getSumWin();
+				    		   bonusDown = b.isBonus();
+				    		   if(eval && gg == 0){
+				    			   resultat = "Ticket perdant";
 				    			   setErreurs(FIELD_CODE, resultat);
-			    			   }
-			    		   }
-			    		   else if(eval && gg != 0){
-			    			   if(bonusDown) {
-			    				   resultat = "Ticket bonus gagnant";
-			    			   }
-			    			   else {
-			    				   resultat = "Ticket gagnant"; 
-			    			   }
-			    			   setErreurs(FIELD_CODE, resultat);
-			    			   if(b.isCagnotte()) {
-			    				   resultat += "Ticket CAGNOTTE";
+				    			   if(b.isCagnotte()) {
+				    				   resultat = "Ticket CAGNOTTE";
+					    			   setErreurs(FIELD_CODE, resultat);
+				    			   }
+				    		   }
+				    		   else if(eval && gg != 0){
+				    			   if(bonusDown) {
+				    				   resultat = "Ticket bonus gagnant";
+				    			   }
+				    			   else {
+				    				   resultat = "Ticket gagnant"; 
+				    			   }
 				    			   setErreurs(FIELD_CODE, resultat);
-			    			   }
-			    		   }
-			    		   			    		  
-			    		   verst.setTypeVers("K");
-					
+				    			   if(b.isCagnotte()) {
+				    				   resultat += "\nTicket CAGNOTTE";
+					    			   setErreurs(FIELD_CODE, resultat);
+				    			   }
+				    		   }
+				    		   			    		  
+				    		   verst.setTypeVers("K");
+						}
+						
+					} catch (IOException | JSONException | URISyntaxException e) {
+						
+						resultat = "ERREUR LORS DE LA VERIFICATION<br/>";
+						setErreurs(FIELD_CODE, resultat);
+						return verst;
+						
+					}
 				}
 			}
 		

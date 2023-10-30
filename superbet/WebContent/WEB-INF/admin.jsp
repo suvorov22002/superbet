@@ -1,7 +1,8 @@
+<%@page import="modele.Caissier"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
-    
+
 <!DOCTYPE html>
 <html lang="fr">
   <head>
@@ -15,6 +16,37 @@
     <link rel="stylesheet" href="ressources/rsrc_caissier/assets/slicknav/slicknav.min.css">
   </head>
 <body>
+
+<%--    <%--%>
+<%--        String userName = null;--%>
+<%--        Cookie[] cookies = request.getCookies();--%>
+<%--        if(cookies !=null){--%>
+<%--            for(Cookie cookie : cookies){--%>
+<%--                if(cookie.getName().equals("caissier")) userName = cookie.getValue();--%>
+<%--            }--%>
+<%--        }--%>
+<%--        if(userName == null) response.sendRedirect("login.jsp");--%>
+<%--    %>--%>
+    <%
+        //allow access only if session exists
+        String user = null;
+        Caissier cais;
+        if(session.getAttribute("caissier") == null){
+            response.sendRedirect("login.jsp");
+        }else cais = (Caissier) session.getAttribute("caissier");
+        
+        String userName = null;
+        String sessionID = null;
+        Cookie[] cookies = request.getCookies();
+        if(cookies !=null){
+            for(Cookie cookie : cookies){
+                if(cookie.getName().equals("caissier")) userName = cookie.getValue();
+                if(cookie.getName().equals("JSESSIONID")) sessionID = cookie.getValue();
+            }
+        }
+    %>
+<%--    <h3>Hi <%=userName %>, Login successful. Your Session ID=<%=sessionID %></h3>--%>
+
 	<div class="container-fluid">
       <div class="row">
         <div class="col-sm-10 nbar" id="menu">
@@ -28,9 +60,12 @@
           </nav>
         </div>
         <div class="col-sm-2" id="logoff">
-        	<a href="./login.jsp" class="btn btn-info">
-        		<span class="glyphicon glyphicon-log-out"></span>Log out
-        	</a>
+<%--        	<a href="./login.jsp" class="btn btn-info">--%>
+<%--        		<span class="glyphicon glyphicon-log-out"></span>Log out--%>
+<%--        	</a>--%>
+            <form action="logout" method="post">
+                <input class="btn btn-info" type="submit" value="Logout" >
+            </form>
         </div>
       </div>
   </div> 
@@ -226,10 +261,10 @@
                 <legend>Réglage turnover</legend>
                 <table class="cbonus" style="margin: 5px;">
                   <tr>
-                    <td class="">
+                    <td class="col-xs-1">
                         <label>Pourcentage: </label>
                     </td>
-                    <td class="">
+                    <td class="col-xs-1">
                       <select class="" name="percentage" id="percentage" style="width:100px;">
                         <option value="70%">70</option>
                         <option value="75%">75</option>
@@ -237,10 +272,10 @@
                         <option value="90%">90</option>
                       </select>
                     </td>
-                      <td class="">
+                      <td class="col-xs-1">
                           <label>Cycle: </label>
                       </td>
-                      <td class="">
+                      <td class="col-xs-1">
                           <select class="" name="cycle" id="cycle" style="width:100px;" >
                               <option value="5000 tours">5000</option>
                               <option value="1000 tours">1000</option>
@@ -248,10 +283,10 @@
                               <option value="100 tours">100</option>
                           </select>
                       </td>
-                      <td class="">
+                      <td class="col-xs-1">
                         <label>Frequence: </label>
                       </td>
-                      <td class="">
+                      <td class="col-xs-1">
                         <select class="" name="frequence" id="frequence" style="width:100px;" >
                             <option value="10%">10</option>
                             <option value="15%">15</option>
@@ -261,10 +296,10 @@
                             <option value="35%">35</option>
                         </select>
                       </td>
-                      <td class="">
+                      <td class="col-xs-1">
                         <label>Jeu: </label>
                       </td>
-                      <td class="">
+                      <td class="col-xs-1">
                           <select class="" name="turn_jeu" id="turn_jeu" style="width:100px;">
                               <option value="Keno">Keno</option>
                               <option value="Dog">Dog Race</option>
@@ -272,8 +307,13 @@
                               <option value="Bingo">Bingo</option>
                           </select>
                       </td>
-                      
+                      <td class="col-xs-1"><input type="hidden" id="turnchoice" name="turnchoice" value=""></td>
+                      <td class="col-xs-3" colspan="2">
+                          <input type="submit" class="btn btn-success" id="addturnover" value="Valider" onclick="return validation_turn();"/>&nbsp;&nbsp;
+                          <span class="${empty turn_form.erreurs ? 'succes' :'erreur'}"> ${turn_form.resultat}</span>
+                      </td>
                    </tr>
+                    <!--
                     <tr>
                         <td class="col-xs-1"></td>
                         <td class="col-xs-1"></td>
@@ -286,7 +326,7 @@
                         	<span class="${empty turn_form.erreurs ? 'succes' :'erreur'}"> ${turn_form.resultat}</span>
                         </td>
                     </tr>
-                    
+                    -->
                </table>
               </fieldset>
           </div>
@@ -914,7 +954,7 @@
                           <h4><label for="ncbonus_part2">>> Partenaire >></label></h4>
                           <select class="" name="ncbonus_part2" id="ncbonus_part2" style="width:300px;">
                             <option value="">Choisir partenaire</option>
-                            </select>
+                          </select>
                         </td>
                         <td class="col-xs-4">
                           

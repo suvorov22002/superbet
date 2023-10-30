@@ -17,6 +17,7 @@ import java.util.stream.Collectors;
 import javax.ejb.EJB;
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.DateUtils;
 import org.codehaus.jettison.json.JSONException;
 
@@ -44,6 +45,7 @@ import superbetDAO.UtilDAO;
 import superbetDAO.api.exeception.DAOAPIException;
 import superbetDAO.api.implementations.SuperGameDAOAPI;
 import superbetDAO.api.interfaces.ISuperGameDAOAPILocal;
+import config.Jeu;
 import config.Params;
 import config.Timestamp;
 import config.UtileKeno;
@@ -65,36 +67,20 @@ public final class ManageKenoForm {
 	public  int event = 0; // nombre d'evenement dans le ticket
 	private  ArrayList<String> choice = null; // collection de choix
 	private String EDraw;
-	private  String libchoix; // libelle choix
-    private  String codeParil; // code du pari effectuÃ©
+	private  String codeParil; // code du pari effectuÃ©
     private  double typejeu;
     private double bonusrate;
     private String[] _fecha;
     private BetTicketK betk;
     
-	private KenoDAO kenoDao;
-	private MisetDAO misetDao;
-	private EffChoicekDAO effchoicekDao;
 	private UtilDAO utilDao;
-	private MisekDAO misekDao;
-	private Misek_tempDAO misektpDao;
 	private PartnerDAO partnerDao;
-	private AirtimeDAO airtimeDao;
-	private ConfigDAO configDao;
 	private  ISuperGameDAOAPILocal  supergameAPI;
 	
 	public ManageKenoForm(KenoDAO kenoDao,MisetDAO misetDao,UtilDAO utilDao,EffChoicekDAO effchoicekDao,MisekDAO misekDao,
 			Misek_tempDAO misektpDao, PartnerDAO partnerDao, AirtimeDAO airtimeDao, ConfigDAO configDao){
-		this.kenoDao = kenoDao;
-		this.misetDao = misetDao;
 		this.utilDao = utilDao;
-		this.effchoicekDao = effchoicekDao;
-		this.misekDao = misekDao;
-		this.misektpDao = misektpDao;
 		this.partnerDao = partnerDao;
-		this.airtimeDao = airtimeDao;
-		this.configDao = configDao;
-		
 		supergameAPI = SuperGameDAOAPI.getInstance();
 	}
 	
@@ -126,6 +112,15 @@ public final class ManageKenoForm {
 	public void set_fecha(String[] _fecha) {
 		this._fecha = _fecha;
 	}
+	
+	public double getBonusrate() {
+		return bonusrate;
+	}
+
+
+	public void setBonusrate(double bonusrate) {
+		this.bonusrate = bonusrate;
+	}
 
 
 	@SuppressWarnings("unused")
@@ -154,237 +149,157 @@ public final class ManageKenoForm {
 		partner = partners.get();
 		
 		if("closed".equalsIgnoreCase(partner.getCob())) {
-			resultat = "Caisse fermée";
+			resultat = "Caisse fermee";
 			setErreurs(FIELD_AMOUNT, resultat);
 			canSubmit = false;
 			return null;
 		}
 		
-//		partner = partners.get(0);
-//
-//		if(partner == null){
-//			return null;
-//	    }
-//		else if("closed".equalsIgnoreCase(partner.getCob())) {
-//			resultat = "Caisse fermée";
-//			setErreurs(FIELD_AMOUNT, resultat);
-//			canSubmit = false;
-//			return null;
-//		}
-		
-		betk.setIdPartner(partner.getIdpartner());
-		
-		icoderace = partner.getCoderace();
-	
-		Miset miset = new Miset();
-		Misek misek = new Misek();
-		Misek_temp misektp = new Misek_temp();
-		EffChoicek effchoicek = new EffChoicek();
-		Coupon crd = new Coupon();
-		
-		double mt = 1;
-		
-		choice = new ArrayList<String>();
-		multiplicite = 1;
-		
-		ichoice = getValeurChoice(request, FIELD_CHOICE);
 		
 		long dbl = 0;
+		long tms;
 		double gain_min = 0;
 		double balance = 0;
+		double mt = 1;
 		
 		String txtDate=new SimpleDateFormat("dd/MM/yyyy,H:m:s", Locale.FRANCE).format(new Date());
 		String hora =  txtDate.toString().substring(11,16);
 		String fecha = txtDate.toString().substring(0,10);
+
 		
-		long tms;
-//		long time1 = System.currentTimeMillis();
-//		System.out.println("TIME TICKET 1: "+time1);
-		if(ichoice != null && !ichoice.equalsIgnoreCase("")){
+		betk.setCoderace(coderace);
+
+		Coupon crd = new Coupon();
+		
+		choice = new ArrayList<>();
+		multiplicite = 1;
+		
+		ichoice = getValeurChoice(request, FIELD_CHOICE);
+	
+		if(ichoice != null && !StringUtils.isBlank(ichoice)){
 			
-			if(amount != null){
-				
-				if(erreurs.isEmpty()){
-					//Verification du solde
-					try {
-						balance = supergameAPI.getSuperGameDAO().getSolde(Params.url, caissier.getIdCaissier());
-						balance = (double)((int)(balance*100))/100;
-					} catch (IOException | JSONException | URISyntaxException | DAOAPIException e) {
-						e.printStackTrace();
-					}
-				//	System.out.println("BALANCE: " +balance+" - " + (System.currentTimeMillis()-time1));
+			if(amount != null && erreurs.isEmpty()){
+					
+				// Verification des limites
 					mt = Double.parseDouble(amount);
 					mt = mt * tp;
 					mt = (double)((int)(mt*100))/100;
-			//		System.out.println("mt: "+mt+"  1mount: "+amount+" BALANCE: "+balance);
-			//		System.out.println("Credit insuffisant: "+(balance < mt));
-					if(balance < mt){
-						resultat = "Credit insuffisant";
-						setErreurs(FIELD_AMOUNT, resultat);
-						canSubmit = false;
-						return null;
-					}
-			
+					
 					if(mt > Params.GAIN_KENO_MAX){
-						resultat = "Gain maximal depassé";
+						
+						resultat = "Gain maximal depasse";
 			    		setErreurs(FIELD_AMOUNT, resultat);
 			    		canSubmit = false;
+			    		
 					}
 					else{
+						
 						resultat = mt+" FCFA";
-	     				// construction de l'objet coupo
 						betk.setSummise(mt);
 						canSubmit = true;
+						
 					}
+
+					if( event != 0 && canSubmit){ // s'il ya au moins un evenement dans le ticket
+				
+						//traitements BD
+						try{
+							
+							int idmiset;
+							int idmisek;
+							int mst;
+							int msk;
+							int bncd;
+							double amountbonus;
+							double mtant = Double.parseDouble(amount) / event;
+							
+							BetTicketK b;
+						
+							tms = Timestamp.givetimestamp(txtDate);
+							
+							betk.setCaissier(caissier.getLoginc());
+							betk.setHeureMise(String.valueOf(tms));
+							betk.setDateMise(txtDate);
+							betk.setDrawnumk(UtileKeno.drawnumk);
+							betk.setXmulti(String.valueOf((xmulti.equalsIgnoreCase("Oui")) ? 1 : 0));
+							betk.setMultiplicite(multiplicite);
+							betk.setCotejeu(typejeu);
+							betk.setEvent(event);
+							betk.setTypeJeu(Jeu.K);
+							betk.setParil(utilDao.searchPariL(codeParil)[1]);
+							betk.setKchoice(ichoice);
+			
+							b =  supergameAPI.getSuperGameDAO().placeSlip(Params.url, betk, coderace);
+//							System.out.println("return: "+b);
+							
+
+						    if(StringUtils.isBlank(b.getMessage())) {
+						    	
+						    	 this.setBonusrate(b.getMvt());
+						    	 String[] dr = b.getKchoice().split("-");
+							     EDraw =  StringUtils.join(dr, ";");
+								// Creation du coupon de jeu
+
+								crd.setRoom(b.getCoderace());
+								crd.setBarcode(b.getBarcode());
+								crd.setCodepari(codeParil);
+								crd.setEventscote(""+typejeu);
+								crd.setEvents(EDraw);
+								crd.setGainMax(getBigWin(mt));
+								crd.setGainMin(getMinWin(mt, multiplicite));
+								crd.setHoraYfecha(fecha+"  "+hora);
+								crd.setIdTicket(String.valueOf(b.getIdMiseT()));
+								crd.setMtMise(String.valueOf(b.getSummise()));
+								crd.setNbEvents(b.getDrawnumk()); //numÃ©ro de tirage
+								crd.setNbreCombi(b.getBonusCod()); //code bonus
+								crd.setMultiplicateur(xmulti);
+								
+								_fecha = new String[multiplicite];
+								
+								Date currentDate = new Date();
+								
+								for(int ii=0; ii < multiplicite; ii++) {
+									
+									txtDate = new SimpleDateFormat("dd/MM/yyyy,H:mm:s", Locale.FRANCE).format(currentDate);
+									hora =  txtDate.substring(11,16);
+									fecha = txtDate.substring(0,10);
+						
+									_fecha[ii] = fecha + "  " + hora;
+									
+									Calendar c = Calendar.getInstance();
+							        c.setTime(currentDate);
+									c.add(Calendar.MINUTE, 6);
+									currentDate = c.getTime();
+									
+								}
+								
+								imprimer = "imprimer";
+								event = 0;
+							    canSubmit = false;
+							    
+							}
+							else{
+								
+								resultat = b.getMessage();
+								setErreurs(FIELD_CHOICE, resultat);
+								return null;
+								
+							}
+						      
+						}
+						catch(ParseException | IOException | JSONException | URISyntaxException e){
+							
+							resultat = "Echec de la connexion: \n merci de reessayer dans quelques instants.";
+							return null;
+							
+						}
+
 				}
 			}
 			else{
 				resultat = "Veuillez saisir un montant correct";
-			}
-			
-			if( event != 0){ // s'il ya au moins un evenement dans le ticket
-				
-				if(canSubmit){
-					//System.out.println("mise possible");
-					//traitements BD
-					try{
-						int idmiset,idmisek;
-						int mst,msk,mfk; //variables control insert en BD
-						int bncd;
-						double amountbonus;
-						Long maxIdkeno;
-						
-						Keno keno;
-						
-						bncd = partner.getBonuskcode();
-						amountbonus = partner.getBonuskamount();
-						bncd += 1; 
-						betk.setBonusCod(bncd);
-						
-						miset.setTypeJeu("K");
-						miset.setSummise(mt);
-//						mst = misetDao.create(miset);
-//						idmiset = misetDao.findId();
-						
-						
-						tms = Timestamp.givetimestamp(txtDate);
-						
-//						System.out.println("k_max.coderace): "+coderace);
-						Long maxdraw;
-						Keno k_max;
-						try {
-							k_max =  supergameAPI.getSuperGameDAO().maxDraw(Params.url, icoderace);
-						} catch (IOException | JSONException | URISyntaxException | DAOAPIException e) {
-							e.printStackTrace();
-							return null;
-						}
-						long time2 = System.currentTimeMillis();
-
-						maxIdkeno = k_max.getIdKeno();
-
-						betk.setKeno(maxIdkeno);
-						betk.setCaissier(caissier.getIdCaissier());
-						betk.setHeureMise(""+tms);
-						betk.setDateMise(txtDate);
-						betk.setDrawnumk(Integer.parseInt(k_max.getDrawnumK()));
-						betk.setXmulti(String.valueOf((xmulti.equalsIgnoreCase("Oui")) ? 1 : 0));
-						betk.setMultiplicite(multiplicite);
-						betk.setCotejeu(typejeu);
-						betk.setEvent(event);
-					
-						double mtant;
-						mtant = Double.parseDouble(amount);
-						mtant = mtant / event;
-						
-						String str_="";
-						mfk = 0;
-						
-						str_ = ichoice;
-
-						effchoicek.setIdparil(utilDao.searchPariL(codeParil)[1]);
-						effchoicek.setKchoice(str_);
-						effchoicek.setIdkeno(maxIdkeno);
-						
-						betk.setParil(utilDao.searchPariL(codeParil)[1]);
-						betk.setKchoice(str_);
-							
-					    BetTicketK b = null;
-				//	    System.out.println("betk*** "+betk);
-						try {
-							b =  supergameAPI.getSuperGameDAO().placeSlip(Params.url, betk, partner.getCoderace());
-						} catch (IOException | JSONException | URISyntaxException | DAOAPIException e) {
-							e.printStackTrace();
-							return null;
-						}
-						
-			//			 System.out.println("return: "+b);
-						  String[] dr = b.getKchoice().split("-");;
-					      for(int i=0;i<dr.length-1;i++){
-					    	  EDraw = EDraw + dr[i] + ";";
-					      }	 
-					      EDraw = EDraw + dr[dr.length-1];
-						
-					    if(b != null) {
-							// Creation du coupon de jeu
-
-							crd.setRoom(icoderace);
-							crd.setBarcode(b.getBarcode());
-							crd.setCodepari(codeParil);
-							crd.setEventscote(""+typejeu);
-							crd.setEvents(EDraw);
-							crd.setGainMax(getBigWin(mt));
-							crd.setGainMin(getMinWin(mt, multiplicite));
-							crd.setHoraYfecha(fecha+"  "+hora);
-							crd.setIdTicket(""+b.getIdMiseT());
-							crd.setMtMise(""+b.getSummise());
-							crd.setNbEvents(b.getDrawnumk()); //numÃ©ro de tirage
-							crd.setNbreCombi(b.getBonusCod()); //code bonus
-							crd.setMultiplicateur(xmulti);
-							
-							amountbonus +=  mt*bonusrate;
-							_fecha = new String[multiplicite];
-							
-							Date currentDate = new Date();
-							
-							for(int ii=0;ii<multiplicite;ii++) {
-								
-								txtDate=new SimpleDateFormat("dd/MM/yyyy,H:mm:s", Locale.FRANCE).format(currentDate);
-								hora =  txtDate.toString().substring(11,16);
-								fecha = txtDate.toString().substring(0,10);
-					
-								_fecha[ii] = fecha+"  "+hora;
-								
-								Calendar c = Calendar.getInstance();
-						        c.setTime(currentDate);
-								c.add(Calendar.MINUTE, 6);
-								currentDate = c.getTime();
-								
-							}
-							
-					//		partnerDao.update_bonusk(amountbonus, bncd, coderace);
-							
-							imprimer = "imprimer";
-//							UtileKeno.count_free_slip += 1;
-//							if(UtileKeno.count_free_slip > 9) {
-//								misetDao.updateFree("freekeno", Params.MISE_MIN/4, partner.getIdpartner());
-//								UtileKeno.count_free_slip = 0;
-//							}
-							event = 0;
-						    canSubmit = false;
-						}
-						else{
-							resultat = "Erreur de ticket";
-							setErreurs(FIELD_CHOICE, resultat);
-							
-							return null;
-						}
-					      
-					}
-					catch(DAOException | ParseException e){
-						resultat = "Echec de la connexion: \n merci de réessayer dans quelques instants.";
-						e.printStackTrace();
-					}
-				}
+				setErreurs(FIELD_CHOICE, resultat);
+				return null;
 			}
 			
 			return crd;
@@ -480,7 +395,6 @@ public final class ManageKenoForm {
 					if(check_draw(_echar)){
 						//verification des numeros saisis
 						
-						libchoix = "hors tirage";
 						codeParil = "numOut";
 						typejeu = 18.5;
 						
@@ -561,7 +475,6 @@ public final class ManageKenoForm {
 					if(check_draw(_echar)){
 						//verification des numeros saisis
 						
-						libchoix = "tout dedans";
 						codeParil = "numAll";
 						typejeu = 6500;
 						
@@ -861,47 +774,38 @@ public final class ManageKenoForm {
   							//verification des numeros saisis
   							
   							if(_echar.length == 2){
-  								libchoix = "deux numeros";
   								codeParil = "num2";
   								typejeu = UtileKeno.num2[_echar.length];
   							}
   							else if(_echar.length == 3){
-  								libchoix = "trois numeros";
   								codeParil = "num3";
   								typejeu = UtileKeno.num3[_echar.length];
   							}
   							else if(_echar.length == 4){
-  								libchoix = "quatre numeros";
   								codeParil = "num4";
   								typejeu = UtileKeno.num4[_echar.length];
   							}
   							else if(_echar.length == 5){
-  								libchoix = "cinq numeros";
   								codeParil = "num5";
   								typejeu = UtileKeno.num5[_echar.length];
   							}
   							else if(_echar.length == 6){
-  								libchoix = "six numeros";
   								codeParil = "num6";
   								typejeu = UtileKeno.num6[_echar.length];
   							}
   							else if(_echar.length == 7){
-  								libchoix = "sept numeros";
   								codeParil = "num7";
   								typejeu = UtileKeno.num7[_echar.length];
   							}
   							else if(_echar.length == 8){
-  								libchoix = "huit numeros";
   								codeParil = "num8";
   								typejeu = UtileKeno.num8[_echar.length];
   							}
   							else if(_echar.length == 9){
-  								libchoix = "neuf numeros";
   								codeParil = "num9";
   								typejeu = UtileKeno.num9[_echar.length];
   							}
   							else if(_echar.length == 10){
-  								libchoix = "dix numeros";
   								codeParil = "num10";
   								typejeu = UtileKeno.num10[_echar.length];
   							}
@@ -1059,8 +963,7 @@ public final class ManageKenoForm {
   
   private  void setColorInTable(String lib, String codepari){
 		 
-	    libchoix = lib;
-		codeParil = codepari;
+	    codeParil = codepari;
 		typejeu = UtileKeno.numSpec[2];
 		event = multiplicite;
 		
@@ -1072,8 +975,7 @@ public final class ManageKenoForm {
   
   private  void setFirstNumber(String lib, String codepari){
 		 
-	    libchoix = lib;
-		codeParil = codepari;
+	    codeParil = codepari;
 		typejeu = UtileKeno.numSpec[1];
 		event = multiplicite;
 		
@@ -1087,7 +989,6 @@ public final class ManageKenoForm {
   private  void setOdd(String lib, String codepari){
 		//1er numero pair
 			
-			libchoix = lib;
 			codeParil =codepari;
 			typejeu = UtileKeno.numSpec[1];
 			event = multiplicite;
@@ -1101,7 +1002,6 @@ public final class ManageKenoForm {
   private  void setEven(String lib, String codepari){
   	//1er numero impair
 		
-		libchoix = lib;
 		codeParil = codepari;
 		typejeu = UtileKeno.numSpec[1];
 		event = multiplicite;
@@ -1112,8 +1012,7 @@ public final class ManageKenoForm {
 	 }
   
   private  void setSum(String lib, String codepari){
-     	libchoix = lib;
-		codeParil = codepari;
+     	codeParil = codepari;
 		typejeu = UtileKeno.numSpec[1];
 		event = multiplicite;
 		

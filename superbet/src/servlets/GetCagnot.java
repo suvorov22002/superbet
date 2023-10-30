@@ -40,22 +40,33 @@ public class GetCagnot extends HttpServlet{
 		
 		//UtileKeno.cagnotte = Integer.parseInt(request.getParameter("state"));
 		String coderace = request.getParameter("coderace");
-	
-		 try {
-			 String json;	
-			 CagnotteDto cgt = supergameAPI.getSuperGameDAO().getCagnot(Params.url, coderace);
+		String json;
+		CagnotteDto cgt;
+		CagnotteDto defaultCgt = new CagnotteDto();
+		defaultCgt.setBarcode(1L);
+		 
+		try {
+			
+			cgt = supergameAPI.getSuperGameDAO().getCagnot(Params.url, coderace);
+			response.setContentType("application/json; charset=UTF-8");
+			response.setHeader("Cache-Control", "no-cache");
+            
+			if(cgt == null) {
+				json = new Gson().toJson(defaultCgt);
+			}
+			else {
+				json = new Gson().toJson(cgt);
+			}
+			
 				
-				
-				response.setContentType("application/json; charset=UTF-8");
-				response.setHeader("Cache-Control", "no-cache");
-                if (cgt == null ) json = new Gson().toJson(new CagnotteDto());
-                else json = new Gson().toJson(cgt);
-				
-                response.getWriter().write(json);
+            
 				 
-		 } catch (IOException | JSONException | URISyntaxException | DAOAPIException e) {
+		 } catch (IOException | JSONException | URISyntaxException e) {
 				e.printStackTrace();
+				json = new Gson().toJson(defaultCgt);
 		 }
+		
+		response.getWriter().write(json);
        
 	}
 	

@@ -3,9 +3,11 @@ package servlets;
 import java.io.IOException;
 
 import javax.servlet.ServletException;
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import modele.Caissier;
 import superbetDAO.AirtimeDAO;
@@ -76,11 +78,34 @@ public class Shift extends HttpServlet {
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// TODO Auto-generated method stub
 		/* Récupération de la session depuis la requête */
-	    
+				response.setContentType("text/html");
+				Cookie[] cookies = request.getCookies();
+				HttpSession session;
+				
 	    		ShiftForm s_form = new ShiftForm(utilDao,  misekDao, misepDao, verstDao, caissierDao, airtimeDao);
 	    		Caissier caissier = s_form.endshift(request);
 	    		
 	    		if(caissier == null){
+	    			
+	    	    	if(cookies != null){
+	    		    	for(Cookie cookie : cookies){
+	    		    		if(cookie.getName().equals("JSESSIONID")){
+	    		    			System.out.println("JSESSIONID="+cookie.getValue());
+	    		    		}
+	    		    		cookie.setMaxAge(0);
+	    		    		response.addCookie(cookie);
+	    		    	}
+	    	    	}
+	    	    	
+	    	    	//invalidate the session if exists
+	    	    	session = request.getSession(false);
+	    	    	System.out.println("User= "+session.getAttribute("caissier"));
+	    	    	
+	    	    	if(session != null){
+	    	    		session.invalidate();
+	    	    		
+	    	    	}
+	    	    	
 	    			response.sendRedirect(request.getContextPath()+VUE);
 	    		}
 	    		else{
@@ -94,6 +119,25 @@ public class Shift extends HttpServlet {
 	    					i++;
 	    				 }
 	    		    	System.out.println("Nombre de caissiers: "+refresh.getCustomers().size());
+	    		    	if(cookies != null){
+		    		    	for(Cookie cookie : cookies){
+		    		    		if(cookie.getName().equals("JSESSIONID")){
+		    		    			System.out.println("JSESSIONID="+cookie.getValue());
+		    		    		}
+		    		    		cookie.setMaxAge(0);
+		    		    		response.addCookie(cookie);
+		    		    	}
+		    	    	}
+	    		    	
+	    		    	//invalidate the session if exists
+	    		    	session = request.getSession(false);
+	    		    	System.out.println("User= "+session.getAttribute("caissier"));
+	    		    	
+	    		    	if(session != null){
+	    		    		session.invalidate();
+	    		    		
+	    		    	}
+	    		    	
 	    		    	response.sendRedirect(request.getContextPath()+VUE);
 	    			}
 	    			else if("C".equalsIgnoreCase(caissier.getStatut())){

@@ -1,6 +1,7 @@
 package modele;
 
 import java.io.Serializable;
+import java.util.Date;
 
 public class CagnotteDto implements Serializable {
 
@@ -9,7 +10,7 @@ public class CagnotteDto implements Serializable {
 	 */
 	private static final long serialVersionUID = 1L;
 	
-	private String heur;
+	private Date heur;
 	private String lot;
 	private String jeu;
 	private Partner partner;
@@ -20,11 +21,11 @@ public class CagnotteDto implements Serializable {
 		super();
 	}
 
-	public String getHeur() {
+	public Date getHeur() {
 		return heur;
 	}
 
-	public void setHeur(String heur) {
+	public void setHeur(Date heur) {
 		this.heur = heur;
 	}
 

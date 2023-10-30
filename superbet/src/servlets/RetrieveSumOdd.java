@@ -31,6 +31,7 @@ import superbetDAO.KenoDAO;
  */
 //@WebServlet("/sumodd")
 public class RetrieveSumOdd extends HttpServlet {
+	
 	private static final long serialVersionUID = 1L;
 	public static final String CONF_DAO_FACTORY = "daofactory";
 	private KenoDAO kenoDao;
@@ -44,37 +45,23 @@ public class RetrieveSumOdd extends HttpServlet {
      */
     public RetrieveSumOdd() {
         super();
-        // TODO Auto-generated constructor stub
     }
 
 	/**
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		
 		String coderace = request.getParameter("partner");
-		//System.out.println("Retrieve Odd: "+coderace);
+
 		List<Keno> keno = kenoDao.getAllLastKdraw(coderace);
-		//System.out.println("keno size: "+keno.size());
 		countAllNumOdds(keno);
-		//System.out.println("Sood size: "+UtileKeno.sOdd.size());
+
 		response.setContentType("application/json; charset=UTF-8");
 		response.setHeader("Cache-Control", "no-cache");
-	//	System.out.println("Soods: "+UtileKeno.sOdd);
-		
-	//	JSONObject j = new JSONObject(UtileKeno.sOdd);
-	//	j.putAll(UtileKeno.sOdd);
-	//	 System.out.println("Sood: "+j);
 	    String json = new Gson().toJson(UtileKeno.sOdd);
-	   // System.out.println("Sood: "+json);
-	//    response.getWriter().write(json);
-	//    
-	//	response.getWriter().write(j.toString());
-		
-	    
-	    
-		
-		
-		
+
+
 		   JsonArrayBuilder arrayBuilder = Json.createArrayBuilder();		
 //		
            JsonObjectBuilder objectBuilder = Json.createObjectBuilder();
@@ -90,60 +77,51 @@ public class RetrieveSumOdd extends HttpServlet {
 	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		// TODO Auto-generated method stub
+		
 		doGet(request, response);
+		
 	}
 	
 	private void countAllNumOdds(List<Keno> allDraws) {
-//		
-		List<String> allDraw = new ArrayList<String>();
-		Map<String, String> allDrawNumOdds = new HashMap<String, String>();
-//		Utile.allDraw.clear();
-//		Utile.allDrawNumOdds.clear();
 		
-		
+		List<String> allDraw = new ArrayList<>();
+		Map<String, String> allDrawNumOdds = new HashMap<>();
+
+
 		for(Keno k : allDraws) {
 			allDraw.add(k.getDrawnumbK());
 		}
-		
+
 		// Initialisation des coefficients
 		for(int i = 0; i < 80; i++) {
-			allDrawNumOdds.put(""+(i+1), ""+0);
+			allDrawNumOdds.put(String.valueOf((i+1)), String.valueOf(0));
 		}
+
+		String[] passDraw;
 		
-//		if(allDraw.size() > 0) {
-			String[] passDraw;
-			for(String ss : allDraw) {
-				passDraw  = ss.split("-");
-				for(int j=0; j<passDraw.length; j++) {
-					String key = passDraw[j];
-					String value = allDrawNumOdds.get(key);
-					try {
-						allDrawNumOdds.put(key, ""+(Integer.parseInt(value) + 1));
-					}
-					catch(NumberFormatException e) {
-						e.printStackTrace();
-						allDrawNumOdds.put(key,   "1");
-					}
-					
-					
+		for(String ss : allDraw) {
+			
+			passDraw  = ss.split("-");
+			
+			for(int j=0; j<passDraw.length; j++) {
+				
+				String key = passDraw[j];
+				String value = allDrawNumOdds.get(key);
+				try {
+					allDrawNumOdds.put(key, String.valueOf(Integer.parseInt(value) + 1));
+				}
+				catch(NumberFormatException e) {
+					e.printStackTrace();
+					allDrawNumOdds.put(key,   "1");
 				}
 			}
 			
+		}
+
 		Map<String, Integer> m = triAvecValeur( allDrawNumOdds );
-		//System.out.println("Apres: "+m);
+		
 		UtileKeno.sOdd.clear();
 		UtileKeno.sOdd = m;
-//		  Iterator it = m.entrySet().iterator();
-//	      while(it.hasNext()) {
-//	           Map.Entry entry = (Map.Entry)it.next();
-//	           UtileKeno.sOdd.put((String)entry.getKey(), ""+entry.getValue());
-//	        //   System.out.println(entry.getKey() + ": "+entry.getValue());
-//	      }
-			
-//		}
-		
-		
 		
 	}
 	

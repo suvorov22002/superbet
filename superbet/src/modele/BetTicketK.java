@@ -21,8 +21,7 @@ public class BetTicketK implements Serializable {
 	private Jeu typeJeu;
 	private String barcode;
 	private double summise;
-	private Long idPartner;  
-//	private EffChoicek efchk;
+	private String coderace;  
 	private String heureMise;
 	private String dateMise;
 	private int drawnumk;
@@ -31,21 +30,22 @@ public class BetTicketK implements Serializable {
 	private double sumWin = 0d;
 	private int archive;
 	private String xmulti; //multiplicateur de gain
-	private Long caissier;
+	private String caissier;
 	private Long keno;
 	private Long idMiseT;
-	private double mvt;
+	private double mvt;  // solde caissier
 	private int multiplicite; //tour multiple
 	private double cotejeu;
 	private int event; //nombre d'evenemnts pour le ticket
 	private String paril;
 	private String kchoice;
-	private String draw_result;
 	private boolean bonus = false;
 	private String message;
 	private Versement vers;
-	private List<EffChoicek> list_efchk = new ArrayList<EffChoicek>();
+	private List<EffChoicek> listEfchk;
 	private boolean cagnotte = false;
+	private long bonusAmount;
+	private String drawResult;
 	
 	
 	public BetTicketK() {
@@ -64,18 +64,6 @@ public class BetTicketK implements Serializable {
 	public void setSummise(double summise) {
 		this.summise = summise;
 	}
-	public Long getIdPartner() {
-		return idPartner;
-	}
-	public void setIdPartner(Long idPartner) {
-		this.idPartner = idPartner;
-	}
-//	public EffChoicek getEfchk() {
-//		return efchk;
-//	}
-//	public void setEfchk(EffChoicek efchk) {
-//		this.efchk = efchk;
-//	}
 	public String getHeureMise() {
 		return heureMise;
 	}
@@ -118,10 +106,10 @@ public class BetTicketK implements Serializable {
 	public void setXmulti(String xmulti) {
 		this.xmulti = xmulti;
 	}
-	public Long getCaissier() {
+	public String getCaissier() {
 		return caissier;
 	}
-	public void setCaissier(Long caissier) {
+	public void setCaissier(String caissier) {
 		this.caissier = caissier;
 	}
 	public Long getKeno() {
@@ -175,7 +163,6 @@ public class BetTicketK implements Serializable {
 		this.etatMise = etatMise;
 	}
 	
-	
 	public String getParil() {
 		return paril;
 	}
@@ -188,22 +175,15 @@ public class BetTicketK implements Serializable {
 	public void setKchoice(String kchoice) {
 		this.kchoice = kchoice;
 	}
-	
-	public String getDraw_result() {
-		return draw_result;
-	}
-	public void setDraw_result(String draw_result) {
-		this.draw_result = draw_result;
-	}
-	
-	public List<EffChoicek> getList_efchk() {
-		return list_efchk;
+
+	public List<EffChoicek> getListEfchk() {
+		return listEfchk;
 	}
 
-	public void setList_efchk(List<EffChoicek> list_efchk) {
-		this.list_efchk = list_efchk;
+	public void setListEfchk(List<EffChoicek> listEfchk) {
+		this.listEfchk = listEfchk;
 	}
-	
+
 	public boolean isBonus() {
 		return bonus;
 	}
@@ -235,10 +215,35 @@ public class BetTicketK implements Serializable {
 	public void setCagnotte(boolean cagnotte) {
 		this.cagnotte = cagnotte;
 	}
+	
+	public String getCoderace() {
+		return coderace;
+	}
+
+	public void setCoderace(String coderace) {
+		this.coderace = coderace;
+	}
+
+	public long getBonusAmount() {
+		return bonusAmount;
+	}
+
+	public void setBonusAmount(long bonusAmount) {
+		this.bonusAmount = bonusAmount;
+	}
+	
+	public String getDrawResult() {
+		return drawResult;
+	}
+
+	public void setDrawResult(String drawResult) {
+		this.drawResult = drawResult;
+	}
 
 	@Override
 	public String toString() {
-		return "BETKENOK [Barcode= "+barcode+" SumMise= "+summise+" Cote= "+cotejeu+" Partner= "+idPartner+" Caissier= "+caissier+" Keno= "+keno+ "]";
+		return "BETKENOK [Barcode= "+barcode+" SumMise= "+summise+" Cote= "+cotejeu+" Partner= "
+				+coderace+" Caissier= "+caissier+" Keno= "+keno+ ", Versement= " + vers+ "]";
 	}
 	
 }

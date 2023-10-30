@@ -1,14 +1,16 @@
 package business;
 
 import java.util.ArrayList;
-import superbetDAO.DAOConfigurationException;
+import java.util.List;
+
 import modele.Caissier;
+import superbetDAO.DAOConfigurationException;
 
 public class RecordUser {
 	
-	private static ArrayList<Caissier> customers;
+	private static List<Caissier> customers;
 	
-	public RecordUser(ArrayList<Caissier> customers){
+	public RecordUser(List<Caissier> customers){
 		customers = new ArrayList<Caissier>();
 		this.customers = customers;
 	}
@@ -23,11 +25,11 @@ public class RecordUser {
 			return instance;
 	}
 	
-	public ArrayList<Caissier> getCustomers() {
+	public List<Caissier> getCustomers() {
 		return customers;
 	}
 
-	public void setCustomers(ArrayList<Caissier> customers) {
+	public void setCustomers(List<Caissier> customers) {
 		this.customers = customers;
 	}
 	

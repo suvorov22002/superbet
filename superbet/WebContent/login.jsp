@@ -3,7 +3,6 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@page import="modele.Caissier"%>
 
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -64,7 +63,7 @@
 					</div>
 
 				</form>
-
+<!--
 				<form class="login100-form validate-form" action="authentication" id="slogin">
 
 					<div class="wrap-input100 validate-input m-b-10" data-validate = "Username is required">
@@ -90,6 +89,8 @@
 						</button>
 					</div>
 				</form>
+-->
+
 				<!--<a href="ressources/../html-link.htm" target="popup" onclick="window.open('../frontend/cashier.html','name','width=1600,height=900')">
 				 Open page in new window</a>
 
@@ -115,22 +116,20 @@
 		}, 3000);
 		//$('#lien').click();mywindow.moveTo(0, 0);
 
-   let urlServeur = "http://127.0.0.1:9090/api/v1/supergames";
+   //let urlServeur = "http://ec2-35-180-126-248.eu-west-3.compute.amazonaws.com:8080/api/v1/supergames";
+	let urlServeur = "";
    async function getUrlServer() {
        
          let intervalUrlServer =  setInterval(async function(){
-          if(urlServeur == undefined){
+          if(urlServeur === undefined || urlServeur === ""){
             $.ajax({
                 url:"paramserver",
                 type:"GET",
-                data:{
-                  'partner':coderace
-                },
                 success:function(result){ 
                     $.each(result,  async function(index, value){
                         urlServeur = await value.server;
-                        console.log("urlServeur: "+urlServeur);
-                           
+                        console.log("lien urlServeur: "+urlServeur);
+						//await fetchAdmin();
                     });
                 }
               });
@@ -144,30 +143,30 @@
 
     getUrlServer();
 
- 	async function fetchAdmin() {
-       
-            if(urlServeur != undefined){
+ 	// async function fetchAdmin() {
+    //
+    //         if(urlServeur !== undefined){
+	//
+    //            var url = urlServeur+'/superadmin';
+    //             const response = await fetch(url);
+    //             const myJson = await response.json(); //extract JSON from the http response
+    //               // do something with myJson
+    //             var admin = JSON.stringify(myJson);
+    //
+    //             if(parseInt(admin) === 0) {
+    //
+    //            	 	document.getElementById("login").style.display = "none";
+    //            	 	//document.getElementById("slogin").style.display = "block";
+    //             }
+    //             else{
+    //             	document.getElementById("login").style.display = "block";
+    //             	//document.getElementById("slogin").style.display = "none";
+    //             }
+    //         }
+    //
+    // }
 
-               var url = urlServeur+'/superadmin';
-                const response = await fetch(url);
-                const myJson = await response.json(); //extract JSON from the http response
-                  // do something with myJson
-                var admin = JSON.stringify(myJson);
-               
-                if(parseInt(admin) == 0) {
-                	
-               	 	document.getElementById("login").style.display = "none";
-               	 	document.getElementById("slogin").style.display = "block";
-                }
-                else{
-                	document.getElementById("login").style.display = "block";
-                	document.getElementById("slogin").style.display = "none";
-                }
-            }
-           
-    }
-
-    fetchAdmin();
+    //fetchAdmin();
 
     $('#create-admin').click(async function(){
           console.log('create-admin');
@@ -201,7 +200,7 @@
           	console.log('admin-name ' + adminName);
           	console.log('admin-password ' + adminPassword);
 
-          	if(urlServeur != undefined){
+          	if(urlServeur !== undefined){
 
                var url = urlServeur+'/save-user/' + adminName + '/' + adminPassword;
                const response = await fetch(url);

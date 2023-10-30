@@ -104,20 +104,22 @@ public class ManageVersement extends HttpServlet {
 	    	ManageVersForm v_form = new ManageVersForm(kenoDao,spinDao,misetDao,utilDao,effchoicekDao,misekDao,effchoicepDao,misepDao,
 	    			verstDao, partnerDao, misektpDao, airtimeDao);
 	    		
-	    		Versement vers = v_form.traiterTicket(req, caissier);
+	    		v_form.traiterTicket(req, caissier);
 	    		vf.setDrawData(v_form.getDrawData());
 	    		vf.setEvenements(v_form.getEvenements());
 	    		vf.setMultiplicite(v_form.getMultiplicite());
 	    		vf.setResultat(v_form.getResultat());
 	    		
-	    		//System.out.println("MULTI: "+v_form.getEvenements());
+	    		System.out.println("MULTI: "+v_form.getEvenements());
 	    		//req.setAttribute("state", 4);
 	    		
 	    		
 	    }
 	    else {
+	    	System.out.println("Manage Versement - Session Expired");
 	    	session.invalidate();
-			res.sendRedirect(URL_REDIRECTION);
+			//res.sendRedirect(URL_REDIRECTION);
+			this.getServletContext().getRequestDispatcher(URL_REDIRECTION).forward(req, res);
 	    }
 	    
 	    
